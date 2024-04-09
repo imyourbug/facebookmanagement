@@ -35,27 +35,14 @@ class AccountController extends Controller
         }
         try {
             DB::beginTransaction();
-            $user = User::create([
+            User::create([
                 is_numeric($tel_or_email) ? 'name' : 'email' =>  $tel_or_email,
                 'password' => Hash::make($request->input('password')),
-                'role' => (int) $request->role
+                'role' => (int) $request->role,
+                'delay' => (int) $request->delay,
+                'limit' => (int) $request->limit,
+                'expire' => (int) $request->expire,
             ]);
-            switch ((int) $request->role) {
-                case 0:
-                    InfoUser::create([
-                        'name' =>  $tel_or_email,
-                        'user_id' => $user->id
-                    ]);
-                    break;
-                case 2:
-                    Customer::create([
-                        'name' =>  $tel_or_email,
-                        'user_id' => $user->id
-                    ]);
-                    break;
-                default:
-                    break;
-            };
             Toastr::success('Tạo tài khoản thành công', __('title.toastr.success'));
             DB::commit();
         } catch (Throwable $e) {

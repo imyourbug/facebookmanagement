@@ -6,7 +6,7 @@
         @switch(Auth::user()?->role)
             @case(0)
                 <a href="{{ route('users.tasks.taskToday') }}" class="brand-link text-center">
-                    <span class="brand-text font-weight-light">Nhân viên</span>
+                    <span class="brand-text font-weight-light">Người dùng</span>
                 </a>
             @break
 
@@ -120,13 +120,6 @@
                             </a>
                             <ul class="nav nav-treeview">
                                 <li
-                                    class="nav-item {{ request()->route()->getName() == 'admin.accounts.create' ? 'option-open' : '' }}">
-                                    <a href="{{ route('admin.accounts.create') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Thêm tài khoản</p>
-                                    </a>
-                                </li>
-                                <li
                                     class="nav-item {{ request()->route()->getName() == 'admin.accounts.index' ? 'option-open' : '' }}">
                                     <a href="{{ route('admin.accounts.index') }}" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
@@ -142,7 +135,7 @@
                             <a href="#" class="nav-link">
                                 <i class="nav-icon fa-solid fa-users"></i>
                                 <p>
-                                    Nhân viên
+                                    Người dùng
                                     <i class="right fas fa-angle-left"></i>
                                 </p>
                             </a>
@@ -151,7 +144,7 @@
                                     class="nav-item {{ request()->route()->getName() == 'admin.staffs.index' ? 'option-open' : '' }}">
                                     <a href="{{ route('admin.staffs.index') }}" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
-                                        <p>Danh sách nhân viên</p>
+                                        <p>Danh sách Người dùng</p>
                                     </a>
                                 </li>
                             </ul>

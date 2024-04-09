@@ -120,7 +120,6 @@ Route::group([
     #accounts
     Route::group(['prefix' => 'accounts', 'as' => 'accounts.'], function () {
         Route::get('/', 'AccountController@index')->name('index');
-        Route::get('/create', 'AccountController@create')->name('create');
         Route::post('/create', 'AccountController@store')->name('store');
         Route::get('/update/{id}', 'AccountController@show')->name('show');
         Route::post('/update', 'AccountController@update')->name('update');

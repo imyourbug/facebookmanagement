@@ -88,7 +88,7 @@
                     </a>
                     <div class="dropdown-divider"></div>
                     <a href="{{ route('admin.staffs.index') }}" style="padding-left: 40px" class="dropdown-item">
-                        -&emsp;Nhân viên
+                        -&emsp;Người dùng
                     </a>
                     <div class="dropdown-divider"></div>
                     <a href="{{ route('admin.types.index') }}" style="padding-left: 40px" class="dropdown-item">

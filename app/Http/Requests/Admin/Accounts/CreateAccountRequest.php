@@ -18,6 +18,10 @@ class CreateAccountRequest extends BaseRequest
             'tel_or_email' => !is_numeric($tel_or_email) ? 'required|email:dns,rfc'
                 : 'required|string|regex:/^0\d{9,10}$/',
             'password' => 'required|string',
+            'delay' => 'required|integer',
+            'limit' => 'required|integer',
+            'expire' => 'required|integer',
+            'role' => 'required|in:0,1',
         ];
 
         return $validate;
