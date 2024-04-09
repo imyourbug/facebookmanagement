@@ -9,7 +9,7 @@
                 CHỦ</a>
         </li>
 
-        @if (Auth::user()?->role == 1)
+        {{-- @if (Auth::user()?->role == 1)
             <li class="nav-item dropdown">
                 <a class="nav-link" data-toggle="dropdown" href="#" aria-expanded="true">
                     DANH MỤC
@@ -134,11 +134,8 @@
                     -&emsp;Phiên bản: VPSC.1215
                 </a>
                 <div class="dropdown-divider"></div>
-                {{-- <a href="#" style="padding-left: 40px" class="dropdown-item">
-                    -&emsp;Bảo trì hệ thống
-                </a> --}}
             </div>
-        </li>
+        </li> --}}
         <li class="nav-item dropdown">
             <a class="nav-link" data-toggle="dropdown" href="#" aria-expanded="true">
                 <i class="fa-solid fa-gear"></i>

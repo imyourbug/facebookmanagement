@@ -107,7 +107,7 @@
 
                     {{-- Admin --}}
                     @case(1)
-                        {{-- <li
+                        <li
                             class="nav-item {{ in_array(request()->route()->getName(), ['admin.accounts.index', 'admin.accounts.create'])
                                 ? 'menu-is-opening menu-open'
                                 : '' }}">
@@ -135,7 +135,7 @@
                                 </li>
                             </ul>
                         </li>
-                        <li
+                        {{-- <li
                             class="nav-item {{ in_array(request()->route()->getName(), ['admin.staffs.index', 'admin.staffs.create'])
                                 ? 'menu-is-opening menu-open'
                                 : '' }}">
@@ -351,123 +351,6 @@
                                 </li>
                             </ul>
                         </li> --}}
-                        <li
-                            class="nav-item {{ in_array(request()->route()->getName(), ['admin.plans.index']) ? 'menu-is-opening menu-open' : '' }}">
-                            <a href="{{ route('admin.plans.index') }}" class="nav-link">
-                                <i class="nav-icon fa-solid fa-note-sticky"></i>
-                                <p>
-                                    Kế hoạch
-                                </p>
-                            </a>
-                        </li>
-                        <li
-                            class="nav-item {{ in_array(request()->route()->getName(), ['admin.contracts.index', 'admin.contracts.create'])
-                                ? 'menu-is-opening menu-open'
-                                : '' }}">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fa-solid fa-file-contract"></i>
-                                <p>
-                                    Hợp đồng
-                                    <i class="right fas fa-angle-left"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                {{-- <li
-                                    class="nav-item {{ request()->route()->getName() == 'admin.contracts.create' ? 'option-open' : '' }}">
-                                    <a href="{{ route('admin.contracts.create') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Thêm hợp đồng</p>
-                                    </a>
-                                </li> --}}
-                                <li
-                                    class="nav-item {{ request()->route()->getName() == 'admin.contracts.index' ? 'option-open' : '' }}">
-                                    <a href="{{ route('admin.contracts.index') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Danh sách hợp đồng</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li
-                            class="nav-item {{ in_array(request()->route()->getName(), ['admin.customers.index', 'admin.customers.create'])
-                                ? 'menu-is-opening menu-open'
-                                : '' }}">
-                                
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fa-solid fa-person"></i>
-                                <p>
-                                    Khách hàng
-                                    <i class="right fas fa-angle-left"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li
-                                    class="nav-item  {{ request()->route()->getName() == 'admin.customers.index' ? 'option-open' : '' }}">
-                                    <a href="{{ route('admin.customers.index') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Danh sách khách hàng</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        {{-- report --}}
-                        <li
-                            class="nav-item {{ in_array(request()->route()->getName(), ['admin.reports.index', 'admin.reports.create'])
-                                ? 'menu-is-opening menu-open'
-                                : '' }}">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fa-solid fa-flag"></i>
-                                <p>
-                                    Báo cáo
-                                    <i class="right fas fa-angle-left"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li
-                                    class="nav-item {{ request()->route()->getName() == 'admin.reports.index' ? 'option-open' : '' }}">
-                                    <a href="{{ route('admin.reports.index') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Báo cáo</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li
-                            class="nav-item {{ in_array(request()->route()->getName(), [])
-                                ? 'menu-is-opening menu-open'
-                                : '' }}">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fa-solid fa-money-bill"></i>
-                                <p>
-                                    Báo giá
-                                    <i class="right fas fa-angle-left"></i>
-                                </p>
-                            </a>
-                        </li>
-                        <li
-                            class="nav-item {{ in_array(request()->route()->getName(), [])
-                                ? 'menu-is-opening menu-open'
-                                : '' }}">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fa-solid fa-newspaper"></i>
-                                <p>
-                                    Biểu mẫu
-                                    <i class="right fas fa-angle-left"></i>
-                                </p>
-                            </a>
-                        </li>
-                        <li
-                            class="nav-item {{ in_array(request()->route()->getName(), [])
-                                ? 'menu-is-opening menu-open'
-                                : '' }}">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fa-solid fa-gear"></i>
-                                <p>
-                                    Hệ thống
-                                    <i class="right fas fa-angle-left"></i>
-                                </p>
-                            </a>
-                        </li>
                     @break
 
                     {{-- Customer --}}
