@@ -83,7 +83,7 @@ class UserController extends Controller
             $user = Auth::user();
 
             return redirect()->route($user->role == 1 ? 'admin.index'
-                : ($user->role == 2 ? 'customers.me' : 'users.home'));
+                : 'users.home');
         }
         Toastr::error('Tài khoản hoặc mật khẩu không chính xác', __('title.toastr.fail'));
 

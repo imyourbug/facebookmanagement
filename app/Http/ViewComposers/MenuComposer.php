@@ -15,8 +15,5 @@ class MenuComposer
      */
     public function compose(View $view)
     {
-        $types = Type::with(['tasks', 'children'])->where('parent_id', 0)->get();
-
-        $view->with('types', $types);
     }
 }
