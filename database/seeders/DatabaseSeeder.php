@@ -6,6 +6,7 @@ namespace Database\Seeders;
 
 use App\Models\Branch;
 use App\Models\Chemistry;
+use App\Models\Comment;
 use App\Models\Customer;
 use App\Models\InfoUser;
 use App\Models\Item;
@@ -63,6 +64,14 @@ class DatabaseSeeder extends Seeder
         Setting::create([
             'key' => 'map',
             'value' => '',
+        ]);
+
+        Comment::create([
+            'title' => 'title',
+            'uid' => 'uid',
+            'phone' => '0368822543',
+            'content' => 'content',
+            'note' => 'note',
         ]);
     }
 }

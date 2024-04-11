@@ -63,6 +63,14 @@ Route::group([
 ], function () {
     Route::get('/', 'AdminController@index')->name('index');
 
+    #comments
+    Route::group(['prefix' => 'comments', 'as' => 'comments.'], function () {
+        Route::get('/', 'CommentController@index')->name('index');
+        Route::post('/create', 'CommentController@store')->name('store');
+        Route::get('/update/{id}', 'CommentController@show')->name('show');
+        Route::post('/update', 'CommentController@update')->name('update');
+    });
+
     #accounts
     Route::group(['prefix' => 'accounts', 'as' => 'accounts.'], function () {
         Route::get('/', 'AccountController@index')->name('index');

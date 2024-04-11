@@ -133,7 +133,7 @@
                                 ? 'menu-is-opening menu-open'
                                 : '' }}">
                             <a href="#" class="nav-link">
-                                <i class="fa-solid fa-barcode"></i>
+                                <i class="nav-icon fa-solid fa-barcode"></i>
                                 <p>
                                     Link quét
                                     <i class="right fas fa-angle-left"></i>
@@ -154,7 +154,7 @@
                                 ? 'menu-is-opening menu-open'
                                 : '' }}">
                             <a href="#" class="nav-link">
-                                <i class="fa-solid fa-user-plus"></i>
+                                <i class="nav-icon fa-solid fa-user-plus"></i>
                                 <p>
                                     Link theo dõi
                                     <i class="right fas fa-angle-left"></i>
@@ -166,6 +166,27 @@
                                     <a href="{{ route('admin.linkfollows.index') }}" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Danh sách link theo dõi</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li
+                            class="nav-item {{ in_array(request()->route()->getName(), ['admin.comments.index', 'admin.comments.create'])
+                                ? 'menu-is-opening menu-open'
+                                : '' }}">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fa-solid fa-comment"></i>
+                                <p>
+                                    Bình luận
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li
+                                    class="nav-item {{ request()->route()->getName() == 'admin.comments.index' ? 'option-open' : '' }}">
+                                    <a href="{{ route('admin.comments.index') }}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Danh sách bình luận</p>
                                     </a>
                                 </li>
                             </ul>

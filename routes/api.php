@@ -18,11 +18,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::group(['namespace' => 'App\Http\Controllers\Users', 'prefix' => 'users',], function () {
-    #taskdetails
-    Route::group(['prefix' => 'taskdetails', 'as' => 'taskdetails.',], function () {
-        Route::get('', 'TaskDetailController@index')->name('index');
-    });
-
     Route::post('change_password', 'UserController@changePassword')->name('changePassword');
 });
 
@@ -42,6 +37,18 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin'], function () {
     #accounts
     Route::group(['prefix' => 'accounts', 'as' => 'accounts.'], function () {
         Route::delete('/{id}/destroy', 'AccountController@destroy')->name('destroy');
+    });
+
+    #comments
+    Route::group(['prefix' => 'comments', 'as' => 'comments.'], function () {
+        Route::post('/create', 'CommentController@store')->name('store');
+    });
+
+    #links
+    Route::group(['prefix' => 'links', 'as' => 'links.'], function () {
+        Route::get('/getByType', 'LinkController@getByType')->name('getByType');
+        Route::get('/getAll', 'LinkController@getAll')->name('getAll');
+        Route::post('/create', 'LinkController@store')->name('store');
     });
 
     #linkscans

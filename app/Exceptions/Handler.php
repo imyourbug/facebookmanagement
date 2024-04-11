@@ -29,7 +29,7 @@ class Handler extends ExceptionHandler
     {
         $this->reportable(function (Throwable $e) {
         });
-        $this->renderable(function (Throwable $e, $request) {
+        $this->renderable(function (Throwable $e) {
             Log::info('Exception');
             Log::error($e);
             if ($e instanceof ValidationException) {
