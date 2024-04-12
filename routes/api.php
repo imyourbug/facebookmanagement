@@ -29,6 +29,11 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
 
 Route::group(['namespace' => 'App\Http\Controllers\Admin'], function () {
 
+    #comments
+    Route::group(['prefix' => 'comments', 'as' => 'comments.'], function () {
+        Route::get('/', 'CommentController@index')->name('index');
+    });
+
     #settings
     Route::group(['prefix' => 'settings', 'as' => 'settings.'], function () {
         Route::post('uploadmap', 'SettingController@uploadmap')->name('uploadmap');
@@ -49,13 +54,13 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin'], function () {
         Route::get('/getByType', 'LinkController@getByType')->name('getByType');
         Route::get('/getAll', 'LinkController@getAll')->name('getAll');
         Route::post('/create', 'LinkController@store')->name('store');
+        Route::post('/update', 'LinkController@update')->name('update');
     });
 
     #linkscans
     Route::group(['prefix' => 'linkscans', 'as' => 'linkscans.'], function () {
         Route::post('/changeIsScan', 'LinkScanController@changeIsScan')->name('changeIsScan');
         Route::get('/getAll', 'LinkScanController@getAll')->name('getAll');
-        Route::post('/follow', 'LinkScanController@follow')->name('follow');
         Route::delete('/{id}/destroy', 'LinkScanController@destroy')->name('destroy');
     });
 

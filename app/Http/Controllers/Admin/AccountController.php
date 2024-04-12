@@ -5,8 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Accounts\CreateAccountRequest;
 use App\Http\Requests\Admin\Accounts\UpdateAccountRequest;
-use App\Models\Customer;
-use App\Models\InfoUser;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -70,7 +68,7 @@ class AccountController extends Controller
         if ($request->ajax()) {
             return response()->json([
                 'status' => 0,
-                'accounts' => User::with(['customer', 'staff'])->get()
+                'accounts' => User::all()
             ]);
         }
 

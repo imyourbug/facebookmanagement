@@ -50,6 +50,9 @@
                     </div>
                 </div>
                 <div class="card-body" style="display: block;padding: 10px !important;">
+                    <div class="form-group col-lg-6">
+                        <label class="count-link">Tổng số link quét: </label>
+                    </div>
                     <table id="table" class="table display nowrap dataTable dtr-inline collapsed">
                         <thead>
                             <tr>

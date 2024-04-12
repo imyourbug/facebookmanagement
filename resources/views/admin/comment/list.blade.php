@@ -92,6 +92,9 @@
                 </div>
                 <div class="card-body" style="display: block;padding: 10px !important;">
                     <div class="form-group col-lg-6">
+                        <label class="count-comment">Tổng số bình luận: </label>
+                    </div>
+                    <div class="form-group col-lg-6">
                         <label>Thời gian:</label>
                         <div class="input-group">
                             <input type="date" class="form-control float-right" id="from">

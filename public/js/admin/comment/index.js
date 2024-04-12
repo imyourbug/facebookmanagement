@@ -2,6 +2,8 @@ var dataTable = null;
 var searchParams = new Map();
 
 $(document).ready(function () {
+    reload();
+
     dataTable = $("#table").DataTable({
         lengthMenu: [
             [100, 250, 500],
@@ -66,22 +68,48 @@ $(document).ready(function () {
     });
 });
 
+async function reload() {
+    await $.ajax({
+        type: "GET",
+        url: "/api/comments",
+        success: function (response) {
+            if (response.status == 0) {
+                $('.count-comment').text(`Tổng số bình luận: ${response.comments.length}`);
+            }
+        }
+    });
+
+}
+
 $(document).on("click", ".copy", function () {
     let value = $(this).data("value");
     navigator.clipboard.writeText(value);
     toastr.success("Đã sao chép", "Thông báo");
 });
 
-$(document).on("change", "#select-time", function () {
+$(document).on("change", "#to", function () {
     if ($(this).val()) {
-        let time = $(this).val().split("-");
-        let year = time[0];
-        let month = time[1];
-        searchParams.set("month", month);
-        searchParams.set("year", year);
+        let time = $(this).val();
+        searchParams.set("to", time);
         dataTable.ajax
-            .url("/api/tasks/getAll?" + getQueryUrlWithParams())
+            .url("/api/comments?" + getQueryUrlWithParams())
             .load();
+    }
+    else if (!$('#from').val()) {
+        dataTable.ajax.url("/api/comments").load();
+    }
+});
+
+$(document).on("change", "#from", function () {
+    if ($(this).val()) {
+        let time = $(this).val();
+        searchParams.set("from", time);
+        dataTable.ajax
+            .url("/api/comments?" + getQueryUrlWithParams())
+            .load();
+    }
+    else if (!$('#to').val()) {
+        dataTable.ajax.url("/api/comments").load();
     }
 });
 
@@ -89,7 +117,7 @@ $(document).on("change", ".select2", function () {
     let contracts = $(this).val();
     searchParams.set("contracts", contracts);
     dataTable.ajax
-        .url("/api/tasks/getAll?" + getQueryUrlWithParams())
+        .url("/api/comments?" + getQueryUrlWithParams())
         .load();
 });
 

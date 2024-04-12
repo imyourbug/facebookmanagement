@@ -22,6 +22,8 @@ return new class extends Migration
             $table->string('data_second')->default(0);
             $table->string('emotion_first')->default(0);
             $table->string('emotion_second')->default(0);
+            $table->string('delay')->default(0);
+            $table->string('status')->default(0);
             $table->string('is_scan')->default(0);
             $table->string('note')->default('');
             $table->string('link_or_post_id')->default('');

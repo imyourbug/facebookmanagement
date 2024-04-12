@@ -10,12 +10,12 @@
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="/template/admin/plugins/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="/js/plugins/fontawesome-free/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
     <!-- icheck bootstrap -->
-    <link rel="stylesheet" href="/template/admin/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+    <link rel="stylesheet" href="/js/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
     <!-- Theme style -->
-    <link rel="stylesheet" href="/template/admin/dist/css/adminlte.min.css">
+    <link rel="stylesheet" href="/js/dist/css/adminlte.min.css">
     {{--  --}}
     {{-- <link rel="stylesheet" href="//cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"> --}}
     <!-- ajax -->
@@ -73,13 +73,13 @@
         </div>
     </div>
     <script src="http://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
-    {{-- <script src="/template/admin/plugins/jquery/jquery.min.js"></script> --}}
+    {{-- <script src="/js/plugins/jquery/jquery.min.js"></script> --}}
     <!-- Bootstrap 4 -->
-    <script src="/template/admin/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <!-- AdminLTE App -->
-    <script src="/template/admin/dist/js/adminlte.min.js"></script>
+    <script src="/js/dist/js/adminlte.min.js"></script>
     <!-- main.js-->
-    {{-- <script src="/template/admin/js/main.js"></script> --}}
+    {{-- <script src="/js/main.js"></script> --}}
     <div class="Toastify"></div>
     <script src="http://cdn.bootcss.com/toastr.js/latest/js/toastr.min.js"></script>
     {!! Toastr::message() !!}

@@ -1,5 +1,7 @@
 var dataTable = null;
 $(document).ready(function () {
+    reload();
+
     dataTable = $("#table").DataTable({
         layout: {
             topStart: {
@@ -67,11 +69,58 @@ $(document).ready(function () {
                     return `<a class="btn btn-primary btn-sm" href='/admin/linkfollows/update/${d.id}'>
                                 <i class="fas fa-edit"></i>
                             </a>
+                            <button data-id="${d.id}" class="btn btn-success btn-sm btn-scan">
+                                <i class="fa-solid fa-barcode"></i>
+                            </button>
                             ${btnDelete}`;
                 },
             },
         ],
     });
+});
+
+async function reload() {
+    let count = 0;
+    let all = 0;
+    await $.ajax({
+        type: "GET",
+        url: "/api/links/getAll",
+        success: function (response) {
+            all = response.links.length;
+            if (response.status == 0) {
+                response.links.forEach((e) => {
+                    if (e.type == 1) {
+                        count++;
+                    }
+                });
+            }
+        }
+    });
+
+    $('.count-link').text(`Tổng số link theo dõi: ${count}/${all}`);
+}
+
+$(document).on("click", ".btn-scan", function () {
+    if (confirm("Bạn có muốn quét link này?")) {
+        let id = $(this).data("id");
+        $.ajax({
+            type: "POST",
+            url: `/api/links/update`,
+            data: {
+                id,
+                type: 0,
+            },
+            success: function (response) {
+                if (response.status == 0) {
+                    toastr.success("Quét thành công");
+                    reload();
+                    dataTable.ajax.reload();
+                } else {
+                    toastr.error(response.message);
+                }
+            },
+        });
+    }
 });
 
 $(document).on("click", ".btn-delete", function () {
@@ -85,6 +134,7 @@ $(document).on("click", ".btn-delete", function () {
                 if (response.status == 0) {
                     toastr.success("Xóa thành công");
                     dataTable.ajax.reload();
+                    reload();
                 } else {
                     toastr.error(response.message);
                 }
