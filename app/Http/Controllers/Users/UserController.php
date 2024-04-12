@@ -7,7 +7,6 @@ use App\Http\Requests\Users\LoginRequest;
 use App\Http\Requests\Users\RecoverRequest;
 use App\Http\Requests\Users\RegisterRequest;
 use App\Mail\RecoverPasswordMail;
-use App\Models\InfoUser;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,7 +20,7 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        return view('user.task.list', [
+        return view('user.home', [
             'title' => 'Trang người dùng',
         ]);
     }
@@ -167,25 +166,25 @@ class UserController extends Controller
         return redirect()->route('users.login');
     }
 
-    public function update(Request $request)
-    {
-        $data = $request->validate([
-            'id' => 'required|int',
-            'avatar' => 'required|string',
-            'name' => 'required|string',
-            'position' => 'required|string',
-            'identification' => 'required|string|regex:/\d{12}$/',
-            'tel' => 'required|string|regex:/^0\d{9,10}$/',
-            'active' => 'required|in:0,1',
-        ]);
-        unset($data['id']);
-        $update = InfoUser::where('id', $request->input('id'))->update($data);
-        if ($update) {
-            Toastr::success(__('message.success.update'), __('title.toastr.success'));
-        } else Toastr::error(__('message.fail.update'), __('title.toastr.fail'));
+    // public function update(Request $request)
+    // {
+    //     $data = $request->validate([
+    //         'id' => 'required|int',
+    //         'avatar' => 'required|string',
+    //         'name' => 'required|string',
+    //         'position' => 'required|string',
+    //         'identification' => 'required|string|regex:/\d{12}$/',
+    //         'tel' => 'required|string|regex:/^0\d{9,10}$/',
+    //         'active' => 'required|in:0,1',
+    //     ]);
+    //     unset($data['id']);
+    //     $update = InfoUser::where('id', $request->input('id'))->update($data);
+    //     if ($update) {
+    //         Toastr::success(__('message.success.update'), __('title.toastr.success'));
+    //     } else Toastr::error(__('message.fail.update'), __('title.toastr.fail'));
 
-        return redirect()->back();
-    }
+    //     return redirect()->back();
+    // }
 
     public function me(Request $request)
     {

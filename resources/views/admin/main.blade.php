@@ -10,13 +10,13 @@
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="/template/admin/plugins/fontawesome-free/css/all.min.css">
-    <link rel="stylesheet" href="/template/admin/plugins/daterangepicker/daterangepicker.css">
+    <link rel="stylesheet" href="/js/plugins/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="/js/plugins/daterangepicker/daterangepicker.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
     <!-- icheck bootstrap -->
-    <link rel="stylesheet" href="/template/admin/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+    <link rel="stylesheet" href="/js/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
     <!-- Theme style -->
-    <link rel="stylesheet" href="/template/admin/dist/css/adminlte.min.css">
+    <link rel="stylesheet" href="/js/dist/css/adminlte.min.css">
     <!-- ajax -->
     <link rel="stylesheet" href="https://cdn.bootcss.com/toastr.js/latest/css/toastr.min.css">
     <!-- select2 -->
@@ -108,7 +108,7 @@
     <div class="wrapper">
         <!-- Preloader -->
         {{-- <div class="preloader flex-column justify-content-center align-items-center">
-            <img class="animation__shake" src="/template/admin/images/gg.png" alt="Áo đá bóng" height="60"
+            <img class="animation__shake" src="/images/gg.png" alt="Áo đá bóng" height="60"
                 width="120">
         </div> --}}
         @include('admin.menu')
@@ -133,13 +133,13 @@
     </div>
     <input type="file" style="opacity: 0" id="file-restore-db" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-    {{-- <script src="/template/admin/plugins/jquery/jquery.min.js"></script> --}}
+    {{-- <script src="/js/plugins/jquery/jquery.min.js"></script> --}}
     <!-- Bootstrap 4 -->
-    <script src="/template/admin/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <!-- AdminLTE App -->
-    <script src="/template/admin/dist/js/adminlte.min.js"></script>
+    <script src="/js/dist/js/adminlte.min.js"></script>
     <!-- main.js-->
-    {{-- <script src="/template/admin/js/main.js"></script> --}}
+    {{-- <script src="/js/main.js"></script> --}}
     {{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> --}}
     <div class="Toastify"></div>
     <script src="https://cdn.bootcss.com/toastr.js/latest/js/toastr.min.js"></script>

@@ -45,7 +45,7 @@ class LinkController extends Controller
                 'links.*.type' => 'required|in:0,1,2',
             ]);
 
-            $data = array_map(function($item) {
+            $data = array_map(function ($item) {
                 return [
                     ...$item,
                     'created_at' => now(),
@@ -53,6 +53,40 @@ class LinkController extends Controller
                 ];
             }, $data['links']);
             Link::insert($data);
+
+            return response()->json([
+                'status' => 0,
+            ]);
+        } catch (Throwable $e) {
+            return response()->json([
+                'status' => 1,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function update(Request $request)
+    {
+        try {
+            $data = $request->validate([
+                'id' => 'required|integer',
+                'title' => 'nullable|string',
+                'time' => 'nullable|string',
+                'content' => 'nullable|string',
+                'comment_first' => 'nullable|string',
+                'comment_second' => 'nullable|string',
+                'data_first' => 'nullable|string',
+                'data_second' => 'nullable|string',
+                'emotion_first' => 'nullable|string',
+                'emotion_second' => 'nullable|string',
+                'is_scan' => 'nullable|in:0,1,2',
+                'note' => 'nullable|string',
+                'link_or_post_id' => 'nullable|string',
+                'type' => 'nullable|in:0,1,2',
+            ]);
+
+            unset($data['id']);
+            Link::where('id', $request->input('id'))->update($data);
 
             return response()->json([
                 'status' => 0,

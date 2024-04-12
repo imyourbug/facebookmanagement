@@ -29,4 +29,9 @@ class Link extends Model
         'link_or_post_id',
         'type',
     ];
+
+    public function userLinks()
+    {
+        return $this->hasMany(UserLink::class, 'link_id');
+    }
 }

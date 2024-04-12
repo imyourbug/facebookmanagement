@@ -1,5 +1,7 @@
 var dataTable = null;
 $(document).ready(function () {
+    reload();
+
     dataTable = $("#table").DataTable({
         layout: {
             topStart: {
@@ -75,7 +77,7 @@ $(document).ready(function () {
                                 <i class="fas fa-edit"></i>
                             </a>
                             <button data-id="${d.id}" class="btn btn-success btn-sm btn-follow">
-                                <i class="fa-solid fa-plus"></i>
+                                <i class="fa-solid fa-user-plus"></i>
                             </button>
                             ${btnDelete}`;
                 },
@@ -83,6 +85,27 @@ $(document).ready(function () {
         ],
     });
 });
+
+async function reload() {
+    let count = 0;
+    let all = 0;
+    await $.ajax({
+        type: "GET",
+        url: "/api/links/getAll",
+        success: function (response) {
+            all = response.links.length;
+            if (response.status == 0) {
+                response.links.forEach((e) => {
+                    if (e.type == 0) {
+                        count++;
+                    }
+                });
+            }
+        }
+    });
+
+    $('.count-link').text(`Tổng số link quét: ${count}/${all}`);
+}
 
 $(document).on("click", ".btn-scan", function () {
     let is_scan = $(this).data("is_scan");
@@ -113,13 +136,15 @@ $(document).on("click", ".btn-follow", function () {
         let id = $(this).data("id");
         $.ajax({
             type: "POST",
-            url: `/api/linkscans/follow`,
+            url: `/api/links/update`,
             data: {
                 id,
+                type: 1,
             },
             success: function (response) {
                 if (response.status == 0) {
                     toastr.success("Theo dõi thành công");
+                    reload();
                     dataTable.ajax.reload();
                 } else {
                     toastr.error(response.message);
@@ -139,6 +164,7 @@ $(document).on("click", ".btn-delete", function () {
             success: function (response) {
                 if (response.status == 0) {
                     toastr.success("Xóa thành công");
+                    reload();
                     dataTable.ajax.reload();
                 } else {
                     toastr.error(response.message);
