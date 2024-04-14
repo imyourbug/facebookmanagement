@@ -5,7 +5,7 @@
             <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
-            <a href="{{ Auth::user()?->role == 1 ? route('admin.index') : route('users.home') }}" class="nav-link">TRANG
+            <a href="{{ Auth::user()?->role == 1 ? route('admin.index') : route('user.home') }}" class="nav-link">TRANG
                 CHỦ</a>
         </li>
 
@@ -150,7 +150,7 @@
                     data-toggle="modal">
                     -&emsp;Đổi mật khẩu
                 </button>
-                <a href="{{ route('users.logout') }}" style="padding-left: 40px" class="dropdown-item"
+                <a href="{{ route('user.logout') }}" style="padding-left: 40px" class="dropdown-item"
                     onclick="return confirm('Bạn có muốn đăng xuất?')" class="nav-link">
                     -&emsp;Đăng xuất
                 </a>
@@ -194,7 +194,7 @@
             <div class="modal-body">
                 <div class="input-group mb-3">
                     <input name="tel_or_email" id="tel_or_email" type="text" value="" class="form-control"
-                        placeholder="Nhập số điện thoại hoặc email">
+                        placeholder="Nhập tiêu đề">
                     <div class="input-group-append">
                         <div class="input-group-text">
                             <span class="fas fa-envelope"></span>

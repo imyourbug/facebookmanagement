@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Constant\GlobalConstant;
 use App\Http\Controllers\Controller;
 use App\Models\Link;
+use App\Models\UserLink;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB  ;
 use Throwable;
 
 class LinkController extends Controller
@@ -19,9 +22,43 @@ class LinkController extends Controller
 
     public function getAll(Request $request)
     {
+        $user_id = $request->user_id;
+        $link_id = $request->link_id;
+        $is_scan = $request->is_scan;
+        $type = (string)$request->type;
+
+        $userLinks = UserLink::with(['link', 'user'])
+            ->when($user_id, function ($q) use ($user_id) {
+                return $q->where('user_id', $user_id);
+            })
+            ->when($link_id, function ($q) use ($link_id) {
+                return $q->where('link_id', $link_id);
+            })
+            ->when($is_scan, function ($q) use ($is_scan) {
+                return $q->whereHas('link', function ($q) use ($is_scan) {
+                    $q->where('is_can', $is_scan);
+                });
+            })
+            ->when(in_array($type, GlobalConstant::LINK_STATUS), function ($q) use ($type) {
+                return $q->whereHas('link', function ($q) use ($type) {
+                    $q->where('type', $type);
+                });
+            })
+            ->get()?->toArray() ?? [];
+
+        $userLinks = array_map(function ($value) {
+            return [
+                ...$value,
+                'accounts' => UserLink::with(['link', 'user'])
+                    ->whereHas('link', function ($q) use ($value) {
+                        $q->where('link_or_post_id', $value['link']['link_or_post_id']);
+                    })->get()
+            ];
+        }, $userLinks);
+
         return response()->json([
             'status' => 0,
-            'links' => Link::all()
+            'links' => $userLinks
         ]);
     }
 
@@ -80,6 +117,7 @@ class LinkController extends Controller
                 'emotion_first' => 'nullable|string',
                 'emotion_second' => 'nullable|string',
                 'is_scan' => 'nullable|in:0,1,2',
+                'status' => 'nullable|in:0,1',
                 'note' => 'nullable|string',
                 'link_or_post_id' => 'nullable|string',
                 'type' => 'nullable|in:0,1,2',
@@ -92,6 +130,24 @@ class LinkController extends Controller
                 'status' => 0,
             ]);
         } catch (Throwable $e) {
+            return response()->json([
+                'status' => 1,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function destroy($id)
+    {
+        try {
+            $link = Link::firstWhere('id', $id);
+            $link->delete();
+
+            return response()->json([
+                'status' => 0,
+            ]);
+        } catch (Throwable $e) {
+
             return response()->json([
                 'status' => 1,
                 'message' => $e->getMessage()

@@ -21,7 +21,7 @@
                     <div class="form-group">
                         <label for="menu">Tiêu đề <span class="required">(*)</span></label>
                         <input type="text" class="form-control" name="title" value="{{ old('title') ?? $link->title }}"
-                            placeholder="Nhập số điện thoại hoặc email">
+                            placeholder="Nhập tiêu đề">
                     </div>
                 </div>
                 <div class="col-lg-6 col-sm-12">

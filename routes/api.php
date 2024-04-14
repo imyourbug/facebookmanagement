@@ -17,8 +17,21 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::group(['namespace' => 'App\Http\Controllers\Users', 'prefix' => 'users',], function () {
+Route::group(['namespace' => 'App\Http\Controllers\Users', 'prefix' => 'user',], function () {
     Route::post('change_password', 'UserController@changePassword')->name('changePassword');
+
+    #linkscans
+    Route::group(['prefix' => 'linkscans', 'as' => 'linkscans.'], function () {
+        Route::post('/changeIsScan', 'LinkScanController@changeIsScan')->name('changeIsScan');
+        Route::get('/getAll', 'LinkScanController@getAll')->name('getAll');
+        Route::delete('/{id}/destroy', 'LinkScanController@destroy')->name('destroy');
+    });
+
+    #links
+    Route::group(['prefix' => 'links', 'as' => 'links.'], function () {
+        Route::get('/getAll', 'LinkController@getAll')->name('getAll');
+        Route::post('/update', 'LinkController@update')->name('update');
+    });
 });
 
 #upload
@@ -32,6 +45,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin'], function () {
     #comments
     Route::group(['prefix' => 'comments', 'as' => 'comments.'], function () {
         Route::get('/', 'CommentController@index')->name('index');
+        Route::delete('/{id}/destroy', 'CommentController@destroy')->name('destroy');
     });
 
     #settings
@@ -55,6 +69,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin'], function () {
         Route::get('/getAll', 'LinkController@getAll')->name('getAll');
         Route::post('/create', 'LinkController@store')->name('store');
         Route::post('/update', 'LinkController@update')->name('update');
+        Route::delete('/{id}/destroy', 'LinkController@destroy')->name('destroy');
     });
 
     #linkscans

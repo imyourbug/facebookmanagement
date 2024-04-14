@@ -14,7 +14,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 @endpush
 @section('content')
-    <form action="{{ route('users.accounts.update', ['id' => $user->id]) }}" method="POST">
+    <form action="{{ route('user.accounts.update', ['id' => $user->id]) }}" method="POST">
         <div class="card-body">
             <div class="row">
                 <div class="col-lg-6 col-sm-12">
@@ -77,7 +77,7 @@
         </div>
         <div class="card-footer">
             <button type="submit" class="btn btn-primary">Lưu</button>
-            <a href="{{ route('users.accounts.index') }}" class="btn btn-success">Xem danh sách</a>
+            <a href="{{ route('user.accounts.index') }}" class="btn btn-success">Xem danh sách</a>
         </div>
         @csrf
     </form>

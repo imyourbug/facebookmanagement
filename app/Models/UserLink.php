@@ -21,11 +21,11 @@ class UserLink extends Model
 
     public function user()
     {
-        return $this->hasOne(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
     public function link()
     {
-        return $this->hasOne(Link::class, 'link_id');
+        return $this->belongsTo(Link::class, 'link_id', 'id');
     }
 }

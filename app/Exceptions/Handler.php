@@ -2,12 +2,11 @@
 
 namespace App\Exceptions;
 
-use Exception;
+use App\Constant\GlobalConstant;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Throwable;
-use Toastr;
 
 class Handler extends ExceptionHandler
 {
@@ -30,17 +29,10 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
         });
         $this->renderable(function (Throwable $e) {
-            Log::info('Exception');
-            Log::error($e);
-            if ($e instanceof ValidationException) {
-                foreach ($e->errors() as $err) {
-                    Toastr::error($err[0], __('title.toastr.fail'));
-                }
-            } else if ($e instanceof Exception) {
-                Toastr::error($e->getMessage(), __('title.toastr.fail'));
-            }
-
-            return redirect()->back();
+            return response()->json([
+                'status' => GlobalConstant::STATUS_ERROR,
+                'message' => $e->getMessage()
+            ]);
         });
     }
 }

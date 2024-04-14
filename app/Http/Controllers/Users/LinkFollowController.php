@@ -5,7 +5,12 @@ namespace App\Http\Controllers\Users;
 use App\Constant\GlobalConstant;
 use App\Http\Controllers\Controller;
 use App\Models\Link;
+use App\Models\UserLink;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 use Toastr;
 
 class LinkFollowController extends Controller
@@ -19,19 +24,40 @@ class LinkFollowController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'title' => 'required|string',
-            'content' => 'nullable|string',
-            'comment' => 'nullable|string',
-            'data' => 'nullable|numeric',
-            'emotion' => 'nullable|numeric',
-            'note' => 'nullable|string',
-            'link_or_post_id' => 'required|string'
-        ]);
-        $data['type'] = GlobalConstant::TYPE_FOLLOW;
+        try {
+            $data = $request->validate([
+                'title' => 'required|string',
+                'content' => 'nullable|string',
+                'comment' => 'nullable|string',
+                'data' => 'nullable|numeric',
+                'emotion' => 'nullable|numeric',
+                'note' => 'nullable|string',
+                'link_or_post_id' => 'required|string'
+            ]);
+            $userLinks = UserLink::with(['link', 'user'])
+            ->where('user_id', Auth::id())
+                ->whereHas('link', function ($q) use ($data) {
+                    $q->where('link_or_post_id', $data['link_or_post_id']);
+                })
+                ->get();
 
-        Link::create($data);
-        Toastr::success('Tạo link theo dõi thành công', __('title.toastr.success'));
+            if ($userLinks->count()) {
+                throw new Exception('Đã tồn tại link hoặc post ID');
+            }
+            $data['type'] = GlobalConstant::TYPE_FOLLOW;
+
+            DB::beginTransaction();
+            $link = Link::create($data);
+            UserLink::create([
+                'user_id' => Auth::id(),
+                'link_id' => $link->id
+            ]);
+            Toastr::success('Tạo link theo dõi thành công', __('title.toastr.success'));
+            DB::commit();
+        } catch (Throwable $e) {
+            DB::rollBack();
+            Toastr::error($e->getMessage(), __('title.toastr.fail'));
+        }
 
         return redirect()->back();
     }

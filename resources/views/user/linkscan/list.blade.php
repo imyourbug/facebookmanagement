@@ -14,21 +14,21 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 @endpush
 @section('content')
-    <form action="{{ route('users.linkscans.store') }}" method="POST">
+    <form action="{{ route('user.linkscans.store') }}" method="POST">
         <div class="card-body">
             <div class="row">
                 <div class="col-lg-6 col-sm-12">
                     <div class="form-group">
                         <label for="menu">Tiêu đề <span class="required">(*)</span></label>
                         <input type="text" class="form-control" name="title" value="{{ old('title') }}"
-                            placeholder="Nhập số điện thoại hoặc email">
+                            placeholder="Nhập tiêu đề">
                     </div>
                 </div>
                 <div class="col-lg-6 col-sm-12">
                     <div class="form-group">
                         <label for="menu">Link hoặc PostID <span class="required">(*)</span></label>
                         <input type="text" class="form-control" name="link_or_post_id"
-                            value="{{ old('link_or_post_id') }}" placeholder="Nhập link hoặc PostID">
+                            value="{{ old('link_or_post_id') }}" placeholder="Nhập link hoặc post ID">
                     </div>
                 </div>
             </div>
@@ -58,7 +58,6 @@
                             <tr>
                                 <th>Data cuối</th>
                                 <th>Ngày tạo</th>
-                                {{-- <th>Tài khoản</th> --}}
                                 <th>Tiêu đề</th>
                                 <th>Nội dung</th>
                                 <th>Bình luận</th>
@@ -76,4 +75,5 @@
             </div>
         </div>
     </div>
+    <input type="hidden" value="{{ Auth::id() }}" name="" id="user_id" />
 @endsection

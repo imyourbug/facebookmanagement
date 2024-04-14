@@ -14,14 +14,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 @endpush
 @section('content')
-    <form action="{{ route('users.linkfollows.store') }}" method="POST">
+    <form action="{{ route('user.linkfollows.store') }}" method="POST">
         <div class="card-body">
             <div class="row">
                 <div class="col-lg-6 col-sm-12">
                     <div class="form-group">
                         <label for="menu">Tiêu đề <span class="required">(*)</span></label>
                         <input type="text" class="form-control" name="title" value="{{ old('title') }}"
-                            placeholder="Nhập số điện thoại hoặc email">
+                            placeholder="Nhập tiêu đề">
                     </div>
                 </div>
                 <div class="col-lg-6 col-sm-12">
@@ -75,4 +75,5 @@
             </div>
         </div>
     </div>
+    <input type="hidden" value="{{ Auth::id() }}" name="" id="user_id" />
 @endsection

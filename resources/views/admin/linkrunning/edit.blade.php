@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.0.1/css/buttons.dataTables.css">
 @endpush
 @push('scripts')
-    <script src="/js/admin/linkfollow/index.js"></script>
+    <script src="/js/admin/linkrunning/index.js"></script>
     <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
     <script src="https://cdn.datatables.net/2.0.2/js/dataTables.js"></script>
@@ -14,14 +14,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 @endpush
 @section('content')
-    <form action="{{ route('admin.linkfollows.update', ['id' => $link->id]) }}" method="POST">
+    <form action="{{ route('admin.linkrunnings.update', ['id' => $link->id]) }}" method="POST">
         <div class="card-body">
             <div class="row">
                 <div class="col-lg-6 col-sm-12">
                     <div class="form-group">
                         <label for="menu">Tiêu đề <span class="required">(*)</span></label>
                         <input type="text" class="form-control" name="title" value="{{ old('title') ?? $link->title }}"
-                            placeholder="Nhập số điện thoại hoặc email">
+                            placeholder="Nhập tiêu đề">
                     </div>
                 </div>
                 <div class="col-lg-6 col-sm-12">
@@ -36,7 +36,7 @@
         </div>
         <div class="card-footer">
             <button type="submit" class="btn btn-primary">Lưu</button>
-            <a href="{{ route('admin.linkfollows.index') }}" class="btn btn-success">Xem danh sách</a>
+            <a href="{{ route('admin.linkrunnings.index') }}" class="btn btn-success">Xem danh sách</a>
         </div>
         @csrf
     </form>
@@ -44,7 +44,7 @@
         <div class="col-lg-12">
             <div class="card direct-chat direct-chat-primary">
                 <div class="card-header ui-sortable-handle header-color" style="cursor: move;">
-                    <h3 class="card-title text-bold">Danh sách link theo dõi</h3>
+                    <h3 class="card-title text-bold">Danh sách link đang chạy</h3>
                     <div class="card-tools">
                         <button type="button" class="btn btn-tool" data-card-widget="collapse">
                             <i class="fas fa-minus"></i>

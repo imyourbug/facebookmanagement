@@ -162,7 +162,7 @@
                     password: $('#password').val(),
                     old_password: $('#old_password').val(),
                 },
-                url: "/api/users/change_password",
+                url: "/api/user/change_password",
                 success: function(response) {
                     if (response.status == 0) {
                         toastr.success(response.message, "Thông báo");

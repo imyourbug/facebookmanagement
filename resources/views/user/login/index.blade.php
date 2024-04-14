@@ -36,10 +36,10 @@
             </div>
             <div class="card">
                 <div class="card-body login-card-body">
-                    <form action="{{ route('users.checkLogin') }}" method="POST">
+                    <form action="{{ route('user.checkLogin') }}" method="POST">
                         <div class="input-group mb-3">
                             <input name="tel_or_email" type="text" value="{{ old('tel_or_email') }}" class="form-control"
-                                placeholder="Nhập số điện thoại hoặc email">
+                                placeholder="Nhập tiêu đề">
                             <div class="input-group-append">
                                 <div class="input-group-text">
                                     <span class="fas fa-envelope"></span>
@@ -63,10 +63,10 @@
                         @csrf
                     </form>
                     <p class="mb-1">
-                        <a href="{{ route('users.forgot') }}">Quên mật khẩu</a>
+                        <a href="{{ route('user.forgot') }}">Quên mật khẩu</a>
                     </p>
                     <p class="mb-0">
-                        <a href="{{ route('users.register') }}" class="text-center">Đăng ký</a>
+                        <a href="{{ route('user.register') }}" class="text-center">Đăng ký</a>
                     </p>
                 </div>
             </div>

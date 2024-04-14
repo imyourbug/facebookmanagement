@@ -15,7 +15,7 @@ class UpdateAccountRequest extends BaseRequest
     {
         return [
             'id' => 'required|integer',
-            'password' => 'required|string',
+            'password' => 'nullable|string',
             'delay' => 'required|integer',
             'limit' => 'required|integer',
             'expire' => 'required|integer',

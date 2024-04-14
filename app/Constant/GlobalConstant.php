@@ -10,4 +10,15 @@ class GlobalConstant
 
     public const ROLE_CUSTOMER = 2;
     public const ROLE_ADMIN = 1;
+
+    public const IS_OFF = 0;
+    public const IS_ON = 1;
+    public const IS_RESET = 2;
+
+    public const STATUS_OK = 0;
+    public const STATUS_ERROR = 1;
+
+    public const LINK_STATUS = [
+        '0', '1', '2'
+    ];
 }

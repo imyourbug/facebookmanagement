@@ -37,7 +37,7 @@
             <div class="card">
                 <div class="card-body login-card-body">
                     <p class="login-box-msg">Lấy lại mật khẩu</p>
-                    <form action="{{ route('users.recover') }}" method="POST">
+                    <form action="{{ route('user.recover') }}" method="POST">
                         <div class="input-group mb-3">
                             <input name="email" type="email" class="form-control" value="{{ old('email')}}" placeholder="Nhập email của bạn">
                             <div class="input-group-append">
@@ -54,10 +54,10 @@
                         @csrf
                     </form>
                     <p class="mb-1">
-                        <a href="{{ route('users.register') }}">Đăng ký</a>
+                        <a href="{{ route('user.register') }}">Đăng ký</a>
                     </p>
                     <p class="mb-0">
-                        <a href="{{ route('users.login') }}" class="text-center">Đã có tài khoản</a>
+                        <a href="{{ route('user.login') }}" class="text-center">Đã có tài khoản</a>
                     </p>
                 </div>
             </div>

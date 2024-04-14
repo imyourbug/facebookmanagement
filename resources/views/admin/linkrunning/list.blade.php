@@ -14,30 +14,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 @endpush
 @section('content')
-    <form action="{{ route('admin.linkrunnings.store') }}" method="POST">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-lg-6 col-sm-12">
-                    <div class="form-group">
-                        <label for="menu">Tiêu đề <span class="required">(*)</span></label>
-                        <input type="text" class="form-control" name="title" value="{{ old('title') }}"
-                            placeholder="Nhập số điện thoại hoặc email">
-                    </div>
-                </div>
-                <div class="col-lg-6 col-sm-12">
-                    <div class="form-group">
-                        <label for="menu">Link hoặc PostID <span class="required">(*)</span></label>
-                        <input type="text" class="form-control" name="link_or_post_id"
-                            value="{{ old('link_or_post_id') }}" placeholder="Nhập link hoặc PostID">
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="card-footer">
-            <button type="submit" class="btn btn-primary">Lưu</button>
-        </div>
-        @csrf
-    </form>
     <div class="row">
         <div class="col-lg-12">
             <div class="card direct-chat direct-chat-primary">

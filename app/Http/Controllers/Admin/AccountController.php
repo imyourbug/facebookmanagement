@@ -54,6 +54,14 @@ class AccountController extends Controller
     public function update(UpdateAccountRequest $request)
     {
         $data = $request->validated();
+        foreach ($data as $key => &$item) {
+            if (!strlen($item)) {
+                unset($data[$key]);
+            }
+            if ($key === 'password') {
+                 $item = Hash::make($item);
+            }
+        }
         unset($data['id']);
         $update = User::where('id', $request->input('id'))->update($data);
         if ($update) {

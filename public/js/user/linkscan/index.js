@@ -18,65 +18,67 @@ $(document).ready(function () {
             },
         },
         ajax: {
-            url: "/admin/linkscans",
-            dataSrc: "linkscans",
+            url: `/api/user/links/getAll?user_id=${$('#user_id').val()}&type=0`,
+            dataSrc: "links",
         },
         columns: [
             {
-                data: "time",
-            },
-            {
-                data: "created_at",
-            },
-            // {
-            //     data: "time",
-            // },
-            {
-                data: "title",
-            },
-            // {
-            //     data: "content",
-            // },
-            {
                 data: function (d) {
-                    return `<img style="width: 50px;height:50px" src="${d.content}" alt="image" />`;
+                    return d.link.time;
                 },
             },
             {
                 data: function (d) {
-                    return `${d.comment_second} | ${parseInt(d.comment_second) - parseInt(d.comment_first)}`;
+                    return d.link.created_at;
                 },
             },
             {
                 data: function (d) {
-                    return `${d.data_second} | ${parseInt(d.data_second) - parseInt(d.data_first)}`;
+                    return d.link.title;
                 },
             },
             {
                 data: function (d) {
-                    return `${d.emotion_second} | ${parseInt(d.emotion_second) - parseInt(d.emotion_first)}`;
+                    return `<img style="width: 50px;height:50px" src="${d.link.content}" alt="image" />`;
                 },
             },
             {
                 data: function (d) {
-                    return d.is_scan == 0 ? `<button class="btn btn-danger btn-scan" data-is_scan="1" data-id=${d.id}>OFF</button>`
-                        : (d.is_scan == 1 ? `<button data-is_scan="0" data-id=${d.id} class="btn btn-success btn-scan">ON</button>`
+                    return `${d.link.comment_second} | ${parseInt(d.link.comment_second) - parseInt(d.link.comment_first)}`;
+                },
+            },
+            {
+                data: function (d) {
+                    return `${d.link.data_second} | ${parseInt(d.link.data_second) - parseInt(d.link.data_first)}`;
+                },
+            },
+            {
+                data: function (d) {
+                    return `${d.link.emotion_second} | ${parseInt(d.link.emotion_second) - parseInt(d.link.emotion_first)}`;
+                },
+            },
+            {
+                data: function (d) {
+                    return d.link.is_scan == 0 ? `<button class="btn btn-danger btn-scan" data-is_scan="1" data-id=${d.link.id}>OFF</button>`
+                        : (d.link.is_scan == 1 ? `<button data-is_scan="0" data-id=${d.link.id} class="btn btn-success btn-scan">ON</button>`
                             : `<button class="btn btn-danger">RESET</button>`);
                 }
             },
             {
-                data: "note",
+                data: function (d) {
+                    return d.link.note;
+                },
             },
             {
                 data: function (d) {
-                    let btnDelete = d.id == $('#editing_link_id').val() ? `` :
-                        `<button data-id="${d.id}" class="btn btn-danger btn-sm btn-delete">
+                    let btnDelete = d.link.id == $('#editing_link_id').val() ? `` :
+                        `<button data-id="${d.link.id}" class="btn btn-danger btn-sm btn-delete">
                                 <i class="fas fa-trash"></i>
                             </button>`;
-                    return `<a class="btn btn-primary btn-sm" href='/admin/linkscans/update/${d.id}'>
+                    return `<a class="btn btn-primary btn-sm" href='/user/linkscans/update/${d.link.id}'>
                                 <i class="fas fa-edit"></i>
                             </a>
-                            <button data-id="${d.id}" class="btn btn-success btn-sm btn-follow">
+                            <button data-id="${d.link.id}" class="btn btn-success btn-sm btn-follow">
                                 <i class="fa-solid fa-user-plus"></i>
                             </button>
                             ${btnDelete}`;
@@ -89,14 +91,17 @@ $(document).ready(function () {
 async function reload() {
     let count = 0;
     let all = 0;
+    let user_id = $('#user_id').val();
+
     await $.ajax({
         type: "GET",
-        url: "/api/links/getAll",
+        url: `/api/user/links/getAll?user_id=${user_id}`,
         success: function (response) {
+            console.log(response.links);
             all = response.links.length;
             if (response.status == 0) {
                 response.links.forEach((e) => {
-                    if (e.type == 0) {
+                    if (e.link.type == 0) {
                         count++;
                     }
                 });
@@ -109,15 +114,17 @@ async function reload() {
 
 $(document).on("click", ".btn-scan", function () {
     let is_scan = $(this).data("is_scan");
+    let user_id = $('#user_id').val();
     let text = is_scan == 0 ? 'tắt' : 'mở';
     if (confirm(`Bạn có muốn ${text} quét link`)) {
-        let id = $(this).data("id");
+        let link_id = $(this).data("id");
         $.ajax({
             type: "POST",
-            url: `/api/linkscans/changeIsScan`,
+            url: `/api/user/linkscans/changeIsScan`,
             data: {
-                id,
+                link_id,
                 is_scan,
+                user_id,
             },
             success: function (response) {
                 if (response.status == 0) {
@@ -136,7 +143,7 @@ $(document).on("click", ".btn-follow", function () {
         let id = $(this).data("id");
         $.ajax({
             type: "POST",
-            url: `/api/links/update`,
+            url: `/api/user/links/update`,
             data: {
                 id,
                 type: 1,

@@ -32,6 +32,6 @@ class Link extends Model
 
     public function userLinks()
     {
-        return $this->hasMany(UserLink::class, 'link_id');
+        return $this->hasMany(UserLink::class, 'link_id', 'id');
     }
 }

@@ -50,6 +50,6 @@ class User extends Authenticatable
 
     public function userLinks()
     {
-        return $this->hasMany(UserLink::class, 'user_id');
+        return $this->hasMany(UserLink::class, 'user_id', 'id');
     }
 }

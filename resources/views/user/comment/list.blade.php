@@ -14,14 +14,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 @endpush
 @section('content')
-    {{-- <form action="{{ route('users.comments.store') }}" method="POST">
+    {{-- <form action="{{ route('user.comments.store') }}" method="POST">
         <div class="card-body">
             <div class="row">
                 <div class="col-lg-6 col-sm-12">
                     <div class="form-group">
                         <label for="menu">Số điện thoại hoặc email <span class="required">(*)</span></label>
                         <input type="text" class="form-control" name="tel_or_email" value="{{ old('tel_or_email') }}"
-                            placeholder="Nhập số điện thoại hoặc email">
+                            placeholder="Nhập tiêu đề">
                     </div>
                 </div>
                 <div class="col-lg-6 col-sm-12">

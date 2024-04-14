@@ -52,20 +52,34 @@ $(document).ready(function () {
             {
                 data: "note",
             },
-            // {
-            //     data: function (d) {
-            //         let btnDelete = d.id == $('#editing_link_id').val() ? `` :
-            //             `<button data-id="${d.id}" class="btn btn-danger btn-sm btn-delete">
-            //                     <i class="fas fa-trash"></i>
-            //                 </button>`;
-            //         return `<a class="btn btn-primary btn-sm" href='/admin/comments/update/${d.id}'>
-            //                     <i class="fas fa-edit"></i>
-            //                 </a>
-            //                 ${btnDelete}`;
-            //     },
-            // },
+            {
+                data: function (d) {
+                    return `<button data-id="${d.id}" class="btn btn-danger btn-sm btn-delete">
+                                <i class="fas fa-trash"></i>
+                            </button>`;
+                },
+            },
         ],
     });
+});
+
+$(document).on("click", ".btn-delete", function () {
+    if (confirm("Bạn có muốn xóa?")) {
+        let id = $(this).data("id");
+        $.ajax({
+            type: "DELETE",
+            url: `/api/comments/${id}/destroy`,
+            success: function (response) {
+                if (response.status == 0) {
+                    toastr.success("Xóa thành công");
+                    dataTable.ajax.reload();
+                    reload();
+                } else {
+                    toastr.error(response.message);
+                }
+            },
+        });
+    }
 });
 
 async function reload() {

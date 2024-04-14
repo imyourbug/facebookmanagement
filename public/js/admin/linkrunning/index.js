@@ -18,68 +18,76 @@ $(document).ready(function () {
             },
         },
         ajax: {
-            url: "/admin/linkrunnings",
-            dataSrc: "linkrunnings",
+            url: "/api/links/getAll?type=2",
+            dataSrc: "links",
         },
         columns: [
             {
-                data: "time",
-            },
-            {
-                data: "updated_at",
-            },
-            {
-                data: "time",
-            },
-            {
-                data: "title",
-            },
-            // {
-            //     data: "content",
-            // },
-            {
                 data: function (d) {
-                    return `<img style="width: 50px;height:50px" src="${d.content}" alt="image" />`;
+                    return d.link.time;
                 },
             },
             {
                 data: function (d) {
-                    return `${d.comment_second} | ${parseInt(d.comment_second) - parseInt(d.comment_first)}`;
+                    return d.link.created_at;
                 },
             },
             {
                 data: function (d) {
-                    return `${d.data_second} | ${parseInt(d.data_second) - parseInt(d.data_first)}`;
+                    return getListAccountNameByUserLink(d.accounts);
+                },
+            },
+
+            {
+                data: function (d) {
+                    return d.link.title;
                 },
             },
             {
                 data: function (d) {
-                    return `${d.emotion_second} | ${parseInt(d.emotion_second) - parseInt(d.emotion_first)}`;
+                    return `<img style="width: 50px;height:50px" src="${d.link.content}" alt="image" />`;
                 },
             },
             {
-                data: "delay",
+                data: function (d) {
+                    return `${d.link.comment_second} | ${parseInt(d.link.comment_second) - parseInt(d.link.comment_first)}`;
+                },
             },
             {
                 data: function (d) {
-                    return d.status == 0 ? `<button class="btn btn-primary btn-sm">
+                    return `${d.link.data_second} | ${parseInt(d.link.data_second) - parseInt(d.link.data_first)}`;
+                },
+            },
+            {
+                data: function (d) {
+                    return `${d.link.emotion_second} | ${parseInt(d.link.emotion_second) - parseInt(d.link.emotion_first)}`;
+                },
+            }, {
+                data: function (d) {
+                    return d.link.delay;
+                },
+            },
+
+            {
+                data: function (d) {
+                    return d.link.status == 0 ? `<button class="btn btn-primary btn-sm btn-status" data-link_id="${d.link.id}" data-status="1">
                                                 Running
                                             </button>`
-                                        : `<button class="btn btn-danger btn-sm">
-                                                Error
+                        : `<button class="btn btn-danger btn-sm  btn-status" data-link_id="${d.link.id}" data-status="0">
+                                                Stop
                                             </button>`;
                 },
             },
             {
                 data: function (d) {
-                    let btnDelete = d.id == $('#editing_link_id').val() ? `` :
-                        `<button data-id="${d.id}" class="btn btn-danger btn-sm btn-delete">
+                    let btnDelete = d.link.id == $('#editing_link_id').val() ? `` :
+                        `<button data-id="${d.link.id}" class="btn btn-danger btn-sm btn-delete">
                                 <i class="fas fa-trash"></i>
                             </button>`;
-                    return `<a class="btn btn-primary btn-sm" href='/admin/linkrunnings/update/${d.id}'>
+                    return `<a class="btn btn-primary btn-sm" href='/admin/linkrunnings/update/${d.link.id}'>
                                 <i class="fas fa-edit"></i>
                             </a>
-                            <button data-id="${d.id}" class="btn btn-success btn-sm btn-reset">
+                            <button data-id="${d.link.id}" class="btn btn-success btn-sm btn-reset">
                                 <i class="fa-solid fa-rotate-right"></i>
                             </button>
                             ${btnDelete}`;
@@ -89,6 +97,41 @@ $(document).ready(function () {
     });
 });
 
+$(document).on("click", ".btn-status", function () {
+    let status = $(this).data("status");
+    let user_id = $('#user_id').val();
+    let text = status == 0 ? 'chạy' : 'dừng';
+    if (confirm(`Bạn có muốn ${text} link này?`)) {
+        let link_id = $(this).data("link_id");
+        $.ajax({
+            type: "POST",
+            url: `/api/links/update`,
+            data: {
+                id: link_id,
+                status,
+                user_id,
+            },
+            success: function (response) {
+                if (response.status == 0) {
+                    toastr.success("Cập nhật thành công");
+                    dataTable.ajax.reload();
+                } else {
+                    toastr.error(response.message);
+                }
+            },
+        });
+    }
+});
+
+function getListAccountNameByUserLink(userLinks = []) {
+    let rs = [];
+    userLinks.forEach((e) => {
+        rs.push(e.user.email || e.user.name);
+    });
+
+    return rs.join('|');
+}
+
 async function reload() {
     let count = 0;
     let all = 0;
@@ -96,13 +139,15 @@ async function reload() {
         type: "GET",
         url: "/api/links/getAll",
         success: function (response) {
-            all = response.links.length;
             if (response.status == 0) {
+                all = response.links.length;
                 response.links.forEach((e) => {
-                    if (e.type == 2) {
+                    if (e.link.type == 2) {
                         count++;
                     }
                 });
+            } else {
+                toastr.error(response.message);
             }
         }
     });
@@ -119,6 +164,7 @@ $(document).on("click", ".btn-reset", function () {
             data: {
                 id,
                 type: 0,
+                is_scan: 2,
             },
             success: function (response) {
                 if (response.status == 0) {
@@ -138,7 +184,7 @@ $(document).on("click", ".btn-delete", function () {
         let id = $(this).data("id");
         $.ajax({
             type: "DELETE",
-            url: `/api/linkrunnings/${id}/destroy`,
+            url: `/api/links/${id}/destroy`,
 
             success: function (response) {
                 if (response.status == 0) {

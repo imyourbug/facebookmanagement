@@ -68,7 +68,7 @@ class UserController extends Controller
     {
         Auth::logout();
 
-        return redirect()->route('users.login');
+        return redirect()->route('user.login');
     }
 
     public function checkLogin(LoginRequest $request)
@@ -82,7 +82,7 @@ class UserController extends Controller
             $user = Auth::user();
 
             return redirect()->route($user->role == 1 ? 'admin.index'
-                : 'users.home');
+                : 'user.home');
         }
         Toastr::error('Tài khoản hoặc mật khẩu không chính xác', __('title.toastr.fail'));
 
@@ -163,7 +163,7 @@ class UserController extends Controller
             return redirect()->back();
         }
 
-        return redirect()->route('users.login');
+        return redirect()->route('user.login');
     }
 
     // public function update(Request $request)

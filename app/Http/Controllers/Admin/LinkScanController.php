@@ -102,13 +102,26 @@ class LinkScanController extends Controller
 
     public function changeIsScan(Request $request)
     {
-        Link::where('id', $request->id)->update([
-            'is_scan' => $request->is_scan
-        ]);
+        $user = User::firstWhere('id', $request->user_id);
+        $userLinks = UserLink::with(['link', 'user'])
+            ->where('user_id', $user->id)
+            ->where('link_id', $request->link_id)
+            ->whereHas('link', function ($q) {
+                $q->where('is_scan', GlobalConstant::IS_ON);
+            })
+            ->get();
 
-        return response()->json([
-            'status' => 0,
-        ]);
+        $limit = $user->limit;
+
+        $response = [
+            'status' => GlobalConstant::STATUS_OK,
+        ];
+        if ($userLinks->count() >= $limit) {
+            $response['status'] = GlobalConstant::STATUS_ERROR;
+            $response['message'] = 'Vượt quá số lượng link cho phép';
+        }
+
+        return $response;
     }
 
     public function getAll()

@@ -5,7 +5,7 @@
     <div class="sidebar">
         @switch(Auth::user()?->role)
             @case(0)
-                <a href="{{ route('users.home') }}" class="brand-link text-center">
+                <a href="{{ route('user.home') }}" class="brand-link text-center">
                     <span class="brand-text font-weight-light">Người dùng</span>
                 </a>
             @break
@@ -35,8 +35,7 @@
             <div class="info">
                 @switch(Auth::user()?->role)
                     @case(0)
-                        <a href="{{ route('users.home') }}"
-                            class="d-block">{{ Auth::user()->name ?? Auth::user()->email }}</a>
+                        <a href="{{ route('user.home') }}" class="d-block">{{ Auth::user()->name ?? Auth::user()->email }}</a>
                     @break
 
                     @case(1)
@@ -53,7 +52,7 @@
                     {{-- Staff --}}
                     @case(0)
                         <li
-                            class="nav-item {{ in_array(request()->route()->getName(), ['users.linkscans.index', 'users.linkscans.create'])
+                            class="nav-item {{ in_array(request()->route()->getName(), ['user.linkscans.index', 'user.linkscans.create'])
                                 ? 'menu-is-opening menu-open'
                                 : '' }}">
                             <a href="#" class="nav-link">
@@ -65,8 +64,8 @@
                             </a>
                             <ul class="nav nav-treeview">
                                 <li
-                                    class="nav-item {{ request()->route()->getName() == 'users.linkscans.index' ? 'option-open' : '' }}">
-                                    <a href="{{ route('users.linkscans.index') }}" class="nav-link">
+                                    class="nav-item {{ request()->route()->getName() == 'user.linkscans.index' ? 'option-open' : '' }}">
+                                    <a href="{{ route('user.linkscans.index') }}" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Danh sách link quét</p>
                                     </a>
@@ -74,7 +73,7 @@
                             </ul>
                         </li>
                         <li
-                            class="nav-item {{ in_array(request()->route()->getName(), ['users.linkfollows.index', 'users.linkfollows.create'])
+                            class="nav-item {{ in_array(request()->route()->getName(), ['user.linkfollows.index', 'user.linkfollows.create'])
                                 ? 'menu-is-opening menu-open'
                                 : '' }}">
                             <a href="#" class="nav-link">
@@ -86,8 +85,8 @@
                             </a>
                             <ul class="nav nav-treeview">
                                 <li
-                                    class="nav-item {{ request()->route()->getName() == 'users.linkfollows.index' ? 'option-open' : '' }}">
-                                    <a href="{{ route('users.linkfollows.index') }}" class="nav-link">
+                                    class="nav-item {{ request()->route()->getName() == 'user.linkfollows.index' ? 'option-open' : '' }}">
+                                    <a href="{{ route('user.linkfollows.index') }}" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Danh sách link theo dõi</p>
                                     </a>
@@ -95,28 +94,7 @@
                             </ul>
                         </li>
                         <li
-                            class="nav-item {{ in_array(request()->route()->getName(), ['users.linkrunnings.index', 'users.linkrunnings.create'])
-                                ? 'menu-is-opening menu-open'
-                                : '' }}">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fa-solid fa-check"></i>
-                                <p>
-                                    Link đang chạy
-                                    <i class="right fas fa-angle-left"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li
-                                    class="nav-item {{ request()->route()->getName() == 'users.linkrunnings.index' ? 'option-open' : '' }}">
-                                    <a href="{{ route('users.linkrunnings.index') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Danh sách link đang chạy</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li
-                            class="nav-item {{ in_array(request()->route()->getName(), ['users.comments.index', 'users.comments.create'])
+                            class="nav-item {{ in_array(request()->route()->getName(), ['user.comments.index', 'user.comments.create'])
                                 ? 'menu-is-opening menu-open'
                                 : '' }}">
                             <a href="#" class="nav-link">
@@ -128,8 +106,8 @@
                             </a>
                             <ul class="nav nav-treeview">
                                 <li
-                                    class="nav-item {{ request()->route()->getName() == 'users.comments.index' ? 'option-open' : '' }}">
-                                    <a href="{{ route('users.comments.index') }}" class="nav-link">
+                                    class="nav-item {{ request()->route()->getName() == 'user.comments.index' ? 'option-open' : '' }}">
+                                    <a href="{{ route('user.comments.index') }}" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Danh sách bình luận</p>
                                     </a>
@@ -137,7 +115,7 @@
                             </ul>
                         </li>
                         {{-- <li
-                            class="nav-item {{ in_array(request()->route()->getName(), ['users.me']) ? 'menu-is-opening menu-open' : '' }}">
+                            class="nav-item {{ in_array(request()->route()->getName(), ['user.me']) ? 'menu-is-opening menu-open' : '' }}">
                             <a href="#" class="nav-link">
                                 <i class="nav-icon fa-solid fa-user"></i>
                                 <p>
@@ -147,8 +125,8 @@
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="{{ route('users.me') }}"
-                                        class="nav-link {{ request()->route()->getName() == 'users.me' ? 'option-open' : '' }}">
+                                    <a href="{{ route('user.me') }}"
+                                        class="nav-link {{ request()->route()->getName() == 'user.me' ? 'option-open' : '' }}">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Cập nhật</p>
                                     </a>
@@ -180,7 +158,7 @@
                                 </li>
                             </ul>
                         </li>
-                        <li
+                        {{-- <li
                             class="nav-item {{ in_array(request()->route()->getName(), ['admin.linkscans.index', 'admin.linkscans.create'])
                                 ? 'menu-is-opening menu-open'
                                 : '' }}">
@@ -221,7 +199,7 @@
                                     </a>
                                 </li>
                             </ul>
-                        </li>
+                        </li> --}}
                         <li
                             class="nav-item {{ in_array(request()->route()->getName(), ['admin.linkrunnings.index', 'admin.linkrunnings.create'])
                                 ? 'menu-is-opening menu-open'

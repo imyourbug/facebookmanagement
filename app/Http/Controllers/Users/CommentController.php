@@ -23,14 +23,22 @@ class CommentController extends Controller
     {
         try {
             $data = $request->validate([
-                'account' => 'nullable|string',
-                'title' => 'nullable|string',
-                'uid' => 'nullable|string',
-                'phone' => 'nullable|string',
-                'content' => 'nullable|string',
-                'note' => 'nullable|string',
+                'comments' => 'nullable|array',
+                'comments.*.account' => 'nullable|string',
+                'comments.*.title' => 'nullable|string',
+                'comments.*.uid' => 'nullable|string',
+                'comments.*.phone' => 'nullable|string',
+                'comments.*.content' => 'nullable|string',
+                'comments.*.note' => 'nullable|string',
             ]);
-            Comment::create($data);
+            $data = array_map(function ($item) {
+                return [
+                    ...$item,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }, $data['comments']);
+            Comment::insert($data);
 
             return response()->json([
                 'status' => 0,

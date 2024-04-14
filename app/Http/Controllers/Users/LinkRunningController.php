@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Users;
 use App\Constant\GlobalConstant;
 use App\Http\Controllers\Controller;
 use App\Models\Link;
+use App\Models\UserLink;
 use Illuminate\Http\Request;
 use Throwable;
 use Toastr;
@@ -32,7 +33,11 @@ class LinkRunningController extends Controller
         ]);
         $data['type'] = GlobalConstant::TYPE_RUNNING;
 
-        Link::create($data);
+        $link = Link::create($data);
+        UserLink::create([
+            'user_id' => Auth::id(),
+            'link_id' => $link->id
+        ]);
         Toastr::success('Tạo link đang chạy thành công', __('title.toastr.success'));
 
         return redirect()->back();

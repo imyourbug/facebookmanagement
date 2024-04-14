@@ -37,10 +37,10 @@
             <div class="card">
                 <div class="card-body login-card-body">
                     <p class="login-box-msg">Đăng ký thành viên</p>
-                    <form action="{{ route('users.checkRegister') }}" method="POST">
+                    <form action="{{ route('user.checkRegister') }}" method="POST">
                         <div class="input-group mb-3">
                             <input name="tel_or_email" type="text" class="form-control" value="{{ old('tel_or_email') }}"
-                                placeholder="Nhập số điện thoại hoặc email">
+                                placeholder="Nhập tiêu đề">
                             <div class="input-group-append">
                                 <div class="input-group-text">
                                     <span class="fas fa-envelope"></span>
@@ -73,10 +73,10 @@
                         @csrf
                     </form>
                     <p class="mb-1">
-                        <a href="{{ route('users.forgot') }}">Quên mật khẩu</a>
+                        <a href="{{ route('user.forgot') }}">Quên mật khẩu</a>
                     </p>
                     <p class="mb-0">
-                        <a href="{{ route('users.login') }}" class="text-center">Đã có tài khoản</a>
+                        <a href="{{ route('user.login') }}" class="text-center">Đã có tài khoản</a>
                     </p>
                 </div>
             </div>

@@ -42,7 +42,7 @@ Route::get('/download/{filename}', function () {
 });
 
 #user
-Route::group(['prefix' => 'user', 'namespace' => 'App\Http\Controllers\Users', 'as' => 'users.'], function () {
+Route::group(['prefix' => 'user', 'namespace' => 'App\Http\Controllers\Users', 'as' => 'user.'], function () {
     Route::get('/', 'UserController@index')->name('home')->middleware('auth');
     Route::get('login', 'UserController@login')->name('login');
     Route::get('forgot', 'UserController@forgot')->name('forgot');
@@ -61,14 +61,6 @@ Route::group(['prefix' => 'user', 'namespace' => 'App\Http\Controllers\Users', '
         Route::post('/create', 'CommentController@store')->name('store');
         Route::get('/update/{id}', 'CommentController@show')->name('show');
         Route::post('/update', 'CommentController@update')->name('update');
-    });
-
-    #accounts
-    Route::group(['prefix' => 'accounts', 'as' => 'accounts.'], function () {
-        Route::get('/', 'AccountController@index')->name('index');
-        Route::post('/create', 'AccountController@store')->name('store');
-        Route::get('/update/{id}', 'AccountController@show')->name('show');
-        Route::post('/update', 'AccountController@update')->name('update');
     });
 
     #linkrunnings

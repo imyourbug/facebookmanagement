@@ -27,7 +27,7 @@
     </script>
 @endpush
 @section('content')
-    <form action="{{ route('users.update', ['id' => $staff->id]) }}" method="POST">
+    <form action="{{ route('user.update', ['id' => $staff->id]) }}" method="POST">
         <div class="card-body">
             <div class="row">
                 <div class="col-lg-6 col-md-12">

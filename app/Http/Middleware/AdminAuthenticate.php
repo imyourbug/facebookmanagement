@@ -19,7 +19,7 @@ class AdminAuthenticate
     {
         $user = Auth::user();
         if (!$user) {
-            return redirect()->route('users.login');
+            return redirect()->route('user.login');
         }
         if ($user && $user->role == 0) {
             return redirect()->back();
