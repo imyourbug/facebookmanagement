@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.0.1/css/buttons.dataTables.css">
 @endpush
 @push('scripts')
-    <script src="/js/admin/linkscan/index.js"></script>
+    <script src="/js/admin/account/index.js"></script>
     <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
     <script src="https://cdn.datatables.net/2.0.2/js/dataTables.js"></script>
@@ -81,41 +81,4 @@
         </div>
         @csrf
     </form>
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="card direct-chat direct-chat-primary">
-                <div class="card-header ui-sortable-handle header-color" style="cursor: move;">
-                    <h3 class="card-title text-bold">Danh sách link quét</h3>
-                    <div class="card-tools">
-                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="card-body" style="display: block;padding: 10px !important;">
-                    <table id="table" class="table display nowrap dataTable dtr-inline collapsed">
-                        <thead>
-                            <tr>
-                                <th>Data cuối</th>
-                                <th>Ngày tạo</th>
-                                <th>Tài khoản</th>
-                                <th>Tiêu đề</th>
-                                <th>Nội dung</th>
-                                <th>Bình luận</th>
-                                <th>Data</th>
-                                <th>Cảm xúc</th>
-                                <th>Quét</th>
-                                <th>Note</th>
-                                <th>Thao tác</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                    <input type="hidden" id="logging_user_id" value="{{ Auth::id() }}" />
-                    <input type="hidden" id="editing_user_id" value="{{ request()->id ?? '' }}" />
-                </div>
-            </div>
-        </div>
-    </div>
 @endsection

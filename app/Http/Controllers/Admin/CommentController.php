@@ -5,13 +5,54 @@ namespace App\Http\Controllers\Admin;
 use App\Constant\GlobalConstant;
 use App\Http\Controllers\Controller;
 use App\Models\Comment;
+use App\Models\Link;
+use App\Models\LinkComment;
+use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Throwable;
 use Toastr;
 
 
 class CommentController extends Controller
 {
+    public function getAll(Request $request)
+    {
+        $user_id = $request->user_id;
+        $comment_id = $request->comment_id;
+        $to = $request->to;
+        $from = $request->from;
+
+        return response()->json([
+            'status' => 0,
+            'comments' => LinkComment::with(['comment', 'link.userLinks.user'])
+                ->when($user_id, function ($q) use ($user_id) {
+                    return $q->whereHas('link.userLinks', function ($q) use ($user_id) {
+                        $q->where('user_id', $user_id);
+                    });
+                })
+                ->when($to, function ($q) use ($to) {
+                    return $q->whereHas('comment', function ($q) use ($to) {
+                        $q->where('created_at', '<=', $to);
+                    });
+                })
+                ->when($from, function ($q) use ($from) {
+                    return $q->whereHas('comment', function ($q) use ($from) {
+                        $q->where(
+                            'created_at',
+                            '>=',
+                            $from
+                        );
+                    });
+                })
+                ->when($comment_id, function ($q) use ($comment_id) {
+                    return $q->where('comment_id', $comment_id);
+                })
+                ->get()
+        ]);
+    }
+
     public function create()
     {
         return view('admin.comment.add', [
@@ -24,28 +65,35 @@ class CommentController extends Controller
         try {
             $data = $request->validate([
                 'comments' => 'nullable|array',
-                'comments.*.account' => 'nullable|string',
+                'comments.*.link_or_post_id' => 'required|string',
                 'comments.*.title' => 'nullable|string',
                 'comments.*.uid' => 'nullable|string',
                 'comments.*.phone' => 'nullable|string',
                 'comments.*.content' => 'nullable|string',
                 'comments.*.note' => 'nullable|string',
             ]);
-            $data = array_map(function ($item) {
-                unset($item['account']);
-
-                return [
-                    ...$item,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ];
-            }, $data['comments']);
-            Comment::insert($data);
+            DB::beginTransaction();
+            foreach ($data['comments'] as $key => $data) {
+                # code...
+                $link = Link::firstWhere('link_or_post_id', $data['link_or_post_id']);
+                if (!$link) {
+                    throw new Exception('link_or_post_id không tồn tại');
+                }
+                unset($data['link_or_post_id']);
+                $comment = Comment::create($data);
+                LinkComment::create([
+                    'link_id' => $link->id,
+                    'comment_id' => $comment->id,
+                ]);
+            }
+            DB::commit();
 
             return response()->json([
                 'status' => 0,
             ]);
         } catch (Throwable $e) {
+            DB::rollBack();
+
             return response()->json([
                 'status' => 1,
                 'message' => $e->getMessage()
@@ -81,7 +129,8 @@ class CommentController extends Controller
             $from = $request->from ?? '';
             $to = $request->to ?? '';
 
-            $comments = Comment::orderByDesc('id')
+            $comments = LinkComment::with(['link.userLinks.user', 'comment'])
+                ->orderByDesc('id')
                 ->when($from, function ($q) use ($from) {
                     return $q->where('created_at', '>=', $from);
                 })

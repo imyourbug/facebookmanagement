@@ -52,4 +52,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserLink::class, 'user_id', 'id');
     }
+
+    public function userComments()
+    {
+        return $this->hasMany(UserComment::class, 'user_id', 'id');
+    }
 }

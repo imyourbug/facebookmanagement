@@ -28,10 +28,16 @@ class Link extends Model
         'note',
         'link_or_post_id',
         'type',
+        'end_cursor',
     ];
 
     public function userLinks()
     {
         return $this->hasMany(UserLink::class, 'link_id', 'id');
+    }
+
+    public function commentLinks()
+    {
+        return $this->hasMany(LinkComment::class, 'link_id', 'id');
     }
 }

@@ -5,7 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Constant\GlobalConstant;
 use App\Http\Controllers\Controller;
 use App\Models\Link;
+use App\Models\User;
+use App\Models\UserLink;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 use Toastr;
 
 class LinkScanController extends Controller
@@ -19,20 +23,38 @@ class LinkScanController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'title' => 'required|string',
-            'content' => 'nullable|string',
-            'comment' => 'nullable|string',
-            'data' => 'nullable|numeric',
-            'emotion' => 'nullable|numeric',
-            'is_scan' => 'nullable|in:0,1',
-            'note' => 'nullable|string',
-            'link_or_post_id' => 'required|string'
-        ]);
-        $data['type'] = GlobalConstant::TYPE_SCAN;
+        try {
+            $data = $request->validate([
+                'user_id' => 'required|string',
+                'title' => 'required|string',
+                'time' => 'nullable|string',
+                'content' => 'nullable|string',
+                'comment_first' => 'nullable|string',
+                'comment_second' => 'nullable|string',
+                'data_first' => 'nullable|string',
+                'data_second' => 'nullable|string',
+                'emotion_first' => 'nullable|string',
+                'emotion_second' => 'nullable|string',
+                'is_scan' => 'nullable|in:0,1,2',
+                'note' => 'nullable|string',
+                'link_or_post_id' => 'required|string',
+            ]);
+            $data['type'] = GlobalConstant::TYPE_SCAN;
+            $user_id = $data['user_id'];
 
-        Link::create($data);
-        Toastr::success('Tạo link quét thành công', __('title.toastr.success'));
+            unset($data['user_id']);
+            DB::beginTransaction();
+            $link = Link::create($data);
+            UserLink::create([
+                'user_id' => $user_id,
+                'link_id' => $link->id
+            ]);
+            DB::commit();
+            Toastr::success('Thêm thành công', 'Thông báo');
+        } catch (Throwable $e) {
+            DB::rollBack();
+            Toastr::error($e->getMessage(), 'Thông báo');
+        }
 
         return redirect()->back();
     }
@@ -102,26 +124,43 @@ class LinkScanController extends Controller
 
     public function changeIsScan(Request $request)
     {
-        $user = User::firstWhere('id', $request->user_id);
-        $userLinks = UserLink::with(['link', 'user'])
-            ->where('user_id', $user->id)
-            ->where('link_id', $request->link_id)
-            ->whereHas('link', function ($q) {
-                $q->where('is_scan', GlobalConstant::IS_ON);
-            })
-            ->get();
+        try {
+            $data = $request->validate([
+                'user_id' => 'required|integer',
+                'link_id' => 'required|integer',
+                'is_scan' => 'nullable|in:0,1,2',
+            ]);
 
-        $limit = $user->limit;
+            if ($data['is_scan'] == GlobalConstant::IS_ON) {
+                $userLinks = UserLink::with(['link', 'user'])
+                    ->where('user_id', $data['user_id'])
+                    ->whereHas('link', function ($q) {
+                        $q->where('is_scan', GlobalConstant::IS_ON);
+                    })
+                    ->get();
+                $limit = User::firstWhere('id', $data['user_id'])->limit ?? 0;
 
-        $response = [
-            'status' => GlobalConstant::STATUS_OK,
-        ];
-        if ($userLinks->count() >= $limit) {
-            $response['status'] = GlobalConstant::STATUS_ERROR;
-            $response['message'] = 'Vượt quá số lượng link cho phép';
+                if ($userLinks->count() >= $limit) {
+                    return response()->json([
+                        'status' => GlobalConstant::STATUS_ERROR,
+                        'message' => 'Vượt quá số lượng link cho phép'
+                    ]);
+                }
+            }
+
+            Link::firstWhere('id', $data['link_id'])->update([
+                'is_scan' => $data['is_scan']
+            ]);
+        } catch (Throwable $e) {
+            return response()->json([
+                'status' => GlobalConstant::STATUS_ERROR,
+                'message' => $e->getMessage()
+            ]);
         }
 
-        return $response;
+        return response()->json([
+            'status' => GlobalConstant::STATUS_OK,
+        ]);
     }
 
     public function getAll()

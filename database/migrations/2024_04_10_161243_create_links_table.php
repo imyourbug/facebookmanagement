@@ -28,6 +28,7 @@ return new class extends Migration
             $table->string('note')->default('');
             $table->string('link_or_post_id')->default('');
             $table->string('type')->default('');
+            $table->string('end_cursor')->default('');
             $table->timestamps();
         });
     }

@@ -48,15 +48,18 @@ $(document).ready(function () {
                     let btnDelete = `<button data-id="${d.id}" class="btn btn-danger btn-sm btn-delete">
                                     <i class="fas fa-trash"></i>
                                 </button>`;
+                    let btnInfo = `<a class="btn btn-success btn-sm" href='/admin/linkscans?user_id=${d.id}'>
+                                    <i class="fas fa-info"></i>
+                                </a>`;
 
                     return `<a class="btn btn-primary btn-sm" href='/admin/accounts/update/${d.id}'>
                             <i class="fas fa-edit"></i>
-                        </a>
-                        ${$("#logging_user_id").val() != d.id &&
+                            </a>
+                            ${d.role == 0 ? btnInfo : ""}
+                            ${$("#logging_user_id").val() != d.id &&
                             $("#editing_user_id").val() != d.id
                             ? btnDelete
-                            : ""
-                        }`;
+                            : ""}`;
                 },
             },
         ],

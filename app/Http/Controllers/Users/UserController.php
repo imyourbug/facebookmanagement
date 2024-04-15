@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Users;
 
+use App\Constant\GlobalConstant;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Users\LoginRequest;
 use App\Http\Requests\Users\RecoverRequest;
 use App\Http\Requests\Users\RegisterRequest;
 use App\Mail\RecoverPasswordMail;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -18,7 +20,7 @@ use Toastr;
 
 class UserController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
         return view('user.home', [
             'title' => 'Trang người dùng',
@@ -81,7 +83,7 @@ class UserController extends Controller
             Toastr::success('Đăng nhập thành công', __('title.toastr.success'));
             $user = Auth::user();
 
-            return redirect()->route($user->role == 1 ? 'admin.index'
+            return redirect()->route($user->role == GlobalConstant::ROLE_ADMIN ? 'admin.index'
                 : 'user.home');
         }
         Toastr::error('Tài khoản hoặc mật khẩu không chính xác', __('title.toastr.fail'));
@@ -137,54 +139,31 @@ class UserController extends Controller
         ]);
     }
 
-    public function checkRegister(RegisterRequest $request)
+    public function checkRegister(Request $request)
     {
-        $tel_or_email = $request->input('tel_or_email');
-        $check = User::where(is_numeric($tel_or_email) ? 'name' : 'email', $tel_or_email)
-            ->get();
-        if ($check->count() > 0) {
-            Toastr::error('Tài khoản đã có người đăng ký!', __('title.toastr.fail'));
-
-            return redirect()->back();
-        }
         try {
-            DB::beginTransaction();
-            $user = User::create([
-                is_numeric($tel_or_email) ? 'name' : 'email' =>  $tel_or_email,
-                'password' => Hash::make($request->input('password')),
-                'role' => 1,
+            $tel_or_email = $request->tel_or_email;
+            $data = $request->validate([
+                'tel_or_email' => !is_numeric($tel_or_email) ? 'required|email:dns,rfc'
+                    : 'required|string|regex:/^0\d{9,10}$/',
+                'password' => 'required|string',
             ]);
-            Toastr::success('Đăng ký thành công', __('title.toastr.success'));
-            DB::commit();
+            $check = User::firstWhere(is_numeric($tel_or_email) ? 'name' : 'email', $tel_or_email);
+            if ($check) {
+                throw new Exception('Tài khoản đã có người đăng ký!');
+            }
+            User::create([
+                is_numeric($tel_or_email) ? 'name' : 'email' =>  $tel_or_email,
+                'password' => Hash::make($data['password']),
+                'role' => GlobalConstant::ROLE_USER,
+            ]);
+            Toastr::success('Tạo tài khoản thành công', __('title.toastr.success'));
         } catch (Throwable $e) {
-            DB::rollBack();
-            Toastr::error(__('message.fail.register'), __('title.toastr.fail'));
-
-            return redirect()->back();
+            Toastr::error($e->getMessage(), __('title.toastr.fail'));
         }
 
-        return redirect()->route('user.login');
+        return redirect()->back();
     }
-
-    // public function update(Request $request)
-    // {
-    //     $data = $request->validate([
-    //         'id' => 'required|int',
-    //         'avatar' => 'required|string',
-    //         'name' => 'required|string',
-    //         'position' => 'required|string',
-    //         'identification' => 'required|string|regex:/\d{12}$/',
-    //         'tel' => 'required|string|regex:/^0\d{9,10}$/',
-    //         'active' => 'required|in:0,1',
-    //     ]);
-    //     unset($data['id']);
-    //     $update = InfoUser::where('id', $request->input('id'))->update($data);
-    //     if ($update) {
-    //         Toastr::success(__('message.success.update'), __('title.toastr.success'));
-    //     } else Toastr::error(__('message.fail.update'), __('title.toastr.fail'));
-
-    //     return redirect()->back();
-    // }
 
     public function me(Request $request)
     {

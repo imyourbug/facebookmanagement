@@ -25,36 +25,43 @@ $(document).ready(function () {
             top2Start: 'pageLength',
         },
         ajax: {
-            url: "/admin/comments",
+            url: `/api/user/comments/getAll?user_id=${$('#user_id').val()}`,
             dataSrc: "comments",
         },
         columns: [
             {
-                data: "created_at",
-            },
-            // {
-            //     data: "created_at",
-            // },
-            {
-                data: "title",
-            },
-            {
                 data: function (d) {
-                    return `<span class="copy" data-value="${d.uid}">${d.uid}</span>`;
+                    return d.comment.created_at;
                 },
             },
             {
-                data: "phone",
-            },
-            {
-                data: "content",
-            },
-            {
-                data: "note",
+                data: function (d) {
+                    return d.comment.title;
+                },
             },
             {
                 data: function (d) {
-                    return `<button data-id="${d.id}" class="btn btn-danger btn-sm btn-delete">
+                    return `<span class="copy" data-value="${d.comment.uid}">${d.comment.uid}</span>`;
+                },
+            },
+            {
+                data: function (d) {
+                    return d.comment.phone;
+                },
+            },
+            {
+                data: function (d) {
+                    return d.comment.content;
+                },
+            },
+            {
+                data: function (d) {
+                    return d.comment.note;
+                },
+            },
+            {
+                data: function (d) {
+                    return `<button data-id="${d.comment.id}" class="btn btn-danger btn-sm btn-delete">
                                 <i class="fas fa-trash"></i>
                             </button>`;
                 },
@@ -85,7 +92,7 @@ $(document).on("click", ".btn-delete", function () {
 async function reload() {
     await $.ajax({
         type: "GET",
-        url: "/api/comments",
+        url: `/api/user/comments/getAll?user_id=${$('#user_id').val()}`,
         success: function (response) {
             if (response.status == 0) {
                 $('.count-comment').text(`Tổng số bình luận: ${response.comments.length}`);
@@ -106,11 +113,11 @@ $(document).on("change", "#to", function () {
         let time = $(this).val();
         searchParams.set("to", time);
         dataTable.ajax
-            .url("/api/comments?" + getQueryUrlWithParams())
+            .url("/api/user/comments/getAll?" + getQueryUrlWithParams())
             .load();
     }
     else if (!$('#from').val()) {
-        dataTable.ajax.url("/api/comments").load();
+        dataTable.ajax.url(`/api/user/comments/getAll?user_id=${$('#user_id').val()}`).load();
     }
 });
 
@@ -119,30 +126,18 @@ $(document).on("change", "#from", function () {
         let time = $(this).val();
         searchParams.set("from", time);
         dataTable.ajax
-            .url("/api/comments?" + getQueryUrlWithParams())
+            .url("/api/user/comments/getAll?" + getQueryUrlWithParams())
             .load();
     }
     else if (!$('#to').val()) {
-        dataTable.ajax.url("/api/comments").load();
+        dataTable.ajax.url(`/api/user/comments/getAll?user_id=${$('#user_id').val()}`).load();
     }
 });
 
-$(document).on("change", ".select2", function () {
-    let contracts = $(this).val();
-    searchParams.set("contracts", contracts);
-    dataTable.ajax
-        .url("/api/comments?" + getQueryUrlWithParams())
-        .load();
-});
-
 function getQueryUrlWithParams() {
-    let query = '';
+    let query = `user_id=${$('#user_id').val()}`;
     Array.from(searchParams).forEach(([key, values], index) => {
-        if (index = 0) {
-            query += `${key}=${typeof values == "array" ? values.join(",") : values}`;
-        } else {
-            query += `&${key}=${typeof values == "array" ? values.join(",") : values}`;
-        }
+        query += `&${key}=${typeof values == "array" ? values.join(",") : values}`;
     })
 
     return query;

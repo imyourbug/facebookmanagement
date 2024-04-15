@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Constant\GlobalConstant;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Accounts\CreateAccountRequest;
 use App\Http\Requests\Admin\Accounts\UpdateAccountRequest;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -21,31 +23,34 @@ class AccountController extends Controller
         ]);
     }
 
-    public function store(CreateAccountRequest $request)
+    public function store(Request $request)
     {
-        $tel_or_email = $request->input('tel_or_email');
-        $check = User::where(is_numeric($tel_or_email) ? 'name' : 'email', $tel_or_email)
-            ->get();
-        if ($check->count() > 0) {
-            Toastr::error('Tài khoản đã có người đăng ký!', __('title.toastr.fail'));
-
-            return redirect()->back();
-        }
         try {
-            DB::beginTransaction();
+            $tel_or_email = $request->tel_or_email;
+            $data = $request->validate([
+                'tel_or_email' => !is_numeric($tel_or_email) ? 'required|email:dns,rfc'
+                    : 'required|string|regex:/^0\d{9,10}$/',
+                'password' => 'required|string',
+                'delay' => 'required|integer',
+                'limit' => 'required|integer',
+                'expire' => 'required|integer',
+                'role' => 'required|in:0,1',
+            ]);
+            $check = User::firstWhere(is_numeric($tel_or_email) ? 'name' : 'email', $tel_or_email);
+            if ($check) {
+                throw new Exception('Tài khoản đã có người đăng ký!');
+            }
             User::create([
                 is_numeric($tel_or_email) ? 'name' : 'email' =>  $tel_or_email,
-                'password' => Hash::make($request->input('password')),
-                'role' => (int) $request->role,
-                'delay' => (int) $request->delay,
-                'limit' => (int) $request->limit,
-                'expire' => (int) $request->expire,
+                'password' => Hash::make($data['password']),
+                'role' => $data['role'],
+                'delay' => $data['delay'],
+                'limit' => $data['limit'],
+                'expire' => $data['expire'],
             ]);
             Toastr::success('Tạo tài khoản thành công', __('title.toastr.success'));
-            DB::commit();
         } catch (Throwable $e) {
-            DB::rollBack();
-            Toastr::error('Tạo tài khoản thất bại', __('title.toastr.fail'));
+            Toastr::error($e->getMessage(), __('title.toastr.fail'));
         }
 
         return redirect()->back();
@@ -59,7 +64,7 @@ class AccountController extends Controller
                 unset($data[$key]);
             }
             if ($key === 'password') {
-                 $item = Hash::make($item);
+                $item = Hash::make($item);
             }
         }
         unset($data['id']);

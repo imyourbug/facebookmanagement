@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class UserComment extends Model
+class LinkComment extends Model
 {
     use HasFactory;
 
@@ -15,7 +15,17 @@ class UserComment extends Model
     ];
 
     protected $fillable = [
-        'user_id',
         'comment_id',
+        'link_id',
     ];
+
+    public function comment()
+    {
+        return $this->belongsTo(Comment::class, 'comment_id', 'id');
+    }
+
+    public function link()
+    {
+        return $this->belongsTo(Link::class, 'link_id', 'id');
+    }
 }

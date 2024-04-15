@@ -32,6 +32,11 @@ Route::group(['namespace' => 'App\Http\Controllers\Users', 'prefix' => 'user',],
         Route::get('/getAll', 'LinkController@getAll')->name('getAll');
         Route::post('/update', 'LinkController@update')->name('update');
     });
+
+    #comments
+    Route::group(['prefix' => 'comments', 'as' => 'comments.'], function () {
+        Route::get('/getAll', 'CommentController@getAll')->name('getAll');
+    });
 });
 
 #upload
@@ -61,6 +66,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin'], function () {
     #comments
     Route::group(['prefix' => 'comments', 'as' => 'comments.'], function () {
         Route::post('/create', 'CommentController@store')->name('store');
+        Route::get('/getAll', 'CommentController@getAll')->name('getAll');
     });
 
     #links

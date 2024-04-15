@@ -21,4 +21,9 @@ class Comment extends Model
         'content',
         'note',
     ];
+
+    public function commentLinks()
+    {
+        return $this->hasMany(LinkComment::class, 'comment_id', 'id');
+    }
 }

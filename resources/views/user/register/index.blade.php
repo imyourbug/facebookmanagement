@@ -40,7 +40,7 @@
                     <form action="{{ route('user.checkRegister') }}" method="POST">
                         <div class="input-group mb-3">
                             <input name="tel_or_email" type="text" class="form-control" value="{{ old('tel_or_email') }}"
-                                placeholder="Nhập tiêu đề">
+                                placeholder="Nhập tài khoản">
                             <div class="input-group-append">
                                 <div class="input-group-text">
                                     <span class="fas fa-envelope"></span>

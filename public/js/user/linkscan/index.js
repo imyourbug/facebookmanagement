@@ -61,12 +61,17 @@ $(document).ready(function () {
                 data: function (d) {
                     return d.link.is_scan == 0 ? `<button class="btn btn-danger btn-scan" data-is_scan="1" data-id=${d.link.id}>OFF</button>`
                         : (d.link.is_scan == 1 ? `<button data-is_scan="0" data-id=${d.link.id} class="btn btn-success btn-scan">ON</button>`
-                            : `<button class="btn btn-danger">RESET</button>`);
+                            : `<button class="btn btn-primary">RESET</button>`);
                 }
             },
             {
                 data: function (d) {
                     return d.link.note;
+                },
+            },
+            {
+                data: function (d) {
+                    return d.link.link_or_post_id;
                 },
             },
             {

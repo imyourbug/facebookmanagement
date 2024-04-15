@@ -65,6 +65,7 @@
                                 <th>Cảm xúc</th>
                                 <th>Quét</th>
                                 <th>Note</th>
+                                <th>Link|PostID</th>
                                 <th>Thao tác</th>
                             </tr>
                         </thead>

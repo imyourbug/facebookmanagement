@@ -7,8 +7,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Link;
 use App\Models\UserLink;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB  ;
+use Illuminate\Support\Facades\DB;
 use Throwable;
+use Toastr;
 
 class LinkController extends Controller
 {
@@ -18,6 +19,43 @@ class LinkController extends Controller
             'status' => 0,
             'links' => Link::where('type', $request->type)->get()
         ]);
+    }
+
+    public function create(Request $request)
+    {
+        try {
+            $data = $request->validate([
+                'user_id' => 'required|string',
+                'title' => 'required|string',
+                'time' => 'nullable|string',
+                'content' => 'nullable|string',
+                'comment_first' => 'nullable|string',
+                'comment_second' => 'nullable|string',
+                'data_first' => 'nullable|string',
+                'data_second' => 'nullable|string',
+                'emotion_first' => 'nullable|string',
+                'emotion_second' => 'nullable|string',
+                'is_scan' => 'nullable|in:0,1,2',
+                'note' => 'nullable|string',
+                'link_or_post_id' => 'required|string',
+                'type' => 'required|in:0,1,2',
+            ]);
+
+            unset($data['user_id']);
+            DB::beginTransaction();
+            $link = Link::create($data);
+            UserLink::create([
+                'user_id' => $data['user_id'],
+                'link_id' => $link->id
+            ]);
+            DB::commit();
+            Toastr::success('Thêm thành công', 'Thông báo');
+        } catch (Throwable $e) {
+            DB::rollBack();
+            Toastr::error($e->getMessage(), 'Thông báo');
+        }
+
+        return redirect()->back();
     }
 
     public function getAll(Request $request)
@@ -36,7 +74,7 @@ class LinkController extends Controller
             })
             ->when($is_scan, function ($q) use ($is_scan) {
                 return $q->whereHas('link', function ($q) use ($is_scan) {
-                    $q->where('is_can', $is_scan);
+                    $q->whereIn('is_scan', $is_scan);
                 });
             })
             ->when(in_array($type, GlobalConstant::LINK_STATUS), function ($q) use ($type) {
@@ -79,6 +117,7 @@ class LinkController extends Controller
                 'links.*.is_scan' => 'nullable|in:0,1,2',
                 'links.*.note' => 'nullable|string',
                 'links.*.link_or_post_id' => 'required|string',
+                'links.*.end_cursor' => 'nullable|string',
                 'links.*.type' => 'required|in:0,1,2',
             ]);
 

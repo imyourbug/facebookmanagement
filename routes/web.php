@@ -95,6 +95,11 @@ Route::group([
 ], function () {
     Route::get('/', 'AdminController@index')->name('index');
 
+    #links
+    Route::group(['prefix' => 'links', 'as' => 'links.'], function () {
+        Route::post('/', 'LinkController@create')->name('create');
+    });
+
     #comments
     Route::group(['prefix' => 'comments', 'as' => 'comments.'], function () {
         Route::get('/', 'CommentController@index')->name('index');

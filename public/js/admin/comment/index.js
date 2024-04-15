@@ -30,31 +30,43 @@ $(document).ready(function () {
         },
         columns: [
             {
-                data: "created_at",
-            },
-            {
-                data: "created_at",
-            },
-            {
-                data: "title",
-            },
-            {
                 data: function (d) {
-                    return `<span class="copy" data-value="${d.uid}">${d.uid}</span>`;
+                    return d.comment.created_at;
                 },
             },
             {
-                data: "phone",
-            },
-            {
-                data: "content",
-            },
-            {
-                data: "note",
+                data: function (d) {
+                    return getListAccountNameByUserLink(d.link.user_links);
+                },
             },
             {
                 data: function (d) {
-                    return `<button data-id="${d.id}" class="btn btn-danger btn-sm btn-delete">
+                    return d.comment.title;
+                },
+            },
+            {
+                data: function (d) {
+                    return `<span class="copy" data-value="${d.comment.uid}">${d.comment.uid}</span>`;
+                },
+            },
+            {
+                data: function (d) {
+                    return d.comment.phone;
+                },
+            },
+            {
+                data: function (d) {
+                    return d.comment.content;
+                },
+            },
+            {
+                data: function (d) {
+                    return d.comment.note;
+                },
+            },
+            {
+                data: function (d) {
+                    return `<button data-id="${d.comment.id}" class="btn btn-danger btn-sm btn-delete">
                                 <i class="fas fa-trash"></i>
                             </button>`;
                 },
@@ -62,6 +74,15 @@ $(document).ready(function () {
         ],
     });
 });
+
+function getListAccountNameByUserLink(userLinks = []) {
+    let rs = [];
+    userLinks.forEach((e) => {
+        rs.push(e.user.email || e.user.name);
+    });
+
+    return rs.join('|');
+}
 
 $(document).on("click", ".btn-delete", function () {
     if (confirm("Bạn có muốn xóa?")) {

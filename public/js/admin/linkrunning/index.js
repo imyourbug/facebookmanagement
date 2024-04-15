@@ -18,7 +18,7 @@ $(document).ready(function () {
             },
         },
         ajax: {
-            url: "/api/links/getAll?type=2",
+            url: "/api/links/getAll?is_scan[]=1&is_scan[]=2",
             dataSrc: "links",
         },
         columns: [
@@ -37,7 +37,6 @@ $(document).ready(function () {
                     return getListAccountNameByUserLink(d.accounts);
                 },
             },
-
             {
                 data: function (d) {
                     return d.link.title;

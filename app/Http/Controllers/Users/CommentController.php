@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Users;
 use App\Constant\GlobalConstant;
 use App\Http\Controllers\Controller;
 use App\Models\Comment;
+use App\Models\LinkComment;
 use Illuminate\Http\Request;
 use Throwable;
 use Toastr;
@@ -12,6 +13,43 @@ use Toastr;
 
 class CommentController extends Controller
 {
+    public function getAll(Request $request)
+    {
+        $user_id = $request->user_id;
+        $comment_id = $request->comment_id;
+        $to = $request->to;
+        $from = $request->from;
+
+        return response()->json([
+            'status' => 0,
+            'comments' => LinkComment::with(['comment', 'link.userLinks.user'])
+                ->when($user_id, function ($q) use ($user_id) {
+                    return $q->whereHas('link.userLinks', function ($q) use ($user_id) {
+                        $q->where('user_id', $user_id);
+                    });
+                })
+                ->when($to, function ($q) use ($to) {
+                    return $q->whereHas('comment', function ($q) use ($to) {
+                        $q->where('created_at', '<=', $to);
+                    });
+                })
+                ->when($from, function ($q) use ($from) {
+                    return $q->whereHas('comment', function ($q) use ($from) {
+                        $q->where(
+                            'created_at',
+                            '>=',
+                            $from
+                        );
+                    });
+                })
+                ->when($comment_id, function ($q) use ($comment_id) {
+                    return $q->where('comment_id', $comment_id);
+                })
+                ->orderByDesc('id')
+                ->get()
+        ]);
+    }
+
     public function create()
     {
         return view('user.comment.add', [

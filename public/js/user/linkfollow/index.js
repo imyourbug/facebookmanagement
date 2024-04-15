@@ -64,6 +64,11 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
+                    return d.link.link_or_post_id;
+                },
+            },
+            {
+                data: function (d) {
                     let btnDelete = d.link.id == $('#editing_link_id').val() ? `` :
                         `<button data-id="${d.link.id}" class="btn btn-danger btn-sm btn-delete">
                                 <i class="fas fa-trash"></i>

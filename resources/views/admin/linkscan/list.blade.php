@@ -28,7 +28,7 @@
                     <div class="form-group">
                         <label for="menu">Link hoặc PostID <span class="required">(*)</span></label>
                         <input type="text" class="form-control" name="link_or_post_id"
-                            value="{{ old('link_or_post_id') }}" placeholder="Nhập link hoặc PostID">
+                            value="{{ old('link_or_post_id') }}" placeholder="Nhập link hoặc post ID">
                     </div>
                 </div>
             </div>
@@ -37,6 +37,7 @@
             <button type="submit" class="btn btn-primary">Lưu</button>
         </div>
         @csrf
+        <input type="hidden" value="{{ Request::get('user_id') }}" name="user_id" id="user_id" />
     </form>
     <div class="row">
         <div class="col-lg-12">
@@ -58,7 +59,6 @@
                             <tr>
                                 <th>Data cuối</th>
                                 <th>Ngày tạo</th>
-                                <th>Tài khoản</th>
                                 <th>Tiêu đề</th>
                                 <th>Nội dung</th>
                                 <th>Bình luận</th>

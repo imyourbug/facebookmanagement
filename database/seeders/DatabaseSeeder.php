@@ -17,15 +17,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
-
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
-        // $this->call([
-        // ]);
-
         User::insert(
             [
                 [
@@ -66,14 +57,6 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Delay time mỗi luồng crawl count (ms)',
                 'value' => '2000',
             ]
-        ]);
-
-        Comment::create([
-            'title' => 'title',
-            'uid' => 'uid',
-            'phone' => '0368822543',
-            'content' => 'content',
-            'note' => 'note',
         ]);
     }
 }
