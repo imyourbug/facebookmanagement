@@ -44,17 +44,20 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return `${d.link.comment_second} | ${parseInt(d.link.comment_second) - parseInt(d.link.comment_first)}`;
+                    return `<p class="show-history" data-type="comment" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.comment_second} | ${parseInt(d.link.comment_second)
+                        - parseInt(d.link.comment_first)}</p>`;
                 },
             },
             {
                 data: function (d) {
-                    return `${d.link.data_second} | ${parseInt(d.link.data_second) - parseInt(d.link.data_first)}`;
+                    return `<p class="show-history" data-type="data" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.data_second} | ${parseInt(d.link.data_second)
+                        - parseInt(d.link.data_first)}</p>`;
                 },
             },
             {
                 data: function (d) {
-                    return `${d.link.emotion_second} | ${parseInt(d.link.emotion_second) - parseInt(d.link.emotion_first)}`;
+                    return `<p class="show-history" data-type="emotion" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.emotion_second} | ${parseInt(d.link.emotion_second)
+                        - parseInt(d.link.emotion_first)}</p>`;
                 },
             },
             {

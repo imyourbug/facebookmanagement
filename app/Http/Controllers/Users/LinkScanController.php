@@ -48,10 +48,25 @@ class LinkScanController extends Controller
                 throw new Exception('Đã tồn tại link hoặc post ID');
             }
 
+            $userLinks = UserLink::with(['link', 'user'])
+                ->where('user_id', Auth::id())
+                ->whereHas('link', function ($q) use ($data) {
+                    $q->where('is_scan', GlobalConstant::IS_ON);
+                })
+                ->get();
+
+            $data['is_scan'] = $userLinks->count() < Auth::user()->limit ? GlobalConstant::IS_ON : GlobalConstant::IS_OFF;
             $data['type'] = GlobalConstant::TYPE_SCAN;
 
             DB::beginTransaction();
-            $link = Link::create($data);
+            $link = Link::firstOrCreate(
+                ['link_or_post_id' => $data['link_or_post_id']],
+                [
+                    'title' =>  $data['title'],
+                    'is_scan' => $data['is_scan'],
+                    'type' => $data['type'],
+                ]
+            );
             UserLink::create([
                 'user_id' => Auth::id(),
                 'link_id' => $link->id

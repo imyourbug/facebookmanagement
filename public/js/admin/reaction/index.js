@@ -25,13 +25,13 @@ $(document).ready(function () {
             top2Start: 'pageLength',
         },
         ajax: {
-            url: "/admin/comments",
-            dataSrc: "comments",
+            url: "/admin/reactions",
+            dataSrc: "reactions",
         },
         columns: [
             {
                 data: function (d) {
-                    return d.comment.created_at;
+                    return d.reaction.created_at;
                 },
             },
             {
@@ -41,32 +41,32 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return d.comment.title;
+                    return d.reaction.title;
                 },
             },
             {
                 data: function (d) {
-                    return `<span class="copy" data-value="${d.comment.uid}">${d.comment.uid}</span>`;
+                    return `<span class="copy" data-value="${d.reaction.uid}">${d.reaction.uid}</span>`;
                 },
             },
             {
                 data: function (d) {
-                    return d.comment.phone;
+                    return d.reaction.phone;
                 },
             },
             {
                 data: function (d) {
-                    return d.comment.content;
+                    return d.reaction.reaction;
                 },
             },
             {
                 data: function (d) {
-                    return d.comment.note;
+                    return d.reaction.note;
                 },
             },
             {
                 data: function (d) {
-                    return `<button data-id="${d.comment.id}" class="btn btn-danger btn-sm btn-delete">
+                    return `<button data-id="${d.reaction.id}" class="btn btn-danger btn-sm btn-delete">
                                 <i class="fas fa-trash"></i>
                             </button>`;
                 },
@@ -89,7 +89,7 @@ $(document).on("click", ".btn-delete", function () {
         let id = $(this).data("id");
         $.ajax({
             type: "DELETE",
-            url: `/api/comments/${id}/destroy`,
+            url: `/api/reactions/${id}/destroy`,
             success: function (response) {
                 if (response.status == 0) {
                     toastr.success("Xóa thành công");
@@ -106,10 +106,10 @@ $(document).on("click", ".btn-delete", function () {
 async function reload() {
     await $.ajax({
         type: "GET",
-        url: "/api/comments",
+        url: "/api/reactions",
         success: function (response) {
             if (response.status == 0) {
-                $('.count-comment').text(`Tổng số bình luận: ${response.comments.length}`);
+                $('.count-comment').text(`Tổng số cảm xúc: ${response.reactions.length}`);
             }
         }
     });
@@ -123,28 +123,28 @@ $(document).on("click", ".copy", function () {
 });
 
 $(document).on("change", "#to", function () {
-    let time = $(this).val();
-    searchParams.set("to", time);
     if ($(this).val()) {
+        let time = $(this).val();
+        searchParams.set("to", time);
         dataTable.ajax
-            .url("/api/comments?" + getQueryUrlWithParams())
+            .url("/api/reactions?" + getQueryUrlWithParams())
             .load();
     }
     else if (!$('#from').val()) {
-        dataTable.ajax.url("/api/comments").load();
+        dataTable.ajax.url("/api/reactions").load();
     }
 });
 
 $(document).on("change", "#from", function () {
-    let time = $(this).val();
-    searchParams.set("from", time);
     if ($(this).val()) {
+        let time = $(this).val();
+        searchParams.set("from", time);
         dataTable.ajax
-            .url("/api/comments?" + getQueryUrlWithParams())
+            .url("/api/reactions?" + getQueryUrlWithParams())
             .load();
     }
     else if (!$('#to').val()) {
-        dataTable.ajax.url("/api/comments").load();
+        dataTable.ajax.url("/api/reactions").load();
     }
 });
 
@@ -152,7 +152,7 @@ $(document).on("change", ".select2", function () {
     let contracts = $(this).val();
     searchParams.set("contracts", contracts);
     dataTable.ajax
-        .url("/api/comments?" + getQueryUrlWithParams())
+        .url("/api/reactions?" + getQueryUrlWithParams())
         .load();
 });
 
@@ -164,7 +164,7 @@ function getQueryUrlWithParams() {
         } else {
             query += `&${key}=${typeof values == "array" ? values.join(",") : values}`;
         }
-    });
+    })
 
     return query;
 }

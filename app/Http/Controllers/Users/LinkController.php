@@ -30,7 +30,7 @@ class LinkController extends Controller
                 })
                 ->when($is_scan, function ($q) use ($is_scan) {
                     return $q->whereHas('link', function ($q) use ($is_scan) {
-                        $q->where('is_can', $is_scan);
+                        $q->whereIn('is_scan', $is_scan);
                     });
                 })
                 ->when(in_array($type, GlobalConstant::LINK_STATUS), function ($q) use ($type) {

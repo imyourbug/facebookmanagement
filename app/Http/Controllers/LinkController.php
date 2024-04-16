@@ -1,11 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers;
 
 use App\Constant\GlobalConstant;
 use App\Http\Controllers\Controller;
 use App\Models\Link;
+use App\Models\LinkHistory;
 use App\Models\UserLink;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Throwable;
@@ -13,6 +15,56 @@ use Toastr;
 
 class LinkController extends Controller
 {
+    public function updateLinkByLinkOrPostId(Request $request)
+    {
+        try {
+            $data = $request->validate([
+                'links' => 'required|array',
+                'links.*.link_or_post_id' => 'required|string',
+                'links.*.title' => 'nullable|string',
+                'links.*.time' => 'nullable|string',
+                'links.*.content' => 'nullable|string',
+                'links.*.comment_first' => 'nullable|string',
+                'links.*.comment_second' => 'nullable|string',
+                'links.*.data_first' => 'nullable|string',
+                'links.*.data_second' => 'nullable|string',
+                'links.*.emotion_first' => 'nullable|string',
+                'links.*.emotion_second' => 'nullable|string',
+                'links.*.is_scan' => 'nullable|in:0,1,2',
+                'links.*.status' => 'nullable|in:0,1',
+                'links.*.note' => 'nullable|string',
+                'links.*.type' => 'nullable|in:0,1,2',
+            ]);
+    
+            DB::beginTransaction();
+    
+            foreach ($data['links'] as $key => &$value) {
+                # code...
+                $link = Link::firstWhere('link_or_post_id', $value['link_or_post_id']);
+                if (!$link) {
+                    throw new Exception('link_or_post_id không tồn tại');
+                }
+                unset($value['link_or_post_id']);
+                $link->update($value);
+                $value['link_id'] = $link->id;
+                $value['created_at'] = now();
+                $value['updated_at'] = now();
+            }
+            LinkHistory::insert($data['links']);
+            DB::commit();
+        } catch( Throwable $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => 1,
+                'message' => $e->getMessage()
+            ]);
+        }
+        return response()->json([
+            'status' => 0,
+        ]);
+    }
+
     public function getByType(Request $request)
     {
         return response()->json([
@@ -174,6 +226,37 @@ class LinkController extends Controller
                 'message' => $e->getMessage()
             ]);
         }
+    }
+
+    public function updateIsScanByLinkOrPostId(Request $request)
+    {
+        $data = $request->validate([
+            'title' => 'nullable|string',
+            'time' => 'nullable|string',
+            'content' => 'nullable|string',
+            'comment_first' => 'nullable|string',
+            'comment_second' => 'nullable|string',
+            'data_first' => 'nullable|string',
+            'data_second' => 'nullable|string',
+            'emotion_first' => 'nullable|string',
+            'emotion_second' => 'nullable|string',
+            'is_scan' => 'required|in:0,1,2',
+            'status' => 'nullable|in:0,1',
+            'note' => 'nullable|string',
+            'link_or_post_id' => 'required|array',
+            'type' => 'nullable|in:0,1,2',
+        ]);
+
+        $links = Link::whereIn('link_or_post_id', $data['link_or_post_id']);
+        if ($links->count() === 0) {
+            throw new Exception('link_or_post_id không tồn tại');
+        }
+        unset($data['link_or_post_id']);
+        $links->update($data);
+
+        return response()->json([
+            'status' => 0,
+        ]);
     }
 
     public function destroy($id)

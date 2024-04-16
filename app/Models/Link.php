@@ -40,4 +40,9 @@ class Link extends Model
     {
         return $this->hasMany(LinkComment::class, 'link_id', 'id');
     }
+
+    public function reactionLinks()
+    {
+        return $this->hasMany(LinkReaction::class, 'link_id', 'id');
+    }
 }

@@ -43,7 +43,7 @@
         <div class="col-lg-12">
             <div class="card direct-chat direct-chat-primary">
                 <div class="card-header ui-sortable-handle header-color" style="cursor: move;">
-                    <h3 class="card-title text-bold">Danh sách link quét</h3>
+                    <h3 class="card-title text-bold">Danh sách link quét - {{$user->email ?? $user->name}}</h3>
                     <div class="card-tools">
                         <button type="button" class="btn btn-tool" data-card-widget="collapse">
                             <i class="fas fa-minus"></i>
@@ -66,6 +66,7 @@
                                 <th>Cảm xúc</th>
                                 <th>Quét</th>
                                 <th>Note</th>
+                                <th>Link|Post ID</th>
                                 <th>Thao tác</th>
                             </tr>
                         </thead>

@@ -44,29 +44,37 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return `${d.link.comment_second} | ${parseInt(d.link.comment_second) - parseInt(d.link.comment_first)}`;
+                    return `<p class="show-history" data-type="comment" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.comment_second} | ${parseInt(d.link.comment_second)
+                        - parseInt(d.link.comment_first)}</p>`;
                 },
             },
             {
                 data: function (d) {
-                    return `${d.link.data_second} | ${parseInt(d.link.data_second) - parseInt(d.link.data_first)}`;
+                    return `<p class="show-history" data-type="data" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.data_second} | ${parseInt(d.link.data_second)
+                        - parseInt(d.link.data_first)}</p>`;
                 },
             },
             {
                 data: function (d) {
-                    return `${d.link.emotion_second} | ${parseInt(d.link.emotion_second) - parseInt(d.link.emotion_first)}`;
+                    return `<p class="show-history" data-type="emotion" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.emotion_second} | ${parseInt(d.link.emotion_second)
+                        - parseInt(d.link.emotion_first)}</p>`;
                 },
             },
             {
                 data: function (d) {
                     return d.link.is_scan == 0 ? `<button class="btn btn-danger btn-scan" data-is_scan="1" data-id=${d.link.id}>OFF</button>`
                         : (d.link.is_scan == 1 ? `<button data-is_scan="0" data-id=${d.link.id} class="btn btn-success btn-scan">ON</button>`
-                            : `<button class="btn btn-danger">RESET</button>`);
+                            : `<button class="btn btn-primary">RESET</button>`);
                 }
             },
             {
                 data: function (d) {
                     return d.link.note;
+                },
+            },
+            {
+                data: function (d) {
+                    return d.link.link_or_post_id;
                 },
             },
             {
@@ -91,14 +99,16 @@ $(document).ready(function () {
 async function reload() {
     let count = 0;
     let all = 0;
+    let user_id = $('#user_id').val();
     await $.ajax({
         type: "GET",
-        url: "/api/links/getAll",
+        url: `/api/user/links/getAll?user_id=${user_id}`,
         success: function (response) {
+            console.log(response.links);
             all = response.links.length;
             if (response.status == 0) {
                 response.links.forEach((e) => {
-                    if (e.type == 0) {
+                    if (e.link.type == 0) {
                         count++;
                     }
                 });

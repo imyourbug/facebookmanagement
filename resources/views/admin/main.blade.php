@@ -131,16 +131,45 @@
             </section>
         </div>
     </div>
+    <div class="modal fade" id="modalHistory" style="display: none;" aria-modal="true" role="dialog">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Lịch sử thay đổi</h4>
+                    <button type="button" class="closeModalHistory close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table style="width: 100%">
+                        <thead>
+                            <th style="display: none" class="display-comment">Bình luận trước</th>
+                            <th style="display: none" class="display-comment">Bình luận sau</th>
+                            <th style="display: none" class="display-comment">Chênh</th>
+                            <th style="display: none" class="display-data">Data trước</th>
+                            <th style="display: none" class="display-data">Data sau</th>
+                            <th style="display: none" class="display-data">Chênh</th>
+                            <th style="display: none" class="display-emotion">Cảm xúc trước</th>
+                            <th style="display: none" class="display-emotion">Cảm xúc sau</th>
+                            <th style="display: none" class="display-emotion">Chênh</th>
+                            <th>Thời gian</th>
+                        </thead>
+                        <tbody class="table-content">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button style="display:none" class="btn-history" data-target="#modalHistory" data-toggle="modal"></button>
     <input type="file" style="opacity: 0" id="file-restore-db" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-    {{-- <script src="/js/plugins/jquery/jquery.min.js"></script> --}}
     <!-- Bootstrap 4 -->
     <script src="/js/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <!-- AdminLTE App -->
     <script src="/js/dist/js/adminlte.min.js"></script>
     <!-- main.js-->
     {{-- <script src="/js/main.js"></script> --}}
-    {{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> --}}
     <div class="Toastify"></div>
     <script src="https://cdn.bootcss.com/toastr.js/latest/js/toastr.min.js"></script>
     {!! Toastr::message() !!}
@@ -149,6 +178,73 @@
     {{-- common --}}
     <script src="/js/common/index.js"></script>
     <script>
+        $(document).on('mouseenter', '.show-history', function() {
+            let link_or_post_id = $(this).data('link_or_post_id');
+            let type = $(this).data('type');
+            const allType = [
+                'comment',
+                'data',
+                'emotion'
+            ];
+            $.ajax({
+                type: "GET",
+                url: `/api/linkHistories/getAll?link_or_post_id=${link_or_post_id}`,
+                success: function(response) {
+                    if (response.status == 0) {
+                        $('.table-content').html('');
+                        allType.forEach(e => {
+                            $('.display-' + e).css('display', 'none');
+                        });
+                        $('.display-' + type).css('display', '');
+                        var html = '';
+                        response.histories.forEach(e => {
+                            switch (type) {
+                                case "comment":
+                                    html += `<tr>
+                                                <td>${e.comment_first}</td>
+                                                <td>${e.comment_second}</td>
+                                                <td>${e.comment_second - e.comment_first}</td>
+                                                <td>${e.created_at}</td>
+                                            </tr>`;
+                                    break;
+                                case "data":
+                                    html += `<tr>
+                                                <td>${e.data_first}</td>
+                                                <td>${e.data_second}</td>
+                                                <td>${e.data_second - e.data_first}</td>
+                                                <td>${e.created_at}</td>
+                                            </tr>`;
+                                    break;
+                                case "emotion":
+                                    html += `<tr>
+                                                <td>${e.emotion_first}</td>
+                                                <td>${e.emotion_second}</td>
+                                                <td>${e.emotion_second - e.emotion_first}</td>
+                                                <td>${e.created_at}</td>
+                                            </tr>`;
+                                    break;
+                            }
+                        });
+                        $('.table-content').html(html);
+                        $('.btn-history').click();
+                    } else {
+                        toastr.error(response.message, "Thông báo");
+                    }
+                },
+            });
+        });
+
+        // $(document).on('mouseleave', '.show-history', function() {
+        //     // closeModal("modalHistory");
+        //     $('.closeModalHistory').click();
+        // })
+
+        function closeModal(id) {
+            $("#" + id).css("display", "none");
+            $("body").removeClass("modal-open");
+            $(".modal-backdrop").remove();
+        }
+
         function closeModalChangePassword() {
             $("#modalChangePassword").css("display", "none");
             $("body").removeClass("modal-open");

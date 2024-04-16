@@ -114,6 +114,27 @@
                                 </li>
                             </ul>
                         </li>
+                        <li
+                            class="nav-item {{ in_array(request()->route()->getName(), ['user.reactions.index', 'user.reactions.create'])
+                                ? 'menu-is-opening menu-open'
+                                : '' }}">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fa-solid fa-face-smile"></i>
+                                <p>
+                                    Cảm xúc
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li
+                                    class="nav-item {{ request()->route()->getName() == 'user.reactions.index' ? 'option-open' : '' }}">
+                                    <a href="{{ route('user.reactions.index') }}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Danh sách cảm xúc</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
                         {{-- <li
                             class="nav-item {{ in_array(request()->route()->getName(), ['user.me']) ? 'menu-is-opening menu-open' : '' }}">
                             <a href="#" class="nav-link">
@@ -238,6 +259,27 @@
                                     <a href="{{ route('admin.comments.index') }}" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Danh sách bình luận</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li
+                            class="nav-item {{ in_array(request()->route()->getName(), ['admin.reactions.index', 'admin.reactions.create'])
+                                ? 'menu-is-opening menu-open'
+                                : '' }}">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fa-solid fa-face-smile"></i>
+                                <p>
+                                    Cảm xúc
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li
+                                    class="nav-item {{ request()->route()->getName() == 'admin.reactions.index' ? 'option-open' : '' }}">
+                                    <a href="{{ route('admin.reactions.index') }}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Danh sách cảm xúc</p>
                                     </a>
                                 </li>
                             </ul>

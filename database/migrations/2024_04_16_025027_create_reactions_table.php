@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('comments', function (Blueprint $table) {
+        Schema::create('reactions', function (Blueprint $table) {
             $table->id();
             $table->string('title')->default('');
             $table->string('uid')->default('');
             $table->string('phone')->default('');
-            $table->string('content')->default('');
+            $table->string('reaction')->default('');
             $table->string('note')->default('');
             $table->timestamps();
         });
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('comments');
+        Schema::dropIfExists('reactions');
     }
 };

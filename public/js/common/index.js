@@ -40,7 +40,6 @@ function getActive(active = "") {
 }
 
 $(document).on("click", ".btn-restore-db", function () {
-    console.log(123);
     $("#file-restore-db").click();
 });
 

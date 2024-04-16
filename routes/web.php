@@ -86,6 +86,14 @@ Route::group(['prefix' => 'user', 'namespace' => 'App\Http\Controllers\Users', '
         Route::get('/update/{id}', 'LinkScanController@show')->name('show');
         Route::post('/update', 'LinkScanController@update')->name('update');
     });
+
+    #reactions
+    Route::group(['prefix' => 'reactions', 'as' => 'reactions.'], function () {
+        Route::get('/', 'ReactionController@index')->name('index');
+        Route::post('/create', 'ReactionController@store')->name('store');
+        Route::get('/update/{id}', 'ReactionController@show')->name('show');
+        Route::post('/update', 'ReactionController@update')->name('update');
+    });
 });
 
 #admin
@@ -94,6 +102,14 @@ Route::group([
     'as' => 'admin.', 'middleware' => 'admin'
 ], function () {
     Route::get('/', 'AdminController@index')->name('index');
+
+    #reactions
+    Route::group(['prefix' => 'reactions', 'as' => 'reactions.'], function () {
+        Route::get('/', 'ReactionController@index')->name('index');
+        Route::post('/create', 'ReactionController@store')->name('store');
+        Route::get('/update/{id}', 'ReactionController@show')->name('show');
+        Route::post('/update', 'ReactionController@update')->name('update');
+    });
 
     #links
     Route::group(['prefix' => 'links', 'as' => 'links.'], function () {

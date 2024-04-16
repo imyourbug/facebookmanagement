@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Link;
 use App\Models\User;
 use App\Models\UserLink;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Throwable;
@@ -39,18 +40,43 @@ class LinkScanController extends Controller
                 'note' => 'nullable|string',
                 'link_or_post_id' => 'required|string',
             ]);
-            $data['type'] = GlobalConstant::TYPE_SCAN;
-            $user_id = $data['user_id'];
+            $userLinks = UserLink::with(['link', 'user'])
+                ->where('user_id', $data['user_id'])
+                ->whereHas('link', function ($q) use ($data) {
+                    $q->where('link_or_post_id', $data['link_or_post_id']);
+                })
+                ->get();
 
-            unset($data['user_id']);
+            if ($userLinks->count()) {
+                throw new Exception('Đã tồn tại link hoặc post ID');
+            }
+
+            $userLinks = UserLink::with(['link', 'user'])
+                ->where('user_id', $data['user_id'])
+                ->whereHas('link', function ($q) use ($data) {
+                    $q->where('is_scan', GlobalConstant::IS_ON);
+                })
+                ->get();
+
+            $data['is_scan'] = $userLinks->count() < (User::firstWhere('id', $data['user_id'])->limit ?? 0)
+                ? GlobalConstant::IS_ON : GlobalConstant::IS_OFF;
+            $data['type'] = GlobalConstant::TYPE_SCAN;
+
             DB::beginTransaction();
-            $link = Link::create($data);
+            $link = Link::firstOrCreate(
+                ['link_or_post_id' => $data['link_or_post_id']],
+                [
+                    'title' =>  $data['title'],
+                    'is_scan' => $data['is_scan'],
+                    'type' => $data['type'],
+                ]
+            );
             UserLink::create([
-                'user_id' => $user_id,
+                'user_id' => $data['user_id'],
                 'link_id' => $link->id
             ]);
-            DB::commit();
             Toastr::success('Thêm thành công', 'Thông báo');
+            DB::commit();
         } catch (Throwable $e) {
             DB::rollBack();
             Toastr::error($e->getMessage(), 'Thông báo');
@@ -91,8 +117,11 @@ class LinkScanController extends Controller
             ]);
         }
 
+        $user = User::firstWhere('id', $request->user_id);
+
         return view('admin.linkscan.list', [
-            'title' => 'Danh sách link quét',
+            'title' => 'Danh sách link quét - ' . $user->email ?? $user->name,
+            'user' => $user
         ]);
     }
 
