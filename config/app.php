@@ -70,8 +70,8 @@ return [
     |
     */
 
-    'timezone' => 'Asia/Jakarta',
-    // 'timezone' => 'Asia/Ho_Chi_Minh',
+    // 'timezone' => 'Asia/Jakarta',
+    'timezone' => 'Asia/Ho_Chi_Minh',
     // 'timezone' => 'UTC',
 
     /*

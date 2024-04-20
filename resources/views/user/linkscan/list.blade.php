@@ -15,26 +15,40 @@
 @endpush
 @section('content')
     <form action="{{ route('user.linkscans.store') }}" method="POST">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-lg-6 col-sm-12">
-                    <div class="form-group">
-                        <label for="menu">Tiêu đề <span class="required">(*)</span></label>
-                        <input type="text" class="form-control" name="title" value="{{ old('title') }}"
-                            placeholder="Nhập tiêu đề">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card direct-chat direct-chat-primary">
+                    <div class="card-header ui-sortable-handle header-color" style="cursor: move;">
+                        <h3 class="card-title text-bold">Thêm link quét</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
                     </div>
-                </div>
-                <div class="col-lg-6 col-sm-12">
-                    <div class="form-group">
-                        <label for="menu">Link hoặc PostID <span class="required">(*)</span></label>
-                        <input type="text" class="form-control" name="link_or_post_id"
-                            value="{{ old('link_or_post_id') }}" placeholder="Nhập link hoặc post ID">
+                    <div class="card-body" style="display: block;padding: 10px !important;">
+                        <div class="row">
+                            <div class="col-lg-6 col-sm-12">
+                                <div class="form-group">
+                                    <label for="menu">Tiêu đề <span class="required">(*)</span></label>
+                                    <input type="text" class="form-control" name="title" value="{{ old('title') }}"
+                                        placeholder="Nhập tiêu đề">
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-sm-12">
+                                <div class="form-group">
+                                    <label for="menu">Link hoặc PostID <span class="required">(*)</span></label>
+                                    <input type="text" class="form-control" name="link_or_post_id"
+                                        value="{{ old('link_or_post_id') }}" placeholder="Nhập link hoặc post ID">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-primary">Lưu</button>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="card-footer">
-            <button type="submit" class="btn btn-primary">Lưu</button>
         </div>
         @csrf
     </form>
@@ -56,17 +70,17 @@
                     <table id="table" class="table display nowrap dataTable dtr-inline collapsed">
                         <thead>
                             <tr>
-                                <th>Data cuối</th>
-                                <th>Ngày tạo</th>
-                                <th>Tiêu đề</th>
-                                <th>Nội dung</th>
-                                <th>Bình luận</th>
-                                <th>Data</th>
-                                <th>Cảm xúc</th>
-                                <th>Quét</th>
-                                <th>Note</th>
-                                <th>Link|PostID</th>
-                                <th>Thao tác</th>
+                                <th data-target="#modalFilter" data-toggle="modal">Data cuối</th>
+                                <th data-target="#modalFilter" data-toggle="modal">Ngày tạo</th>
+                                <th data-target="#modalFilter" data-toggle="modal">Link|PostID</th>
+                                <th data-target="#modalFilter" data-toggle="modal">Tiêu đề</th>
+                                <th data-target="#modalFilter" data-toggle="modal">Nội dung</th>
+                                <th data-target="#modalFilter" data-toggle="modal">Bình luận</th>
+                                <th data-target="#modalFilter" data-toggle="modal">Data</th>
+                                <th data-target="#modalFilter" data-toggle="modal">Cảm xúc</th>
+                                <th data-target="#modalFilter" data-toggle="modal">Quét</th>
+                                <th data-target="#modalFilter" data-toggle="modal">Note</th>
+                                <th data-target="#modalFilter" data-toggle="modal">Thao tác</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -77,4 +91,130 @@
         </div>
     </div>
     <input type="hidden" value="{{ Auth::id() }}" name="" id="user_id" />
+    <div class="modal fade" id="modalFilter" style="display: none;" aria-modal="true" role="dialog">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Lọc</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-6 col-sm-12">
+                            <div class="form-group">
+                                <label for="menu">Data cuối</label>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <input type="text" class="form-control" id="time_from" value=""
+                                            placeholder="Từ">
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <input type="text" class="form-control" id="time_to" value=""
+                                            placeholder="Đến">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-sm-12">
+                            <div class="form-group">
+                                <label for="menu">Ngày tạo </label>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <input type="date" class="form-control" id="from" value=""
+                                            placeholder="Từ">
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <input type="date" class="form-control" id="to" value=""
+                                            placeholder="Đến">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        {{-- <div class="col-lg-6 col-sm-12">
+                            <div class="form-group">
+                                <label for="menu">Tài khoản</label>
+                                <input type="text" class="form-control" id="user" value=""
+                                    placeholder="Tên tài khoản">
+                            </div>
+                        </div> --}}
+                        <div class="col-lg-6 col-sm-12">
+                            <div class="form-group">
+                                <label for="menu">Bình luận</label>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <input type="text" class="form-control" id="comment_from" value=""
+                                            placeholder="Từ">
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <input type="text" class="form-control" id="comment_to" value=""
+                                            placeholder="Đến">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-sm-12">
+                            <div class="form-group">
+                                <label for="menu">Data</label>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <input type="text" class="form-control" id="data_from" value=""
+                                            placeholder="Từ">
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <input type="text" class="form-control" id="data_to" value=""
+                                            placeholder="Đến">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-sm-12">
+                            <div class="form-group">
+                                <label for="menu">Cảm xúc</label>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <input type="text" class="form-control" id="reaction_from" value=""
+                                            placeholder="Từ">
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <input type="text" class="form-control" id="reaction_to" value=""
+                                            placeholder="Đến">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-sm-12">
+                            <div class="form-group">
+                                <label for="menu">Quét</label>
+                                <select class="form-control" id="is_scan">
+                                    <option value="">ALL</option>
+                                    <option value="0">OFF</option>
+                                    <option value="1">ON</option>
+                                    <option value="2">RESET</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        {{-- <div class="col-lg-6 col-sm-12">
+                            <div class="form-group">
+                                <label for="menu">Ghi chú</label>
+                                <input type="text" class="form-control" id="note" value=""
+                                    placeholder="Ghi chú">
+                            </div>
+                        </div> --}}
+                    </div>
+                    <input type="hidden" id="type" value="0">
+                    <button class="btn btn-rounded btn-warning btn-filter">Lọc</button>
+                    <button class="btn btn-rounded btn-success btn-refresh">Làm mới</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection

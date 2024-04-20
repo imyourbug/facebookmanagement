@@ -41,7 +41,15 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return `<span class="copy" data-value="${d.comment.uid}">${d.comment.uid}</span>`;
+                    return `<p class="show-uid tool-tip" data-id="${d.comment.id}" data-value="${d.comment.uid}" data-uid="${d.comment.uid}">${d.comment.uid}
+                    <div style="display:none;width: max-content;
+                                background-color: black;
+                                color: #fff;
+                                border-radius: 6px;
+                                padding: 5px 10px;
+                                position: absolute;
+                                z-index: 1;" class="tooltip-uid tooltip-uid-${d.comment.id}">
+                    </div></p>`;
                 },
             },
             {
@@ -101,12 +109,6 @@ async function reload() {
     });
 
 }
-
-$(document).on("click", ".copy", function () {
-    let value = $(this).data("value");
-    navigator.clipboard.writeText(value);
-    toastr.success("Đã sao chép", "Thông báo");
-});
 
 $(document).on("change", "#to", function () {
     if ($(this).val()) {

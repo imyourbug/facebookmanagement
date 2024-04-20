@@ -59,6 +59,7 @@
                             <tr>
                                 <th>Data cuối</th>
                                 <th>Ngày tạo</th>
+                                <th>Link|Post ID</th>
                                 <th>Tiêu đề</th>
                                 <th>Nội dung</th>
                                 <th>Bình luận</th>
@@ -66,7 +67,6 @@
                                 <th>Cảm xúc</th>
                                 <th>Quét</th>
                                 <th>Note</th>
-                                <th>Link|Post ID</th>
                                 <th>Thao tác</th>
                             </tr>
                         </thead>

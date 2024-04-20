@@ -19,6 +19,8 @@ class GlobalConstant
     public const STATUS_OK = 0;
     public const STATUS_ERROR = 1;
 
+    public const UTC_HOUR = 7;
+
     public const LINK_STATUS = [
         '0', '1', '2'
     ];

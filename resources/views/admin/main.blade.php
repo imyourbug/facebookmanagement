@@ -24,6 +24,8 @@
     <meta name="csrf-token" id="csrf-token" content="{{ csrf_token() }}">
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    {{--  --}}
+    {{-- <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css"> --}}
     <style>
         span.required {
             color: red;
@@ -100,6 +102,20 @@
             background-color: #28a745;
             color: white;
         }
+
+        .tool-tip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 1px dotted black;
+        }
+
+        .tool-tip:hover {
+            cursor: pointer;
+        }
+
+        .card-body {
+            overflow-x: clip !important;
+        }
     </style>
     @stack('styles')
 </head>
@@ -131,36 +147,6 @@
             </section>
         </div>
     </div>
-    <div class="modal fade" id="modalHistory" style="display: none;" aria-modal="true" role="dialog">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Lịch sử thay đổi</h4>
-                    <button type="button" class="closeModalHistory close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <table style="width: 100%">
-                        <thead>
-                            <th style="display: none" class="display-comment">Bình luận trước</th>
-                            <th style="display: none" class="display-comment">Bình luận sau</th>
-                            <th style="display: none" class="display-comment">Chênh</th>
-                            <th style="display: none" class="display-data">Data trước</th>
-                            <th style="display: none" class="display-data">Data sau</th>
-                            <th style="display: none" class="display-data">Chênh</th>
-                            <th style="display: none" class="display-emotion">Cảm xúc trước</th>
-                            <th style="display: none" class="display-emotion">Cảm xúc sau</th>
-                            <th style="display: none" class="display-emotion">Chênh</th>
-                            <th>Thời gian</th>
-                        </thead>
-                        <tbody class="table-content">
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
     <button style="display:none" class="btn-history" data-target="#modalHistory" data-toggle="modal"></button>
     <input type="file" style="opacity: 0" id="file-restore-db" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
@@ -177,8 +163,60 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     {{-- common --}}
     <script src="/js/common/index.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
     <script>
-        $(document).on('mouseenter', '.show-history', function() {
+        $(function() {
+            // $(document).tooltip();
+            $(' .card-body').css('overflow-x', '');
+        });
+        // show uid
+        $(document).on('mouseenter', '.show-uid', async function() {
+            let uid = $(this).data('uid');
+            let id = $(this).data('id');
+            $('.tooltip-uid-' + id).css('display', 'block');
+            $('.tooltip-uid-' + id).html(`UID: ${uid || 'Trống'}`);
+        });
+
+        $(document).on('click', '.show-uid', function() {
+            let uid = $(this).data('uid');
+            window.open("#", '_blank').focus();
+        });
+
+        $(document).on('mouseleave', '.show-uid', function() {
+            $('.tooltip-uid').html('');
+            $('.tooltip-uid').css('display', 'none');
+        })
+        // show content
+        $(document).on('mouseenter', '.show-content', async function() {
+            let content = $(this).data('content');
+            let link_or_post_id = $(this).data('link_or_post_id');
+            $('.tooltip-content-' + link_or_post_id).css('display', 'block');
+            $('.tooltip-content-' + link_or_post_id).html(`Nội dung: ${content || 'Trống'}`);
+        });
+
+        $(document).on('mouseleave', '.show-content', function() {
+            $('.tooltip-content').html('');
+            $('.tooltip-content').css('display', 'none');
+        })
+        // show title
+        $(document).on('click', '.show-title', function() {
+            let link_or_post_id = $(this).data('link_or_post_id');
+            let id = $(this).data('id');
+            window.open("#", '_blank').focus();
+        });
+        $(document).on('mouseenter', '.show-title', function() {
+            let link_or_post_id = $(this).data('link_or_post_id');
+            let id = $(this).data('id');
+            $('.tooltip-title-' + id).css('display', 'block');
+            $('.tooltip-title-' + id).html(`Link|PostID: ${link_or_post_id}`);
+        });
+
+        $(document).on('mouseleave', '.show-title', function() {
+            $('.tooltip-title').html('');
+            $('.tooltip-title').css('display', 'none');
+        })
+        // show
+        $(document).on('click', '.show-history', async function() {
             let link_or_post_id = $(this).data('link_or_post_id');
             let type = $(this).data('type');
             const allType = [
@@ -186,17 +224,13 @@
                 'data',
                 'emotion'
             ];
-            $.ajax({
+            var html = '';
+            var name = type === 'comment' ? 'Bình luận' : (type === 'data' ? 'Data' : 'Cảm xúc');
+            await $.ajax({
                 type: "GET",
                 url: `/api/linkHistories/getAll?link_or_post_id=${link_or_post_id}`,
                 success: function(response) {
                     if (response.status == 0) {
-                        $('.table-content').html('');
-                        allType.forEach(e => {
-                            $('.display-' + e).css('display', 'none');
-                        });
-                        $('.display-' + type).css('display', '');
-                        var html = '';
                         response.histories.forEach(e => {
                             switch (type) {
                                 case "comment":
@@ -225,19 +259,32 @@
                                     break;
                             }
                         });
-                        $('.table-content').html(html);
-                        $('.btn-history').click();
                     } else {
                         toastr.error(response.message, "Thông báo");
                     }
                 },
             });
+            $(`.tooltiptext-${type}-${link_or_post_id}`).css('display', 'block');
+            $(`.tooltiptext-${type}-${link_or_post_id}`).html(`
+                    <table style="width: 100%">
+                        <thead>
+                            <th style="" class="">${name} trước</th>
+                            <th style="" class="">${name} sau</th>
+                            <th style="" class="">Chênh</th>
+                            <th>Thời gian</th>
+                        </thead>
+                        <tbody class="table-content">
+                            ${html}
+                        </tbody>
+                    </table>`);
+
         });
 
-        // $(document).on('mouseleave', '.show-history', function() {
-        //     // closeModal("modalHistory");
-        //     $('.closeModalHistory').click();
-        // })
+        $(document).on('mouseleave', '.show-history', function() {
+            let type = $(this).data('type');
+            $('.tooltiptext-' + type).html('');
+            $('.tooltiptext-' + type).css('display', 'none');
+        })
 
         function closeModal(id) {
             $("#" + id).css("display", "none");

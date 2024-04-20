@@ -23,7 +23,7 @@
             @break
         @endswitch
         <!-- Sidebar user (optional) -->
-        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+        <div class="user-panel mt-3 d-flex">
             @switch(Auth::user()?->role)
                 @case(0)
                     <div class="image">
@@ -32,7 +32,7 @@
                     </div>
                 @break
             @endswitch
-            <div class="info">
+            <div class="info" style="text-align: center">
                 @switch(Auth::user()?->role)
                     @case(0)
                         <a href="{{ route('user.home') }}" class="d-block">{{ Auth::user()->name ?? Auth::user()->email }}</a>
@@ -42,6 +42,7 @@
                         <a href="{{ route('admin.index') }}" class="d-block">{{ Auth::user()?->email }}</a>
                     @break
                 @endswitch
+                <p style="color: white">Số ngày hết hạn: {{Auth::user()?->limit}}</p>
             </div>
         </div>
         <!-- Sidebar Menu -->

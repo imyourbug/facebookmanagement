@@ -57,10 +57,10 @@
                     </div>
                     <table id="table" class="table display nowrap dataTable dtr-inline collapsed">
                         <thead>
-                            <tr>
+                             <tr>
                                 <th>Data cuối</th>
                                 <th>Ngày tạo</th>
-                                {{-- <th>Tài khoản</th> --}}
+                                <th>Link|PostID</th>
                                 <th>Tiêu đề</th>
                                 <th>Nội dung</th>
                                 <th>Bình luận</th>

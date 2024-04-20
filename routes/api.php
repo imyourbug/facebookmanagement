@@ -59,6 +59,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
 
     #links
     Route::group(['prefix' => 'links', 'as' => 'links.'], function () {
+        Route::get('/', 'LinkController@index')->name('index');
         Route::get('/getByType', 'LinkController@getByType')->name('getByType');
         Route::get('/getAll', 'LinkController@getAll')->name('getAll');
         // Route::post('/create', 'LinkController@store')->name('store');

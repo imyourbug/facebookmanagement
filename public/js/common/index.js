@@ -62,3 +62,13 @@ $(document).on("change", "#file-restore-db", function () {
         },
     });
 });
+
+function getDateDiffInHours(date1, date2) {
+    // Convert dates to milliseconds since epoch
+    const timeDiffInMs = date2.getTime() - date1.getTime();
+
+    // Convert milliseconds to days (divide by 1000 milliseconds/second, 60 seconds/minute, 60 minutes/hour, 24 hours/day)
+    const dayDiff = timeDiffInMs / (1000 * 60 * 60);
+
+    return Math.floor(dayDiff); // Round down to whole days
+}

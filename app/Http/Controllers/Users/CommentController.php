@@ -68,6 +68,7 @@ class CommentController extends Controller
                 'comments.*.phone' => 'nullable|string',
                 'comments.*.content' => 'nullable|string',
                 'comments.*.note' => 'nullable|string',
+                'comments.*.comment_id' => 'nullable|string',
             ]);
             $data = array_map(function ($item) {
                 return [
@@ -99,6 +100,7 @@ class CommentController extends Controller
             'data' => 'nullable|numeric',
             'emotion' => 'nullable|numeric',
             'note' => 'nullable|string',
+            'comment_id' => 'nullable|string',
             'link_or_post_id' => 'required|string'
         ]);
         unset($data['id']);

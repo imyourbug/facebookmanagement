@@ -35,6 +35,7 @@
                                 <th>Data cuối</th>
                                 <th>Ngày tạo</th>
                                 <th>Tài khoản</th>
+                                <th>Link|PostID</th>
                                 <th>Tiêu đề</th>
                                 <th>Nội dung</th>
                                 <th>Bình luận</th>
@@ -42,7 +43,6 @@
                                 <th>Cảm xúc</th>
                                 <th>Delay</th>
                                 <th>Status</th>
-                                <th>Link|PostID</th>
                                 <th>Thao tác</th>
                             </tr>
                         </thead>

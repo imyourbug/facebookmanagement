@@ -15,6 +15,181 @@ use Toastr;
 
 class LinkController extends Controller
 {
+    public function getAll(Request $request)
+    {
+        $comment_from = $request->comment_from;
+        $comment_to = $request->comment_to;
+        $data_from = $request->data_from;
+        $data_to = $request->data_to;
+        $reaction_from = $request->reaction_from;
+        $reaction_to = $request->reaction_to;
+        $time_from = $request->time_from;
+        $time_to = $request->time_to;
+        $from = $request->from;
+        $to = $request->to;
+        $user_id = $request->user_id;
+        $user = $request->user;
+        $note = $request->note;
+        $link_id = $request->link_id;
+        $is_scan = $request->is_scan;
+        $type = (string)$request->type;
+
+        // DB::enableQueryLog();
+
+        $userLinks = UserLink::with(['link', 'user'])
+            ->when($user_id, function ($q) use ($user_id) {
+                return $q->where('user_id', $user_id);
+            })
+            ->when($link_id, function ($q) use ($link_id) {
+                return $q->where('link_id', $link_id);
+            })
+            // data
+            ->when($data_from, function ($q) use ($data_from, $data_to) {
+                return $q->when($data_to, function ($q) use ($data_from, $data_to) {
+                    return $q->whereHas('link', function ($q) use ($data_from, $data_to) {
+                        $q->whereRaw('(data_second - data_first) >= ?', $data_from)
+                            ->whereRaw('(data_second - data_first) <= ?', $data_to);
+                    });
+                }, function ($q) use ($data_from) {
+                    return $q->whereHas('link', function ($q) use ($data_from) {
+                        $q->whereRaw('(data_second - data_first) >= ?', $data_from);
+                    });
+                });
+            }, function ($q) use ($data_to) {
+                return $q->when($data_to, function ($q) use ($data_to) {
+                    return $q->whereHas('link', function ($q) use ($data_to) {
+                        $q->whereRaw('(data_second - data_first) <= ?', $data_to);
+                    });
+                });
+            })
+            // reaction
+            ->when($reaction_from, function ($q) use ($reaction_from, $reaction_to) {
+                return $q->when($reaction_to, function ($q) use ($reaction_from, $reaction_to) {
+                    return $q->whereHas('link', function ($q) use ($reaction_from, $reaction_to) {
+                        $q->whereRaw('(reaction_second - reaction_first) >= ?', $reaction_from)
+                            ->whereRaw('(reaction_second - reaction_first) <= ?', $reaction_to);
+                    });
+                }, function ($q) use ($reaction_from) {
+                    return $q->whereHas('link', function ($q) use ($reaction_from) {
+                        $q->whereRaw('(reaction_second - reaction_first) >= ?', $reaction_from);
+                    });
+                });
+            }, function ($q) use ($reaction_to) {
+                return $q->when($reaction_to, function ($q) use ($reaction_to) {
+                    return $q->whereHas('link', function ($q) use ($reaction_to) {
+                        $q->whereRaw('(reaction_second - reaction_first) <= ?', $reaction_to);
+                    });
+                });
+            })
+            // comment
+            ->when($comment_from, function ($q) use ($comment_from, $comment_to) {
+                return $q->when($comment_to, function ($q) use ($comment_from, $comment_to) {
+                    return $q->whereHas('link', function ($q) use ($comment_from, $comment_to) {
+                        $q->whereRaw('(comment_second - comment_first) >= ?', $comment_from)
+                            ->whereRaw('(comment_second - comment_first) <= ?', $comment_to);
+                    });
+                }, function ($q) use ($comment_from) {
+                    return $q->whereHas('link', function ($q) use ($comment_from) {
+                        $q->whereRaw('(comment_second - comment_first) >= ?', $comment_from);
+                    });
+                });
+            }, function ($q) use ($comment_to) {
+                return $q->when($comment_to, function ($q) use ($comment_to) {
+                    return $q->whereHas('link', function ($q) use ($comment_to) {
+                        $q->whereRaw('(comment_second - comment_first) <= ?', $comment_to);
+                    });
+                });
+            })
+            // time
+            ->when($time_from, function ($q) use ($time_from, $time_to) {
+                return $q->when($time_to, function ($q) use ($time_from, $time_to) {
+                    return $q->whereHas('link', function ($q) use ($time_from, $time_to) {
+                        $q->whereRaw('HOUR(CURRENT_TIMESTAMP()) - HOUR(updated_at) + (DATEDIFF(CURRENT_TIMESTAMP(), updated_at) * 24) >= ?', $time_from)
+                            ->whereRaw('HOUR(CURRENT_TIMESTAMP()) - HOUR(updated_at) + (DATEDIFF(CURRENT_TIMESTAMP(), updated_at) * 24) <= ?', $time_to);
+                    });
+                }, function ($q) use ($time_from) {
+                    return $q->whereHas('link', function ($q) use ($time_from) {
+                        $q->whereRaw('HOUR(CURRENT_TIMESTAMP()) - HOUR(updated_at) + (DATEDIFF(CURRENT_TIMESTAMP(), updated_at) * 24) >= ?', $time_from);
+                    });
+                });
+            }, function ($q) use ($time_to) {
+                return $q->when($time_to, function ($q) use ($time_to) {
+                    return $q->whereHas('link', function ($q) use ($time_to) {
+                        $q->whereRaw('HOUR(CURRENT_TIMESTAMP()) - HOUR(updated_at) + (DATEDIFF(CURRENT_TIMESTAMP(), updated_at) * 24) <= ?', $time_to);
+                    });
+                });
+            })
+            // date
+            ->when($from, function ($q) use ($from, $to) {
+                return $q->when($to, function ($q) use ($from, $to) {
+                    return $q->whereHas('link', function ($q) use ($from, $to) {
+                        $q->whereRaw('created_at >= ?', $from)
+                            ->whereRaw('created_at <= ?', $to . ' 23:59:59');
+                    });
+                }, function ($q) use ($from) {
+                    return $q->whereHas('link', function ($q) use ($from) {
+                        $q->whereRaw('created_at >= ?', $from);
+                    });
+                });
+            }, function ($q) use ($to) {
+                return $q->when($to, function ($q) use ($to) {
+                    return $q->whereHas('link', function ($q) use ($to) {
+                        $q->whereRaw('created_at <= ?', $to . ' 23:59:59');
+                    });
+                });
+            })
+            // is_scan
+            ->when(is_numeric($is_scan) || is_array($is_scan), function ($q) use ($is_scan) {
+                return $q->whereHas('link', function ($q) use ($is_scan) {
+                    switch (true) {
+                        case is_array($is_scan):
+                            $q->whereIn('is_scan', $is_scan);
+                            break;
+                        default:
+                            $q->where('is_scan', $is_scan);
+                            break;
+                    }
+                });
+            })
+            // user
+            ->when($user, function ($q) use ($user) {
+                return $q->whereHas('user', function ($q) use ($user) {
+                    $q->where('name', 'like', "%$user%")
+                        ->orWhere('email', 'like', "%$user%");
+                });
+            })
+            // note
+            ->when($note, function ($q) use ($note) {
+                return $q->whereHas('link', function ($q) use ($note) {
+                    $q->where('note', 'like', "%$note%");
+                });
+            })
+            // type
+            ->when(in_array($type, GlobalConstant::LINK_STATUS), function ($q) use ($type) {
+                return $q->whereHas('link', function ($q) use ($type) {
+                    $q->where('type', $type);
+                });
+            })
+            ->get()?->toArray() ?? [];
+
+            // dd(DB::getRawQueryLog());
+
+        $userLinks = array_map(function ($value) {
+            return [
+                ...$value,
+                'accounts' => UserLink::with(['link', 'user'])
+                    ->whereHas('link', function ($q) use ($value) {
+                        $q->where('link_or_post_id', $value['link']['link_or_post_id']);
+                    })->get()
+            ];
+        }, $userLinks);
+
+        return response()->json([
+            'status' => 0,
+            'links' => $userLinks
+        ]);
+    }
+
     public function updateLinkByLinkOrPostId(Request $request)
     {
         try {
@@ -35,9 +210,9 @@ class LinkController extends Controller
                 'links.*.note' => 'nullable|string',
                 'links.*.type' => 'nullable|in:0,1,2',
             ]);
-    
+
             DB::beginTransaction();
-    
+
             foreach ($data['links'] as $key => &$value) {
                 # code...
                 $link = Link::firstWhere('link_or_post_id', $value['link_or_post_id']);
@@ -52,7 +227,7 @@ class LinkController extends Controller
             }
             LinkHistory::insert($data['links']);
             DB::commit();
-        } catch( Throwable $e) {
+        } catch (Throwable $e) {
             DB::rollBack();
 
             return response()->json([
@@ -108,48 +283,6 @@ class LinkController extends Controller
         }
 
         return redirect()->back();
-    }
-
-    public function getAll(Request $request)
-    {
-        $user_id = $request->user_id;
-        $link_id = $request->link_id;
-        $is_scan = $request->is_scan;
-        $type = (string)$request->type;
-
-        $userLinks = UserLink::with(['link', 'user'])
-            ->when($user_id, function ($q) use ($user_id) {
-                return $q->where('user_id', $user_id);
-            })
-            ->when($link_id, function ($q) use ($link_id) {
-                return $q->where('link_id', $link_id);
-            })
-            ->when($is_scan, function ($q) use ($is_scan) {
-                return $q->whereHas('link', function ($q) use ($is_scan) {
-                    $q->whereIn('is_scan', $is_scan);
-                });
-            })
-            ->when(in_array($type, GlobalConstant::LINK_STATUS), function ($q) use ($type) {
-                return $q->whereHas('link', function ($q) use ($type) {
-                    $q->where('type', $type);
-                });
-            })
-            ->get()?->toArray() ?? [];
-
-        $userLinks = array_map(function ($value) {
-            return [
-                ...$value,
-                'accounts' => UserLink::with(['link', 'user'])
-                    ->whereHas('link', function ($q) use ($value) {
-                        $q->where('link_or_post_id', $value['link']['link_or_post_id']);
-                    })->get()
-            ];
-        }, $userLinks);
-
-        return response()->json([
-            'status' => 0,
-            'links' => $userLinks
-        ]);
     }
 
     public function store(Request $request)
@@ -275,5 +408,13 @@ class LinkController extends Controller
                 'message' => $e->getMessage()
             ]);
         }
+    }
+
+    public function index()
+    {
+        return response()->json([
+            'status' => 0,
+            'links' => Link::all()
+        ]);
     }
 }

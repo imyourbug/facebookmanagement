@@ -41,12 +41,28 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return d.reaction.title;
+                    return `<p class="show-title tool-tip" data-link_or_post_id="${d.link.link_or_post_id}" data-id="${d.reaction.id}">${d.reaction.title}
+                    <div style="display:none;width: max-content;
+                                background-color: black;
+                                color: #fff;
+                                border-radius: 6px;
+                                padding: 5px 10px;
+                                position: absolute;
+                                z-index: 1;" class="tooltip-title tooltip-title-${d.reaction.id}">
+                    </div></p>`;
                 },
             },
             {
                 data: function (d) {
-                    return `<span class="copy" data-value="${d.reaction.uid}">${d.reaction.uid}</span>`;
+                    return `<p class="show-uid tool-tip" data-id="${d.reaction.id}" data-value="${d.reaction.uid}" data-uid="${d.reaction.uid}">${d.reaction.uid}
+                    <div style="display:none;width: max-content;
+                                background-color: black;
+                                color: #fff;
+                                border-radius: 6px;
+                                padding: 5px 10px;
+                                position: absolute;
+                                z-index: 1;" class="tooltip-uid tooltip-uid-${d.reaction.id}">
+                    </div></p>`;
                 },
             },
             {

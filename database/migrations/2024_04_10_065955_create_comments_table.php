@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('phone')->default('');
             $table->string('content')->default('');
             $table->string('note')->default('');
+            $table->string('comment_id')->default('');
             $table->timestamps();
         });
     }

@@ -24,8 +24,9 @@ $(document).ready(function () {
         columns: [
             {
                 data: function (d) {
-                    return d.link.time;
-                },
+                    return new Date().getHours() -
+                        new Date(d.link.updated_at).getHours() + "h";
+                }
             },
             {
                 data: function (d) {
@@ -39,30 +40,70 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return d.link.title;
+                    return d.link.link_or_post_id;
                 },
             },
             {
                 data: function (d) {
-                    return `<img style="width: 50px;height:50px" src="${d.link.content}" alt="image" />`;
+                    return `<p class="show-title tool-tip" data-id="${d.link.id}" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.title}
+                    <div style="display:none;width: max-content;
+                                background-color: black;
+                                color: #fff;
+                                border-radius: 6px;
+                                padding: 5px 10px;
+                                position: absolute;
+                                z-index: 1;" class="tooltip-title tooltip-title-${d.link.id}">
+                    </div></p>`;
                 },
             },
             {
                 data: function (d) {
-                    return `<p class="show-history" data-type="comment" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.comment_second} | ${parseInt(d.link.comment_second)
-                        - parseInt(d.link.comment_first)}</p>`;
+                    return `<p class="show-content tool-tip" data-link_or_post_id="${d.link.link_or_post_id}" data-content="${d.link.content}">
+                    <img style="width: 50px;height:50px" src="${d.link.content}" alt="image" />
+                    <div style="display:none;width: max-content;
+                                background-color: black;
+                                color: #fff;
+                                border-radius: 6px;
+                                padding: 5px 10px;
+                                position: absolute;
+                                z-index: 1;" class="tooltip-content tooltip-content-${d.link.link_or_post_id}">
+                    </div></p>`;
                 },
             },
             {
                 data: function (d) {
-                    return `<p class="show-history" data-type="data" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.data_second} | ${parseInt(d.link.data_second)
-                        - parseInt(d.link.data_first)}</p>`;
+                    return `<p class="show-history tool-tip" data-type="comment" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.comment_second} | ${parseInt(d.link.comment_second)
+                        - parseInt(d.link.comment_first)}<div style="display:none;
+                                                                        width: max-content;
+                                                                        background-color: black;
+                                                                        color: #fff;
+                                                                        border-radius: 6px;
+                                                                        position: absolute;
+                                                                        z-index: 1;" class="tooltiptext tooltiptext-comment tooltiptext-comment-${d.link.link_or_post_id}"></div></p>`;
                 },
             },
             {
                 data: function (d) {
-                    return `<p class="show-history" data-type="emotion" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.emotion_second} | ${parseInt(d.link.emotion_second)
-                        - parseInt(d.link.emotion_first)}</p>`;
+                    return `<p class="show-history tool-tip" data-type="data" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.data_second} | ${parseInt(d.link.data_second)
+                        - parseInt(d.link.data_first)}<div style="display:none;
+                                                                        width: max-content;
+                                                                        background-color: black;
+                                                                        color: #fff;
+                                                                        border-radius: 6px;
+                                                                        position: absolute;
+                                                                        z-index: 1;" class="tooltiptext tooltiptext-data tooltiptext-data-${d.link.link_or_post_id}"></div></p>`;
+                },
+            },
+            {
+                data: function (d) {
+                    return `<p class="show-history tool-tip" data-type="emotion" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.emotion_second} | ${parseInt(d.link.emotion_second)
+                        - parseInt(d.link.emotion_first)}<div style="display:none;
+                                                                        width: max-content;
+                                                                        background-color: black;
+                                                                        color: #fff;
+                                                                        border-radius: 6px;
+                                                                        position: absolute;
+                                                                        z-index: 1;" class="tooltiptext tooltiptext-emotion tooltiptext-emotion-${d.link.link_or_post_id}"></div></p>`;
                 },
             },
             {
@@ -78,11 +119,6 @@ $(document).ready(function () {
                         : `<button class="btn btn-danger btn-sm  btn-status" data-link_id="${d.link.id}" data-status="0">
                                                 Stop
                                             </button>`;
-                },
-            },
-            {
-                data: function (d) {
-                    return d.link.link_or_post_id;
                 },
             },
             {
