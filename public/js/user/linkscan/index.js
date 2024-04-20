@@ -1,4 +1,6 @@
 var dataTable = null;
+var allRecord = [];
+var tempAllRecord = [];
 $(document).ready(function () {
     reload();
 
@@ -30,6 +32,7 @@ $(document).ready(function () {
             {
                 data: function (d) {
                     return d.link.created_at;
+                    return d.link.updated_at;
                 },
             },
             {
@@ -148,6 +151,8 @@ var searchParams = new Map([
     ["type", ""],
 ]);
 
+var isFiltering = [];
+
 function getQueryUrlWithParams() {
     let query = `user_id=${$('#user_id').val()}`;
     Array.from(searchParams).forEach(([key, values], index) => {
@@ -157,26 +162,67 @@ function getQueryUrlWithParams() {
     return query;
 }
 
-$(document).on("click", ".btn-filter", function () {
+$(document).on("click", ".btn-filter", async function () {
+    isFiltering = [];
     Array.from(searchParams).forEach(([key, values], index) => {
         searchParams.set(key, String($('#' + key).val()).length ? $('#' + key).val() : '');
+        if ($('#' + key).val() && $('#' + key).attr('data-name')) {
+            isFiltering.push($('#' + key).attr('data-name'));
+        }
     });
+    // display filtering
+    displayFiltering();
+
+    // reload
+    // dataTable.clear().rows.add(tempAllRecord).draw();
     dataTable.ajax
         .url("/api/links/getAll?" + getQueryUrlWithParams())
         .load();
+
+    //
+    await $.ajax({
+        type: "GET",
+        url: `/api/links/getAll?${getQueryUrlWithParams()}`,
+        success: function (response) {
+            if (response.status == 0) {
+                tempAllRecord = response.links;
+            }
+        }
+    });
 });
 
 $(document).on("click", ".btn-refresh", function () {
+    tempAllRecord = allRecord;
     // Array.from(searchParams).forEach(([key, values], index) => {
     //     if (key != 'type') {
     //         $('#' + key).val('');
     //     }
     // });
 
+    // display filtering
+    isFiltering = [];
+    displayFiltering();
+
+    // reload table
     dataTable.ajax
         .url(`/api/links/getAll?user_id=${$('#user_id').val()}&type=0`)
         .load();
+
+    // reload count and record
+    reload();
 });
+
+function displayFiltering() {
+    isFiltering = isFiltering.filter(function (item, pos, self) {
+        return self.indexOf(item) == pos;
+    });
+    // isFiltering.forEach((e) => {
+    //     console.log(e);
+    //     html += `<button class="btn btn-warning">${e}</button>`;
+    // });
+    $('.filtering').text(`Lọc theo: ${isFiltering.join(',')}`);
+
+}
 
 async function reload() {
     let count = 0;
@@ -192,6 +238,7 @@ async function reload() {
                 response.links.forEach((e) => {
                     if (e.link.type == 0) {
                         count++;
+                        allRecord.push(e);
                     }
                 });
             }
@@ -199,6 +246,7 @@ async function reload() {
     });
 
     $('.count-link').text(`Tổng số link quét: ${count}/${all}`);
+    tempAllRecord = allRecord;
 }
 
 $(document).on("click", ".btn-scan", function () {
@@ -247,6 +295,68 @@ $(document).on("click", ".btn-follow", function () {
                 }
             },
         });
+    }
+});
+
+$(document).on("click", ".btn-follow-multiple", function () {
+    if (confirm("Bạn có muốn theo dõi các link đang hiển thị?")) {
+        if (tempAllRecord.length) {
+            let link_or_post_id = [];
+            tempAllRecord.forEach((e) => {
+                link_or_post_id.push(e.link.link_or_post_id);
+            });
+            $.ajax({
+                type: "POST",
+                url: `/api/links/updateIsScanByLinkOrPostId`,
+                data: {
+                    link_or_post_id,
+                    type: 1,
+                },
+                success: function (response) {
+                    if (response.status == 0) {
+                        toastr.success("Theo dõi thành công");
+                        reload();
+                        dataTable.ajax.reload();
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+            });
+        } else {
+            toastr.error('Link trống');
+        }
+    }
+});
+
+
+$(document).on("click", ".btn-scan-multiple", function () {
+    if (confirm(`Bạn có muốn ${text} quét các link đang hiển thị?`)) {
+        if (tempAllRecord.length) {
+            let is_scan = $(this).data("is_scan");
+            let text = is_scan == 0 ? 'tắt' : (is_scan == 1 ? 'mở' : 'làm mới');
+            let link_or_post_id = [];
+            tempAllRecord.forEach((e) => {
+                link_or_post_id.push(e.link.link_or_post_id);
+            });
+            $.ajax({
+                type: "POST",
+                url: `/api/links/updateIsScanByLinkOrPostId`,
+                data: {
+                    link_or_post_id,
+                    is_scan,
+                },
+                success: function (response) {
+                    if (response.status == 0) {
+                        toastr.success("Cập nhật thành công");
+                        dataTable.ajax.reload();
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+            });
+        } else {
+            toastr.error('Link trống');
+        }
     }
 });
 

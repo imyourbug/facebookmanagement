@@ -65,7 +65,16 @@
                 </div>
                 <div class="card-body" style="display: block;padding: 10px !important;">
                     <div class="form-group col-lg-6">
-                        <label class="count-link">Tổng số link quét: </label>
+                        <label class="count-link">Tổng số link quét: </label><br>
+                        <label class="filtering">Lọc theo: Không</label>
+                        {{-- <div class="filtering">
+                        </div> --}}
+                    </div>
+                    <div class="form-group col-lg-6">
+                        <button class="btn btn-warning btn-follow-multiple">Theo dõi</button>
+                        <button data-is_scan="0" class="btn btn-danger btn-scan-multiple">OFF</button>
+                        <button data-is_scan="1" class="btn btn-success btn-scan-multiple">ON</button>
+                        <button data-is_scan="2" class="btn btn-primary btn-scan-multiple">RESET</button>
                     </div>
                     <table id="table" class="table display nowrap dataTable dtr-inline collapsed">
                         <thead>
@@ -107,11 +116,11 @@
                                 <label for="menu">Data cuối</label>
                                 <div class="row">
                                     <div class="col-lg-6">
-                                        <input type="text" class="form-control" id="time_from" value=""
+                                        <input type="text" class="form-control" data-name="Data cuối" id="time_from" value=""
                                             placeholder="Từ">
                                     </div>
                                     <div class="col-lg-6">
-                                        <input type="text" class="form-control" id="time_to" value=""
+                                        <input type="text" class="form-control" data-name="Data cuối" id="time_to" value=""
                                             placeholder="Đến">
                                     </div>
                                 </div>
@@ -122,11 +131,11 @@
                                 <label for="menu">Ngày tạo </label>
                                 <div class="row">
                                     <div class="col-lg-6">
-                                        <input type="date" class="form-control" id="from" value=""
+                                        <input type="date" class="form-control" data-name="Ngày tạo" id="from" value=""
                                             placeholder="Từ">
                                     </div>
                                     <div class="col-lg-6">
-                                        <input type="date" class="form-control" id="to" value=""
+                                        <input type="date" class="form-control" data-name="Ngày tạo" id="to" value=""
                                             placeholder="Đến">
                                     </div>
                                 </div>
@@ -146,11 +155,11 @@
                                 <label for="menu">Bình luận</label>
                                 <div class="row">
                                     <div class="col-lg-6">
-                                        <input type="text" class="form-control" id="comment_from" value=""
+                                        <input type="text" class="form-control" data-name="Bình luận" id="comment_from" value=""
                                             placeholder="Từ">
                                     </div>
                                     <div class="col-lg-6">
-                                        <input type="text" class="form-control" id="comment_to" value=""
+                                        <input type="text" class="form-control" data-name="Bình luận" id="comment_to" value=""
                                             placeholder="Đến">
                                     </div>
                                 </div>
@@ -161,11 +170,11 @@
                                 <label for="menu">Data</label>
                                 <div class="row">
                                     <div class="col-lg-6">
-                                        <input type="text" class="form-control" id="data_from" value=""
+                                        <input type="text" data-name="Data" class="form-control" id="data_from" value=""
                                             placeholder="Từ">
                                     </div>
                                     <div class="col-lg-6">
-                                        <input type="text" class="form-control" id="data_to" value=""
+                                        <input type="text" data-name="Data" class="form-control" id="data_to" value=""
                                             placeholder="Đến">
                                     </div>
                                 </div>
@@ -178,11 +187,11 @@
                                 <label for="menu">Cảm xúc</label>
                                 <div class="row">
                                     <div class="col-lg-6">
-                                        <input type="text" class="form-control" id="reaction_from" value=""
+                                        <input data-name="Cảm xúc" type="text" class="form-control" id="reaction_from" value=""
                                             placeholder="Từ">
                                     </div>
                                     <div class="col-lg-6">
-                                        <input type="text" class="form-control" id="reaction_to" value=""
+                                        <input data-name="Cảm xúc" type="text" class="form-control" id="reaction_to" value=""
                                             placeholder="Đến">
                                     </div>
                                 </div>
@@ -191,7 +200,7 @@
                         <div class="col-lg-6 col-sm-12">
                             <div class="form-group">
                                 <label for="menu">Quét</label>
-                                <select class="form-control" id="is_scan">
+                                <select data-name="Trạng thái quét" class="form-control" id="is_scan">
                                     <option value="">ALL</option>
                                     <option value="0">OFF</option>
                                     <option value="1">ON</option>
