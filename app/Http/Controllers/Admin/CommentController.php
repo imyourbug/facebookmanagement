@@ -79,6 +79,10 @@ class CommentController extends Controller
                 if (!$link) {
                     throw new Exception('link_or_post_id không tồn tại');
                 }
+                $comment = Comment::firstWhere('comment_id', $data['comment_id']);
+                if ($comment) {
+                    throw new Exception('comment_id đã tồn tại');
+                }
                 unset($data['link_or_post_id']);
                 $comment = Comment::create($data);
                 LinkComment::create([
