@@ -63,7 +63,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::delete('/{id}/destroy', 'CommentController@destroy')->name('destroy');
         Route::post('/create', 'CommentController@store')->name('store');
         Route::get('/getAll', 'CommentController@getAll')->name('getAll');
-        Route::post('/deleteAll', 'LinkController@deleteAll')->name('deleteAll');
+        Route::post('/deleteAll', 'CommentController@deleteAll')->name('deleteAll');
     });
 
     #links

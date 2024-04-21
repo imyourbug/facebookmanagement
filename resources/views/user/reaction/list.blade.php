@@ -27,18 +27,17 @@
                 </div>
                 <div class="card-body" style="display: block;padding: 10px !important;">
                     <div class="form-group col-lg-6">
-                        <label class="count-reaction">Tổng số cảm xúc: 0</label>
+                        <label class="count-reaction">Tổng số cảm xúc: 0</label><br>
+                        <label class="filtering">Lọc theo: Không</label>
                     </div>
                     <div class="form-group col-lg-6">
-                        <label>Thời gian:</label>
-                        <div class="input-group">
-                            <input type="date" class="form-control float-right" id="from">
-                            <input type="date" class="form-control float-right" id="to">
-                        </div>
+                        <button disabled class="btn-control btn btn-danger btn-delete-multiple">Xóa</button>
+                        <button data-target="#modalFilter" data-toggle="modal" class="btn btn-primary btn-choose-filter">Chọn</button>
                     </div>
                     <table id="table" class="table display nowrap dataTable dtr-inline collapsed">
                         <thead>
                             <tr>
+                                <th><input class="btn-select-all" type="checkbox" /></th>
                                 <th>Thời gian</th>
                                 <th>Tên bài</th>
                                 <th>UID</th>
@@ -56,4 +55,70 @@
         </div>
     </div>
     <input type="hidden" value="{{ Auth::id() }}" id="user_id" />
+    <div class="modal fade" id="modalFilter" style="display: none;" aria-modal="true" role="dialog">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Lọc</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                         <div class="col-lg-6 col-sm-12">
+                            <div class="form-group">
+                                <label for="menu">UID</label>
+                                <input type="text" data-name="UID" class="form-control" id="uid" value=""
+                                    placeholder="UID">
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-sm-12">
+                            <div class="form-group">
+                                <label for="menu">Ngày tạo </label>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <input type="date" class="form-control" data-name="Ngày tạo" id="from" value=""
+                                            placeholder="Từ">
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <input type="date" class="form-control" data-name="Ngày tạo" id="to" value=""
+                                            placeholder="Đến">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-sm-12">
+                            <div class="form-group">
+                                <label for="menu">SĐT</label>
+                                <input type="text" data-name="SĐT" class="form-control" id="phone" value=""
+                                    placeholder="SĐT">
+                            </div>
+                        </div><div class="col-lg-6 col-sm-12">
+                            <div class="form-group">
+                                <label for="menu">Cảm xúc</label>
+                                <input type="text" data-name="Cảm xúc" class="form-control" id="reaction" value=""
+                                    placeholder="Cảm xúc">
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-sm-12">
+                            <div class="form-group">
+                                <label for="menu">Ghi chú</label>
+                                <input type="text" data-name="Ghi chú" class="form-control" id="note" value=""
+                                    placeholder="Ghi chú">
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-rounded btn-warning btn-filter">Chọn</button>
+                    <button class="btn btn-rounded btn-success btn-refresh">Làm mới</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection

@@ -26,7 +26,7 @@ $(document).ready(function () {
             top2Start: 'pageLength',
         },
         ajax: {
-            url: `/api/user/comments/getAll?user_id=${$('#user_id').val()}`,
+            url: `/api/comments/getAll?user_id=${$('#user_id').val()}`,
             dataSrc: "comments",
         },
         columns: [
@@ -90,6 +90,7 @@ var searchParams = new Map([
     ["content", ""],
     ["phone", ""],
     ["note", ""],
+    ["uid", ""],
 ]);
 
 var isFiltering = [];
@@ -227,7 +228,7 @@ $(document).on("click", ".btn-delete", function () {
 async function reload() {
     await $.ajax({
         type: "GET",
-        url: `/api/user/comments/getAll?user_id=${$('#user_id').val()}`,
+        url: `/api/comments/getAll?user_id=${$('#user_id').val()}`,
         success: function (response) {
             if (response.status == 0) {
                 $('.count-comment').text(`Tổng số bình luận: ${response.comments.length}`);
@@ -238,7 +239,6 @@ async function reload() {
     //
     tempAllRecord = [];
     reloadAll();
-
 }
 
 $(document).on("click", ".btn-delete-multiple", function () {
