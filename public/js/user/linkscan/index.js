@@ -5,6 +5,10 @@ $(document).ready(function () {
     reload();
 
     dataTable = $("#table").DataTable({
+        lengthMenu: [
+            [100, 250, 500],
+            [100, 250, 500]
+        ],
         layout: {
             topStart: {
                 buttons: [
@@ -18,12 +22,18 @@ $(document).ready(function () {
                     "colvis",
                 ],
             },
+            top2Start: 'pageLength',
         },
         ajax: {
             url: `/api/links/getAll?user_id=${$('#user_id').val()}&type=0`,
             dataSrc: "links",
         },
         columns: [
+            {
+                data: function (d) {
+                    return `<input class="btn-select" type="checkbox" data-id="${d.link.id}" data-link_or_post_id="${d.link.link_or_post_id}" />`;
+                }
+            },
             {
                 data: function (d) {
                     return getDateDiffInHours(new Date(d.link.updated_at), new Date()) + "h";
@@ -33,11 +43,6 @@ $(document).ready(function () {
                 data: function (d) {
                     return d.link.created_at;
                     return d.link.updated_at;
-                },
-            },
-            {
-                data: function (d) {
-                    return d.link.link_or_post_id;
                 },
             },
             {
@@ -145,9 +150,9 @@ var searchParams = new Map([
     ["reaction_to", ""],
     ["from", ""],
     ["to", ""],
-    // ["user", ""],
-    // ["note", ""],
-    ["is_scan", ""],
+    ["content", ""],
+    ["title", ""],
+    ["link_or_post_id", ""],
     ["type", ""],
 ]);
 
@@ -161,6 +166,46 @@ function getQueryUrlWithParams() {
 
     return query;
 }
+
+function reloadAll() {
+    // enable or disable button
+    $('.btn-control').prop('disabled', tempAllRecord.length ? false : true);
+
+}
+
+$(document).on("click", ".btn-select-all", function () {
+    tempAllRecord = [];
+    if ($(this).is(':checked')) {
+        $('.btn-select').each(function () {
+            if ($(this).is(':checked')) {
+                $(this).prop('checked', false);
+            } else {
+                $(this).prop('checked', true);
+                tempAllRecord.push($(this).data('id'));
+            }
+        });
+    } else {
+        $('.btn-select').each(function () {
+            $(this).prop('checked', false);
+        });
+    }
+    reloadAll();
+    console.log(tempAllRecord);
+});
+
+$(document).on("click", ".btn-select", async function () {
+    let id = $(this).data("id");
+    let link_or_post_id = $(this).data("link_or_post_id");
+    if ($(this).is(':checked')) {
+        if (!tempAllRecord.includes(id)) {
+            tempAllRecord.push(id);
+        }
+    } else {
+        tempAllRecord = tempAllRecord.filter((e) => e != id);
+    }
+    console.log(tempAllRecord);
+    reloadAll();
+});
 
 $(document).on("click", ".btn-filter", async function () {
     isFiltering = [];
@@ -192,7 +237,6 @@ $(document).on("click", ".btn-filter", async function () {
 });
 
 $(document).on("click", ".btn-refresh", function () {
-    tempAllRecord = allRecord;
     // Array.from(searchParams).forEach(([key, values], index) => {
     //     if (key != 'type') {
     //         $('#' + key).val('');
@@ -210,6 +254,8 @@ $(document).on("click", ".btn-refresh", function () {
 
     // reload count and record
     reload();
+    // reload all
+    reloadAll();
 });
 
 function displayFiltering() {
@@ -235,10 +281,10 @@ async function reload() {
         success: function (response) {
             all = response.links.length;
             if (response.status == 0) {
+                allRecord = response.links;
                 response.links.forEach((e) => {
                     if (e.link.type == 0) {
                         count++;
-                        allRecord.push(e);
                     }
                 });
             }
@@ -246,7 +292,9 @@ async function reload() {
     });
 
     $('.count-link').text(`Tổng số link quét: ${count}/${all}`);
-    tempAllRecord = allRecord;
+    //
+    tempAllRecord = [];
+    reloadAll();
 }
 
 $(document).on("click", ".btn-scan", function () {
@@ -267,6 +315,8 @@ $(document).on("click", ".btn-scan", function () {
                 if (response.status == 0) {
                     toastr.success("Cập nhật thành công");
                     dataTable.ajax.reload();
+                    tempAllRecord = [];
+                    reloadAll();
                 } else {
                     toastr.error(response.message);
                 }
@@ -301,15 +351,11 @@ $(document).on("click", ".btn-follow", function () {
 $(document).on("click", ".btn-follow-multiple", function () {
     if (confirm("Bạn có muốn theo dõi các link đang hiển thị?")) {
         if (tempAllRecord.length) {
-            let link_or_post_id = [];
-            tempAllRecord.forEach((e) => {
-                link_or_post_id.push(e.link.link_or_post_id);
-            });
             $.ajax({
                 type: "POST",
-                url: `/api/links/updateIsScanByLinkOrPostId`,
+                url: `/api/links/updateLinkByLinkId`,
                 data: {
-                    link_or_post_id,
+                    ids: tempAllRecord,
                     type: 1,
                 },
                 success: function (response) {
@@ -330,24 +376,45 @@ $(document).on("click", ".btn-follow-multiple", function () {
 
 
 $(document).on("click", ".btn-scan-multiple", function () {
+    let is_scan = $(this).data("is_scan");
+    let text = is_scan == 0 ? 'tắt' : (is_scan == 1 ? 'mở' : 'làm mới');
     if (confirm(`Bạn có muốn ${text} quét các link đang hiển thị?`)) {
         if (tempAllRecord.length) {
-            let is_scan = $(this).data("is_scan");
-            let text = is_scan == 0 ? 'tắt' : (is_scan == 1 ? 'mở' : 'làm mới');
-            let link_or_post_id = [];
-            tempAllRecord.forEach((e) => {
-                link_or_post_id.push(e.link.link_or_post_id);
-            });
             $.ajax({
                 type: "POST",
-                url: `/api/links/updateIsScanByLinkOrPostId`,
+                url: `/api/links/updateLinkByLinkId`,
                 data: {
-                    link_or_post_id,
+                    ids: tempAllRecord,
                     is_scan,
                 },
                 success: function (response) {
                     if (response.status == 0) {
                         toastr.success("Cập nhật thành công");
+                        dataTable.ajax.reload();
+                        tempAllRecord = [];
+                        reloadAll();
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+            });
+        } else {
+            toastr.error('Link trống');
+        }
+    }
+});
+
+$(document).on("click", ".btn-delete-multiple", function () {
+    if (confirm("Bạn có muốn xóa các link đang hiển thị?")) {
+        if (tempAllRecord.length) {
+            $.ajax({
+                type: "POST",
+                url: `/api/links/deleteAll`,
+                data: { ids: tempAllRecord },
+                success: function (response) {
+                    if (response.status == 0) {
+                        toastr.success("Xóa thành công");
+                        reload();
                         dataTable.ajax.reload();
                     } else {
                         toastr.error(response.message);

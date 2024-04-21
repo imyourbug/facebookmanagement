@@ -33,12 +33,33 @@ class LinkController extends Controller
         $link_id = $request->link_id;
         $is_scan = $request->is_scan;
         $type = (string)$request->type;
+        $link_or_post_id = $request->link_or_post_id;
+        $title = $request->title;
+        $content = $request->content;
 
         $query = '(HOUR(CURRENT_TIMESTAMP()) * 60 + MINUTE(CURRENT_TIMESTAMP()) - HOUR(updated_at) * 60 - MINUTE(updated_at))/60 + DATEDIFF(CURRENT_TIMESTAMP(), updated_at) * 24';
 
         // DB::enableQueryLog();
 
         $userLinks = UserLink::with(['link', 'user'])
+            // title
+            ->when($title, function ($q) use ($title) {
+                return $q->whereHas('link', function ($q) use ($title) {
+                    $q->where('title', 'like', "%$title%");
+                });
+            })
+            // link_or_post_id
+            ->when($link_or_post_id, function ($q) use ($link_or_post_id) {
+                return $q->whereHas('link', function ($q) use ($link_or_post_id) {
+                    $q->where('link_or_post_id', 'like', "%$link_or_post_id%");
+                });
+            })
+            // content
+            ->when($content, function ($q) use ($content) {
+                return $q->whereHas('link', function ($q) use ($content) {
+                    $q->where('content', 'like', "%$content%");
+                });
+            })
             ->when($user_id, function ($q) use ($user_id) {
                 return $q->where('user_id', $user_id);
             })
@@ -192,6 +213,52 @@ class LinkController extends Controller
         ]);
     }
 
+    public function updateMultipleLinkByLinkOrPostId(Request $request)
+    {
+        try {
+            $data = $request->validate([
+                'links' => 'required|array',
+                'links.*.link_or_post_id' => 'required|string',
+                'links.*.title' => 'nullable|string',
+                'links.*.time' => 'nullable|string',
+                'links.*.content' => 'nullable|string',
+                'links.*.comment_first' => 'nullable|string',
+                'links.*.comment_second' => 'nullable|string',
+                'links.*.data_first' => 'nullable|string',
+                'links.*.data_second' => 'nullable|string',
+                'links.*.emotion_first' => 'nullable|string',
+                'links.*.emotion_second' => 'nullable|string',
+                'links.*.is_scan' => 'nullable|in:0,1,2',
+                'links.*.status' => 'nullable|in:0,1',
+                'links.*.note' => 'nullable|string',
+                'links.*.end_cursor' => 'nullable|string',
+                'links.*.type' => 'nullable|in:0,1,2',
+            ]);
+
+            DB::beginTransaction();
+
+            foreach ($data['links'] as $value) {
+                # code...
+                $link = Link::firstWhere('link_or_post_id', $value['link_or_post_id']);
+                if (!$link) {
+                    throw new Exception('link_or_post_id không tồn tại');
+                }
+                $link->update($value);
+            }
+            DB::commit();
+        } catch (Throwable $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => 1,
+                'message' => $e->getMessage()
+            ]);
+        }
+        return response()->json([
+            'status' => 0,
+        ]);
+    }
+
     public function updateLinkByLinkOrPostId(Request $request)
     {
         try {
@@ -210,6 +277,7 @@ class LinkController extends Controller
                 'links.*.is_scan' => 'nullable|in:0,1,2',
                 'links.*.status' => 'nullable|in:0,1',
                 'links.*.note' => 'nullable|string',
+                'links.*.end_cursor' => 'nullable|string',
                 'links.*.type' => 'nullable|in:0,1,2',
             ]);
 
@@ -255,7 +323,7 @@ class LinkController extends Controller
         try {
             $data = $request->validate([
                 'user_id' => 'required|string',
-                'title' => 'required|string',
+                'title' => 'nullable|string',
                 'time' => 'nullable|string',
                 'content' => 'nullable|string',
                 'comment_first' => 'nullable|string',
@@ -345,6 +413,7 @@ class LinkController extends Controller
                 'is_scan' => 'nullable|in:0,1,2',
                 'status' => 'nullable|in:0,1',
                 'note' => 'nullable|string',
+                'end_cursor' => 'nullable|string',
                 'link_or_post_id' => 'nullable|string',
                 'type' => 'nullable|in:0,1,2',
             ]);
@@ -366,6 +435,7 @@ class LinkController extends Controller
     public function updateIsScanByLinkOrPostId(Request $request)
     {
         $data = $request->validate([
+            'link_or_post_id' => 'required|array',
             'title' => 'nullable|string',
             'time' => 'nullable|string',
             'content' => 'nullable|string',
@@ -378,7 +448,7 @@ class LinkController extends Controller
             'is_scan' => 'nullable|in:0,1,2',
             'status' => 'nullable|in:0,1',
             'note' => 'nullable|string',
-            'link_or_post_id' => 'required|array',
+            'end_cursor' => 'nullable|string',
             'type' => 'nullable|in:0,1,2',
         ]);
 
@@ -387,6 +457,38 @@ class LinkController extends Controller
             throw new Exception('link_or_post_id không tồn tại');
         }
         unset($data['link_or_post_id']);
+        $links->update($data);
+
+        return response()->json([
+            'status' => 0,
+        ]);
+    }
+
+    public function updateLinkByLinkId(Request $request)
+    {
+        $data = $request->validate([
+            'ids' => 'required|array',
+            'title' => 'nullable|string',
+            'time' => 'nullable|string',
+            'content' => 'nullable|string',
+            'comment_first' => 'nullable|string',
+            'comment_second' => 'nullable|string',
+            'data_first' => 'nullable|string',
+            'data_second' => 'nullable|string',
+            'emotion_first' => 'nullable|string',
+            'emotion_second' => 'nullable|string',
+            'is_scan' => 'nullable|in:0,1,2',
+            'status' => 'nullable|in:0,1',
+            'note' => 'nullable|string',
+            'end_cursor' => 'nullable|string',
+            'type' => 'nullable|in:0,1,2',
+        ]);
+
+        $links = Link::whereIn('id', $data['ids']);
+        if ($links->count() === 0) {
+            throw new Exception('Link không tồn tại');
+        }
+        unset($data['ids']);
         $links->update($data);
 
         return response()->json([
@@ -404,6 +506,26 @@ class LinkController extends Controller
                 'status' => 0,
             ]);
         } catch (Throwable $e) {
+
+            return response()->json([
+                'status' => 1,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function deleteAll(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            Link::whereIn('id', $request->ids)->delete();
+
+            DB::commit();
+            return response()->json([
+                'status' => 0,
+            ]);
+        } catch (Throwable $e) {
+            DB::rollBack();
 
             return response()->json([
                 'status' => 1,

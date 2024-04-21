@@ -20,7 +20,7 @@ class LinkFollowController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'title' => 'required|string',
+            'title' => 'nullable|string',
             'content' => 'nullable|string',
             'comment' => 'nullable|string',
             'data' => 'nullable|numeric',
@@ -40,7 +40,7 @@ class LinkFollowController extends Controller
     {
         $data = $request->validate([
             'id' => 'required|integer',
-            'title' => 'required|string',
+            'title' => 'nullable|string',
             'content' => 'nullable|string',
             'comment' => 'nullable|string',
             'data' => 'nullable|numeric',

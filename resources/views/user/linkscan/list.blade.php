@@ -67,29 +67,28 @@
                     <div class="form-group col-lg-6">
                         <label class="count-link">Tổng số link quét: </label><br>
                         <label class="filtering">Lọc theo: Không</label>
-                        {{-- <div class="filtering">
-                        </div> --}}
                     </div>
                     <div class="form-group col-lg-6">
-                        <button class="btn btn-warning btn-follow-multiple">Theo dõi</button>
-                        <button data-is_scan="0" class="btn btn-danger btn-scan-multiple">OFF</button>
-                        <button data-is_scan="1" class="btn btn-success btn-scan-multiple">ON</button>
-                        <button data-is_scan="2" class="btn btn-primary btn-scan-multiple">RESET</button>
+                        <button disabled class="btn-control btn btn-warning btn-follow-multiple">Theo dõi</button>
+                        <button disabled data-is_scan="0" class="btn-control btn btn-danger btn-scan-multiple">OFF</button>
+                        <button disabled data-is_scan="1" class="btn-control btn btn-success btn-scan-multiple">ON</button>
+                        <button disabled class="btn-control btn btn-danger btn-delete-multiple">Xóa</button>
+                        <button data-target="#modalFilter" data-toggle="modal" class="btn btn-primary btn-choose-filter">Chọn</button>
                     </div>
                     <table id="table" class="table display nowrap dataTable dtr-inline collapsed">
                         <thead>
                             <tr>
-                                <th data-target="#modalFilter" data-toggle="modal">Data cuối</th>
-                                <th data-target="#modalFilter" data-toggle="modal">Ngày tạo</th>
-                                <th data-target="#modalFilter" data-toggle="modal">Link|PostID</th>
-                                <th data-target="#modalFilter" data-toggle="modal">Tiêu đề</th>
-                                <th data-target="#modalFilter" data-toggle="modal">Nội dung</th>
-                                <th data-target="#modalFilter" data-toggle="modal">Bình luận</th>
-                                <th data-target="#modalFilter" data-toggle="modal">Data</th>
-                                <th data-target="#modalFilter" data-toggle="modal">Cảm xúc</th>
-                                <th data-target="#modalFilter" data-toggle="modal">Quét</th>
-                                <th data-target="#modalFilter" data-toggle="modal">Note</th>
-                                <th data-target="#modalFilter" data-toggle="modal">Thao tác</th>
+                                <th><input class="btn-select-all" type="checkbox" /></th>
+                                <th>Data cuối</th>
+                                <th>Ngày tạo</th>
+                                <th>Tiêu đề</th>
+                                <th>Nội dung</th>
+                                <th>Bình luận</th>
+                                <th>Data</th>
+                                <th>Cảm xúc</th>
+                                <th>Quét</th>
+                                <th>Note</th>
+                                <th>Thao tác</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -210,16 +209,32 @@
                         </div>
                     </div>
                     <div class="row">
-                        {{-- <div class="col-lg-6 col-sm-12">
+                        <div class="col-lg-6 col-sm-12">
                             <div class="form-group">
-                                <label for="menu">Ghi chú</label>
-                                <input type="text" class="form-control" id="note" value=""
-                                    placeholder="Ghi chú">
+                                <label for="menu">Tiêu đề</label>
+                                <input type="text" data-name="Tiêu đề" class="form-control" id="title" value=""
+                                    placeholder="Tiêu đề">
                             </div>
-                        </div> --}}
+                        </div><div class="col-lg-6 col-sm-12">
+                            <div class="form-group">
+                                <label for="menu">Link|PostID</label>
+                                <input type="text" data-name="Link|PostID" class="form-control" id="link_or_post_id" value=""
+                                    placeholder="Link|PostID">
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-sm-12">
+                            <div class="form-group">
+                                <label for="menu">Nội dung</label>
+                                <input type="text" data-name="Nội dung" class="form-control" id="content" value=""
+                                    placeholder="Nội dung">
+                            </div>
+                        </div>
                     </div>
                     <input type="hidden" id="type" value="0">
-                    <button class="btn btn-rounded btn-warning btn-filter">Lọc</button>
+                    <button class="btn btn-rounded btn-warning btn-filter">Chọn</button>
                     <button class="btn btn-rounded btn-success btn-refresh">Làm mới</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
                 </div>

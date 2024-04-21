@@ -11,6 +11,8 @@ class Comment extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $casts = [
         'created_at' => 'datetime:H:i:s Y/m/d',
         'updated_at' => 'datetime:H:i:s Y/m/d',
@@ -23,6 +25,7 @@ class Comment extends Model
         'content',
         'note',
         'comment_id',
+        'created_at'
     ];
 
     public function commentLinks()

@@ -104,7 +104,7 @@ class ReactionController extends Controller
     {
         $data = $request->validate([
             'id' => 'required|integer',
-            'title' => 'required|string',
+            'title' => 'nullable|string',
             'reaction' => 'nullable|string',
             'data' => 'nullable|numeric',
             'emotion' => 'nullable|numeric',

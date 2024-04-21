@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('links', function (Blueprint $table) {
             $table->id();
             $table->string('time')->default(0);
-            $table->string('title')->default('');
-            $table->string('content')->default('');
+            $table->longText('title')->nullable();
+            $table->longText('content')->nullable();
             $table->string('comment_first')->default(0);
             $table->string('comment_second')->default(0);
             $table->string('data_first')->default(0);
@@ -25,10 +25,10 @@ return new class extends Migration
             $table->string('delay')->default(0);
             $table->string('status')->default(0);
             $table->string('is_scan')->default(0);
-            $table->string('note')->default('');
-            $table->string('link_or_post_id')->default('');
-            $table->string('type')->default('');
-            $table->string('end_cursor')->default('');
+            $table->longText('note')->nullable();
+            $table->string('link_or_post_id')->nullable();
+            $table->string('type')->nullable();
+            $table->string('end_cursor')->nullable();
             $table->timestamps();
         });
     }

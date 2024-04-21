@@ -57,6 +57,15 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::get('/getAll', 'LinkHistoryController@getAll')->name('getAll');
     });
 
+    #comments
+    Route::group(['prefix' => 'comments', 'as' => 'comments.'], function () {
+        Route::get('/', 'CommentController@index')->name('index');
+        Route::delete('/{id}/destroy', 'CommentController@destroy')->name('destroy');
+        Route::post('/create', 'CommentController@store')->name('store');
+        Route::get('/getAll', 'CommentController@getAll')->name('getAll');
+        Route::post('/deleteAll', 'LinkController@deleteAll')->name('deleteAll');
+    });
+
     #links
     Route::group(['prefix' => 'links', 'as' => 'links.'], function () {
         Route::get('/', 'LinkController@index')->name('index');
@@ -66,7 +75,10 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::post('/update', 'LinkController@update')->name('update');
         Route::post('/updateIsScanByLinkOrPostId', 'LinkController@updateIsScanByLinkOrPostId')->name('updateIsScanByLinkOrPostId');
         Route::post('/updateLinkByLinkOrPostId', 'LinkController@updateLinkByLinkOrPostId')->name('updateLinkByLinkOrPostId');
+        Route::post('/updateLinkByLinkId', 'LinkController@updateLinkByLinkId')->name('updateLinkByLinkId');
+        Route::post('/updateMultipleLinkByLinkOrPostId', 'LinkController@updateMultipleLinkByLinkOrPostId')->name('updateMultipleLinkByLinkOrPostId');
         Route::delete('/{id}/destroy', 'LinkController@destroy')->name('destroy');
+        Route::post('/deleteAll', 'LinkController@deleteAll')->name('deleteAll');
     });
 });
 
@@ -87,14 +99,6 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin'], function () {
     #accounts
     Route::group(['prefix' => 'accounts', 'as' => 'accounts.'], function () {
         Route::delete('/{id}/destroy', 'AccountController@destroy')->name('destroy');
-    });
-
-    #comments
-    Route::group(['prefix' => 'comments', 'as' => 'comments.'], function () {
-        Route::get('/', 'CommentController@index')->name('index');
-        Route::delete('/{id}/destroy', 'CommentController@destroy')->name('destroy');
-        Route::post('/create', 'CommentController@store')->name('store');
-        Route::get('/getAll', 'CommentController@getAll')->name('getAll');
     });
 
     #linkscans

@@ -27,7 +27,7 @@ class LinkScanController extends Controller
         try {
             $data = $request->validate([
                 'user_id' => 'required|string',
-                'title' => 'required|string',
+                'title' => 'nullable|string',
                 'time' => 'nullable|string',
                 'content' => 'nullable|string',
                 'comment_first' => 'nullable|string',
@@ -89,7 +89,7 @@ class LinkScanController extends Controller
     {
         $data = $request->validate([
             'id' => 'required|integer',
-            'title' => 'required|string',
+            'title' => 'nullable|string',
             'content' => 'nullable|string',
             'comment' => 'nullable|string',
             'data' => 'nullable|numeric',

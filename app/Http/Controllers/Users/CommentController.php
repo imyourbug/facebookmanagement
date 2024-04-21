@@ -94,7 +94,7 @@ class CommentController extends Controller
     {
         $data = $request->validate([
             'id' => 'required|integer',
-            'title' => 'required|string',
+            'title' => 'nullable|string',
             'content' => 'nullable|string',
             'comment' => 'nullable|string',
             'data' => 'nullable|numeric',

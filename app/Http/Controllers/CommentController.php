@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers;
 
 use App\Constant\GlobalConstant;
 use App\Http\Controllers\Controller;
@@ -23,6 +23,11 @@ class CommentController extends Controller
         $comment_id = $request->comment_id;
         $to = $request->to;
         $from = $request->from;
+        $content = $request->content;
+        $user = $request->user;
+        $uid = $request->uid;
+        $note = $request->note;
+        $phone = $request->phone;
 
         return response()->json([
             'status' => 0,
@@ -49,6 +54,30 @@ class CommentController extends Controller
                 ->when($comment_id, function ($q) use ($comment_id) {
                     return $q->where('comment_id', $comment_id);
                 })
+                // note
+                ->when($note, function ($q) use ($note) {
+                    return $q->whereHas('comment', function ($q) use ($note) {
+                        $q->where('note', 'like', "%$note%");
+                    });
+                })
+                // content
+                ->when($content, function ($q) use ($content) {
+                    return $q->whereHas('comment', function ($q) use ($content) {
+                        $q->where('content', 'like', "%$content%");
+                    });
+                })
+                // phone
+                ->when($phone, function ($q) use ($phone) {
+                    return $q->whereHas('comment', function ($q) use ($phone) {
+                        $q->where('phone', 'like', "%$phone%");
+                    });
+                })
+                // uid
+                ->when($uid, function ($q) use ($uid) {
+                    return $q->whereHas('comment', function ($q) use ($uid) {
+                        $q->where('uid', 'like', "%$uid%");
+                    });
+                })
                 ->get()
         ]);
     }
@@ -72,6 +101,7 @@ class CommentController extends Controller
                 'comments.*.content' => 'nullable|string',
                 'comments.*.note' => 'nullable|string',
                 'comments.*.comment_id' => 'nullable|string',
+                'comments.*.created_at' => 'nullable|string',
             ]);
             DB::beginTransaction();
             foreach ($data['comments'] as $key => $data) {
@@ -173,6 +203,26 @@ class CommentController extends Controller
                 'status' => 0,
             ]);
         } catch (Throwable $e) {
+
+            return response()->json([
+                'status' => 1,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function deleteAll(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            Comment::whereIn('id', $request->ids)->delete();
+
+            DB::commit();
+            return response()->json([
+                'status' => 0,
+            ]);
+        } catch (Throwable $e) {
+            DB::rollBack();
 
             return response()->json([
                 'status' => 1,

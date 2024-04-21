@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
-            $table->string('title')->default('');
-            $table->string('uid')->default('');
-            $table->string('phone')->default('');
-            $table->string('content')->default('');
-            $table->string('note')->default('');
-            $table->string('comment_id')->default('');
+            $table->string('title')->nullable();
+            $table->string('uid')->nullable();
+            $table->string('phone')->nullable();
+            $table->longText('content')->nullable();
+            $table->longText('note')->nullable();
+            $table->string('comment_id')->nullable();
             $table->timestamps();
         });
     }

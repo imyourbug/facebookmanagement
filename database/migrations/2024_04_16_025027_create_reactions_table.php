@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('reactions', function (Blueprint $table) {
             $table->id();
-            $table->string('title')->default('');
-            $table->string('uid')->default('');
-            $table->string('phone')->default('');
-            $table->string('reaction')->default('');
-            $table->string('note')->default('');
+            $table->string('title')->nullable();
+            $table->string('uid')->nullable();
+            $table->string('phone')->nullable();
+            $table->string('reaction')->nullable();
+            $table->longText('note')->nullable();
             $table->timestamps();
         });
     }
