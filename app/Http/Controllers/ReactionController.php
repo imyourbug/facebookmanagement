@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Constant\GlobalConstant;
 use App\Http\Controllers\Controller;
+use App\Models\Comment;
 use App\Models\Link;
 use App\Models\LinkReaction;
 use App\Models\Reaction;
@@ -23,7 +24,7 @@ class ReactionController extends Controller
         $reaction_id = $request->reaction_id;
         $to = $request->to;
         $from = $request->from;
-        $content = $request->content;
+        $reaction = $request->reaction;
         $user = $request->user;
         $uid = $request->uid;
         $note = $request->note;
@@ -31,7 +32,7 @@ class ReactionController extends Controller
 
         return response()->json([
             'status' => 0,
-            'comments' => LinkReaction::with(['reaction', 'link.userLinks.user'])
+            'reactions' => LinkReaction::with(['reaction', 'link.userLinks.user'])
             ->when($user_id, function ($q) use ($user_id) {
                 return $q->whereHas('link.userLinks', function ($q) use ($user_id) {
                     $q->where('user_id', $user_id);
@@ -60,10 +61,10 @@ class ReactionController extends Controller
                         $q->where('note', 'like', "%$note%");
                     });
                 })
-                // content
-                ->when($content, function ($q) use ($content) {
-                    return $q->whereHas('reaction', function ($q) use ($content) {
-                        $q->where('content', 'like', "%$content%");
+                // reaction
+                ->when($reaction, function ($q) use ($reaction) {
+                    return $q->whereHas('reaction', function ($q) use ($reaction) {
+                        $q->where('reaction', 'like', "%$reaction%");
                     });
                 })
                 // phone
@@ -196,5 +197,25 @@ class ReactionController extends Controller
         return response()->json([
             'status' => 0,
         ]);
+    }
+
+    public function deleteAll(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            Reaction::whereIn('id', $request->ids)->delete();
+
+            DB::commit();
+            return response()->json([
+                'status' => 0,
+            ]);
+        } catch (Throwable $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => 1,
+                'message' => $e->getMessage()
+            ]);
+        }
     }
 }

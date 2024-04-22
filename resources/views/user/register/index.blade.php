@@ -39,7 +39,7 @@
                     <p class="login-box-msg">Đăng ký thành viên</p>
                     <form action="{{ route('user.checkRegister') }}" method="POST">
                         <div class="input-group mb-3">
-                            <input name="tel_or_email" type="text" class="form-control" value="{{ old('tel_or_email') }}"
+                            <input name="name" type="text" class="form-control" value="{{ old('name') }}"
                                 placeholder="Nhập tài khoản">
                             <div class="input-group-append">
                                 <div class="input-group-text">

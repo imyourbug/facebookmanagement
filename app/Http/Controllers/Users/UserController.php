@@ -73,18 +73,26 @@ class UserController extends Controller
         return redirect()->route('user.login');
     }
 
-    public function checkLogin(LoginRequest $request)
+    public function checkLogin(Request $request)
     {
-        $tel_or_email = $request->input('tel_or_email');
-        if (Auth::attempt([
-            is_numeric($tel_or_email) ? 'name' : 'email' => $tel_or_email,
-            'password' => $request->input('password')
-        ])) {
-            Toastr::success('Đăng nhập thành công', __('title.toastr.success'));
-            $user = Auth::user();
+        try {
+            $data = $request->validate([
+                'name' => 'required|string',
+                'password' => 'required|string',
+            ]);
+            if (Auth::attempt([
+                'name'  => $data['name'],
+                'password' => $request->input('password')
+            ])) {
+                Toastr::success('Đăng nhập thành công', __('title.toastr.success'));
+                $user = Auth::user();
 
-            return redirect()->route($user->role == GlobalConstant::ROLE_ADMIN ? 'admin.index'
-                : 'user.home');
+                return redirect()->route($user->role == GlobalConstant::ROLE_ADMIN ? 'admin.index'
+                    : 'user.home');
+            }
+        } catch (Throwable $e) {
+            dd($e);
+            Toastr::error($e->getMessage(), __('title.toastr.fail'));
         }
         Toastr::error('Tài khoản hoặc mật khẩu không chính xác', __('title.toastr.fail'));
 
@@ -142,18 +150,16 @@ class UserController extends Controller
     public function checkRegister(Request $request)
     {
         try {
-            $tel_or_email = $request->tel_or_email;
             $data = $request->validate([
-                'tel_or_email' => !is_numeric($tel_or_email) ? 'required|email:dns,rfc'
-                    : 'required|string|regex:/^0\d{9,10}$/',
+                'name' => 'required|string',
                 'password' => 'required|string',
             ]);
-            $check = User::firstWhere(is_numeric($tel_or_email) ? 'name' : 'email', $tel_or_email);
+            $check = User::firstWhere('name', $data['name']);
             if ($check) {
                 throw new Exception('Tài khoản đã có người đăng ký!');
             }
             User::create([
-                is_numeric($tel_or_email) ? 'name' : 'email' =>  $tel_or_email,
+                'name' =>  $data['name'],
                 'password' => Hash::make($data['password']),
                 'role' => GlobalConstant::ROLE_USER,
             ]);

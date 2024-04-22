@@ -6,6 +6,7 @@ use App\Constant\GlobalConstant;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Accounts\CreateAccountRequest;
 use App\Http\Requests\Admin\Accounts\UpdateAccountRequest;
+use App\Models\Setting;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
@@ -26,22 +27,20 @@ class AccountController extends Controller
     public function store(Request $request)
     {
         try {
-            $tel_or_email = $request->tel_or_email;
             $data = $request->validate([
-                'tel_or_email' => !is_numeric($tel_or_email) ? 'required|email:dns,rfc'
-                    : 'required|string|regex:/^0\d{9,10}$/',
+                'name' => 'required|string',
                 'password' => 'required|string',
                 'delay' => 'required|integer',
                 'limit' => 'required|integer',
                 'expire' => 'required|integer',
                 'role' => 'required|in:0,1',
             ]);
-            $check = User::firstWhere(is_numeric($tel_or_email) ? 'name' : 'email', $tel_or_email);
+            $check = User::firstWhere('name', $data['name']);
             if ($check) {
                 throw new Exception('Tài khoản đã có người đăng ký!');
             }
             User::create([
-                is_numeric($tel_or_email) ? 'name' : 'email' =>  $tel_or_email,
+                'name' => $data['name'],
                 'password' => Hash::make($data['password']),
                 'role' => $data['role'],
                 'delay' => $data['delay'],
@@ -87,6 +86,7 @@ class AccountController extends Controller
 
         return view('admin.account.list', [
             'title' => 'Danh sách tài khoản',
+            'setting' => Setting::all()->pluck('value', 'key')->toArray(),
         ]);
     }
 

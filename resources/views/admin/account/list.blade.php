@@ -19,7 +19,7 @@
             <div class="row">
                 <div class="col-lg-6 col-sm-12">
                     <div class="form-group">
-                        <label for="menu">Số điện thoại hoặc email <span class="required">(*)</span></label>
+                        <label for="menu">Tài khoản <span class="required">(*)</span></label>
                         <input type="text" class="form-control" name="tel_or_email" value="{{ old('tel_or_email') }}"
                             placeholder="Nhập tiêu đề">
                     </div>
@@ -27,8 +27,8 @@
                 <div class="col-lg-6 col-sm-12">
                     <div class="form-group">
                         <label for="menu">Mật khẩu <span class="required">(*)</span></label>
-                        <input type="password" class="form-control" name="password"
-                            value="{{ old('password') }}" placeholder="Nhập mật khẩu">
+                        <input type="password" class="form-control" name="password" value="{{ old('password') }}"
+                            placeholder="Nhập mật khẩu">
                     </div>
                 </div>
             </div>
@@ -36,15 +36,15 @@
                 <div class="col-lg-6 col-sm-12">
                     <div class="form-group">
                         <label for="menu">Delay time mặc định <span class="required">(*)</span></label>
-                        <input type="number"  min="0" class="form-control" name="delay"
-                            value="{{ old('delay') }}" placeholder="Nhập delay time mặc định">
+                        <input type="number" min="0" class="form-control" name="delay"
+                            value="{{ $setting['delay-time'] ?? old('delay') }}" placeholder="Nhập delay time mặc định">
                     </div>
                 </div>
                 <div class="col-lg-6 col-sm-12">
                     <div class="form-group">
                         <label for="menu">Limit post quét <span class="required">(*)</span></label>
                         <input type="number" min="0" class="form-control" name="limit"
-                            value="{{ old('limit') }}" placeholder="Nhập limit post quét">
+                            value="{{ $setting['craw-count'] ?? old('limit') }}" placeholder="Nhập limit post quét">
                     </div>
                 </div>
             </div>
@@ -52,8 +52,8 @@
                 <div class="col-lg-12 col-sm-12">
                     <div class="form-group">
                         <label for="menu">Số ngày hết hạn <span class="required">(*)</span></label>
-                        <input type="number"  min="0" class="form-control" name="expire"
-                            value="{{ old('expire') }}" placeholder="Nhập số ngày hết hạn">
+                        <input type="number" min="0" class="form-control" name="expire" value="{{ old('expire') }}"
+                            placeholder="Nhập số ngày hết hạn">
                     </div>
                 </div>
             </div>

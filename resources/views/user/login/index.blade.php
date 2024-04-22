@@ -38,7 +38,7 @@
                 <div class="card-body login-card-body">
                     <form action="{{ route('user.checkLogin') }}" method="POST">
                         <div class="input-group mb-3">
-                            <input name="tel_or_email" type="text" value="{{ old('tel_or_email') }}" class="form-control"
+                            <input name="name" type="text" value="{{ old('name') }}" class="form-control"
                                 placeholder="Nhập tài khoản">
                             <div class="input-group-append">
                                 <div class="input-group-text">

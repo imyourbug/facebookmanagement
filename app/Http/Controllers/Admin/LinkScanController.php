@@ -120,7 +120,7 @@ class LinkScanController extends Controller
         $user = User::firstWhere('id', $request->user_id);
 
         return view('admin.linkscan.list', [
-            'title' => 'Danh sách link quét - ' . $user->email ?? $user->name,
+            'title' => 'Danh sách link quét - ' . $user->name ?? $user->email,
             'user' => $user
         ]);
     }

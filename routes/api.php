@@ -47,8 +47,17 @@ Route::group(['namespace' => 'App\Http\Controllers\Users', 'prefix' => 'user',],
     });
 });
 
-#upload
 Route::group(['namespace' => 'App\Http\Controllers'], function () {
+    #reactions
+    Route::group(['prefix' => 'reactions', 'as' => 'reactions.'], function () {
+        Route::get('/', 'ReactionController@index')->name('index');
+        Route::delete('/{id}/destroy', 'ReactionController@destroy')->name('destroy');
+        Route::post('/create', 'ReactionController@store')->name('store');
+        Route::get('/getAll', 'ReactionController@getAll')->name('getAll');
+        Route::post('/deleteAll', 'ReactionController@deleteAll')->name('deleteAll');
+    });
+
+    #upload
     Route::post('/upload', 'UploadController@upload')->name('upload');
     Route::post('/restore', 'UploadController@restore')->name('restore');
 
@@ -83,14 +92,6 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
 });
 
 Route::group(['namespace' => 'App\Http\Controllers\Admin'], function () {
-    #reactions
-    Route::group(['prefix' => 'reactions', 'as' => 'reactions.'], function () {
-        Route::get('/', 'ReactionController@index')->name('index');
-        Route::delete('/{id}/destroy', 'ReactionController@destroy')->name('destroy');
-        Route::post('/create', 'ReactionController@store')->name('store');
-        Route::get('/getAll', 'ReactionController@getAll')->name('getAll');
-    });
-
     #settings
     Route::group(['prefix' => 'settings', 'as' => 'settings.'], function () {
         Route::post('uploadmap', 'SettingController@uploadmap')->name('uploadmap');

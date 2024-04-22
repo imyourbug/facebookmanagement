@@ -20,26 +20,26 @@ class DatabaseSeeder extends Seeder
         User::insert(
             [
                 [
-                    'email' => 'duongvankhai2022001@gmail.com',
+                    'name' => 'duongvankhai2022001@gmail.com',
                     'password' => Hash::make(1),
                     'role' => 1,
-                    'limit' => 1,
+                    'limit' => 5,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ],
                 [
-                    'email' => 'user@gmail.com',
+                    'name' => 'user@gmail.com',
                     'password' => Hash::make(1),
                     'role' => 0,
-                    'limit' => 1,
+                    'limit' => 5,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ],
                 [
-                    'email' => 'tu@gmail.com',
+                    'name' => 'tu@gmail.com',
                     'password' => Hash::make(1),
                     'role' => 0,
-                    'limit' => 1,
+                    'limit' => 5,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ],

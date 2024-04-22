@@ -39,7 +39,7 @@
                     @break
 
                     @case(1)
-                        <a href="{{ route('admin.index') }}" class="d-block">{{ Auth::user()?->email }}</a>
+                        <a href="{{ route('admin.index') }}" class="d-block">{{  Auth::user()->name ?? Auth::user()->email }}</a>
                     @break
                 @endswitch
                 <p style="color: white">Số ngày hết hạn: {{Auth::user()?->limit}}</p>
@@ -56,85 +56,45 @@
                             class="nav-item {{ in_array(request()->route()->getName(), ['user.linkscans.index', 'user.linkscans.create'])
                                 ? 'menu-is-opening menu-open'
                                 : '' }}">
-                            <a href="#" class="nav-link">
+                            <a href="{{ route('user.linkscans.index') }}" class="nav-link">
                                 <i class="nav-icon fa-solid fa-barcode"></i>
                                 <p>
                                     Link quét
-                                    <i class="right fas fa-angle-left"></i>
                                 </p>
                             </a>
-                            <ul class="nav nav-treeview">
-                                <li
-                                    class="nav-item {{ request()->route()->getName() == 'user.linkscans.index' ? 'option-open' : '' }}">
-                                    <a href="{{ route('user.linkscans.index') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Danh sách link quét</p>
-                                    </a>
-                                </li>
-                            </ul>
                         </li>
                         <li
                             class="nav-item {{ in_array(request()->route()->getName(), ['user.linkfollows.index', 'user.linkfollows.create'])
                                 ? 'menu-is-opening menu-open'
                                 : '' }}">
-                            <a href="#" class="nav-link">
+                            <a href="{{ route('user.linkfollows.index') }}" class="nav-link">
                                 <i class="nav-icon fa-solid fa-user-plus"></i>
                                 <p>
                                     Link theo dõi
-                                    <i class="right fas fa-angle-left"></i>
                                 </p>
                             </a>
-                            <ul class="nav nav-treeview">
-                                <li
-                                    class="nav-item {{ request()->route()->getName() == 'user.linkfollows.index' ? 'option-open' : '' }}">
-                                    <a href="{{ route('user.linkfollows.index') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Danh sách link theo dõi</p>
-                                    </a>
-                                </li>
-                            </ul>
                         </li>
                         <li
                             class="nav-item {{ in_array(request()->route()->getName(), ['user.comments.index', 'user.comments.create'])
                                 ? 'menu-is-opening menu-open'
                                 : '' }}">
-                            <a href="#" class="nav-link">
+                            <a href="{{ route('user.comments.index') }}" class="nav-link">
                                 <i class="nav-icon fa-solid fa-comment"></i>
                                 <p>
                                     Bình luận
-                                    <i class="right fas fa-angle-left"></i>
                                 </p>
                             </a>
-                            <ul class="nav nav-treeview">
-                                <li
-                                    class="nav-item {{ request()->route()->getName() == 'user.comments.index' ? 'option-open' : '' }}">
-                                    <a href="{{ route('user.comments.index') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Danh sách bình luận</p>
-                                    </a>
-                                </li>
-                            </ul>
                         </li>
                         <li
                             class="nav-item {{ in_array(request()->route()->getName(), ['user.reactions.index', 'user.reactions.create'])
                                 ? 'menu-is-opening menu-open'
                                 : '' }}">
-                            <a href="#" class="nav-link">
+                            <a href="{{ route('user.reactions.index') }}" class="nav-link">
                                 <i class="nav-icon fa-solid fa-face-smile"></i>
                                 <p>
                                     Cảm xúc
-                                    <i class="right fas fa-angle-left"></i>
                                 </p>
                             </a>
-                            <ul class="nav nav-treeview">
-                                <li
-                                    class="nav-item {{ request()->route()->getName() == 'user.reactions.index' ? 'option-open' : '' }}">
-                                    <a href="{{ route('user.reactions.index') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Danh sách cảm xúc</p>
-                                    </a>
-                                </li>
-                            </ul>
                         </li>
                         {{-- <li
                             class="nav-item {{ in_array(request()->route()->getName(), ['user.me']) ? 'menu-is-opening menu-open' : '' }}">
@@ -163,22 +123,12 @@
                             class="nav-item {{ in_array(request()->route()->getName(), ['admin.accounts.index', 'admin.accounts.create'])
                                 ? 'menu-is-opening menu-open'
                                 : '' }}">
-                            <a href="#" class="nav-link">
+                            <a href="{{ route('admin.accounts.index') }}" class="nav-link">
                                 <i class="nav-icon fa-solid fa-user"></i>
                                 <p>
                                     Tài khoản
-                                    <i class="right fas fa-angle-left"></i>
                                 </p>
                             </a>
-                            <ul class="nav nav-treeview">
-                                <li
-                                    class="nav-item {{ request()->route()->getName() == 'admin.accounts.index' ? 'option-open' : '' }}">
-                                    <a href="{{ route('admin.accounts.index') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Danh sách tài khoản</p>
-                                    </a>
-                                </li>
-                            </ul>
                         </li>
                         {{-- <li
                             class="nav-item {{ in_array(request()->route()->getName(), ['admin.linkscans.index', 'admin.linkscans.create'])
@@ -226,64 +176,34 @@
                             class="nav-item {{ in_array(request()->route()->getName(), ['admin.linkrunnings.index', 'admin.linkrunnings.create'])
                                 ? 'menu-is-opening menu-open'
                                 : '' }}">
-                            <a href="#" class="nav-link">
+                            <a href="{{ route('admin.linkrunnings.index') }}" class="nav-link">
                                 <i class="nav-icon fa-solid fa-check"></i>
                                 <p>
                                     Link đang chạy
-                                    <i class="right fas fa-angle-left"></i>
                                 </p>
                             </a>
-                            <ul class="nav nav-treeview">
-                                <li
-                                    class="nav-item {{ request()->route()->getName() == 'admin.linkrunnings.index' ? 'option-open' : '' }}">
-                                    <a href="{{ route('admin.linkrunnings.index') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Danh sách link đang chạy</p>
-                                    </a>
-                                </li>
-                            </ul>
                         </li>
                         <li
                             class="nav-item {{ in_array(request()->route()->getName(), ['admin.comments.index', 'admin.comments.create'])
                                 ? 'menu-is-opening menu-open'
                                 : '' }}">
-                            <a href="#" class="nav-link">
+                            <a href="{{ route('admin.comments.index') }}" class="nav-link">
                                 <i class="nav-icon fa-solid fa-comment"></i>
                                 <p>
                                     Bình luận
-                                    <i class="right fas fa-angle-left"></i>
                                 </p>
                             </a>
-                            <ul class="nav nav-treeview">
-                                <li
-                                    class="nav-item {{ request()->route()->getName() == 'admin.comments.index' ? 'option-open' : '' }}">
-                                    <a href="{{ route('admin.comments.index') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Danh sách bình luận</p>
-                                    </a>
-                                </li>
-                            </ul>
                         </li>
                         <li
                             class="nav-item {{ in_array(request()->route()->getName(), ['admin.reactions.index', 'admin.reactions.create'])
                                 ? 'menu-is-opening menu-open'
                                 : '' }}">
-                            <a href="#" class="nav-link">
+                            <a href="{{ route('admin.reactions.index') }}" class="nav-link">
                                 <i class="nav-icon fa-solid fa-face-smile"></i>
                                 <p>
                                     Cảm xúc
-                                    <i class="right fas fa-angle-left"></i>
                                 </p>
                             </a>
-                            <ul class="nav nav-treeview">
-                                <li
-                                    class="nav-item {{ request()->route()->getName() == 'admin.reactions.index' ? 'option-open' : '' }}">
-                                    <a href="{{ route('admin.reactions.index') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Danh sách cảm xúc</p>
-                                    </a>
-                                </li>
-                            </ul>
                         </li>
                         <li
                             class="nav-item {{ in_array(request()->route()->getName(), ['admin.settings.index']) ? 'menu-is-opening menu-open' : '' }}">

@@ -1,8 +1,14 @@
 var dataTable = null;
+var allRecord = [];
+var tempAllRecord = [];
 $(document).ready(function () {
     reload();
 
     dataTable = $("#table").DataTable({
+        lengthMenu: [
+            [100, 250, 500],
+            [100, 250, 500]
+        ],
         layout: {
             topStart: {
                 buttons: [
@@ -16,6 +22,7 @@ $(document).ready(function () {
                     "colvis",
                 ],
             },
+            top2Start: 'pageLength',
         },
         ajax: {
             url: `/api/links/getAll?user_id=${$('#user_id').val()}&type=0`,
@@ -24,18 +31,23 @@ $(document).ready(function () {
         columns: [
             {
                 data: function (d) {
-                    return new Date().getHours() -
-                        new Date(d.link.updated_at).getHours() + "h";
+                    return `<input class="btn-select" type="checkbox" data-id="${d.link.id}" data-link_or_post_id="${d.link.link_or_post_id}" />`;
+                }
+            },
+            {
+                data: function (d) {
+                    return getDateDiffInHours(new Date(d.link.updated_at), new Date()) + "h";
                 }
             },
             {
                 data: function (d) {
                     return d.link.created_at;
+                    return d.link.updated_at;
                 },
             },
             {
                 data: function (d) {
-                    return d.link.link_or_post_id;
+                    return getListAccountNameByUserLink(d.accounts);
                 },
             },
             {
@@ -132,17 +144,159 @@ $(document).ready(function () {
     });
 });
 
+var searchParams = new Map([
+    ["time_from", ""],
+    ["time_to", ""],
+    ["data_from", ""],
+    ["data_to", ""],
+    ["comment_from", ""],
+    ["comment_to", ""],
+    ["reaction_from", ""],
+    ["reaction_to", ""],
+    ["from", ""],
+    ["to", ""],
+    ["content", ""],
+    ["title", ""],
+    ["link_or_post_id", ""],
+    ["user", ""],
+]);
+
+var isFiltering = [];
+
+function getQueryUrlWithParams() {
+    let query = `user_id=${$('#user_id').val()}`;
+    Array.from(searchParams).forEach(([key, values], index) => {
+        query += `&${key}=${typeof values == "array" ? values.join(",") : values}`;
+    })
+
+    return query;
+}
+
+function reloadAll() {
+    // enable or disable button
+    $('.btn-control').prop('disabled', tempAllRecord.length ? false : true);
+    $('.count-select').text(`Số lượng chọn: ${tempAllRecord.length}`);
+
+}
+
+$(document).on("click", ".btn-select-all", function () {
+    tempAllRecord = [];
+    if ($(this).is(':checked')) {
+        $('.btn-select').each(function () {
+            if ($(this).is(':checked')) {
+                $(this).prop('checked', false);
+            } else {
+                $(this).prop('checked', true);
+                tempAllRecord.push($(this).data('id'));
+            }
+        });
+    } else {
+        $('.btn-select').each(function () {
+            $(this).prop('checked', false);
+        });
+    }
+    reloadAll();
+    console.log(tempAllRecord);
+});
+
+$(document).on("click", ".btn-select", async function () {
+    let id = $(this).data("id");
+    let link_or_post_id = $(this).data("link_or_post_id");
+    if ($(this).is(':checked')) {
+        if (!tempAllRecord.includes(id)) {
+            tempAllRecord.push(id);
+        }
+    } else {
+        tempAllRecord = tempAllRecord.filter((e) => e != id);
+    }
+    console.log(tempAllRecord);
+    reloadAll();
+});
+
+$(document).on("click", ".btn-filter", async function () {
+    isFiltering = [];
+    tempAllRecord = [];
+    Array.from(searchParams).forEach(([key, values], index) => {
+        searchParams.set(key, String($('#' + key).val()).length ? $('#' + key).val() : '');
+        if ($('#' + key).val() && $('#' + key).attr('data-name')) {
+            isFiltering.push($('#' + key).attr('data-name'));
+        }
+    });
+    // display filtering
+    displayFiltering();
+
+    // reload
+    // dataTable.clear().rows.add(tempAllRecord).draw();
+    dataTable.ajax
+        .url("/api/links/getAll?" + getQueryUrlWithParams())
+        .load();
+    //
+    await $.ajax({
+        type: "GET",
+        url: `/api/links/getAll?${getQueryUrlWithParams()}`,
+        success: function (response) {
+            if (response.status == 0) {
+                response.links.forEach((e) => {
+                    tempAllRecord.push(e.link.id);
+                });
+            }
+        }
+    });
+    // auto selected
+    tempAllRecord.forEach((e) => {
+        $(`.btn-select[data-id="${e}"]`).prop('checked', true);
+    });
+    $('.btn-select-all').prop('checked', true);
+    // reload all
+    reloadAll();
+});
+
+$(document).on("click", ".btn-refresh", function () {
+    Array.from(searchParams).forEach(([key, values], index) => {
+        if (key != 'type') {
+            $('#' + key).val('');
+        }
+    });
+
+    // display filtering
+    isFiltering = [];
+    displayFiltering();
+
+    // reload table
+    dataTable.ajax
+        .url(`/api/links/getAll?user_id=${$('#user_id').val()}&type=0`)
+        .load();
+
+    // reload count and record
+    reload();
+    // reload all
+    reloadAll();
+});
+
+function displayFiltering() {
+    isFiltering = isFiltering.filter(function (item, pos, self) {
+        return self.indexOf(item) == pos;
+    });
+    // isFiltering.forEach((e) => {
+    //     console.log(e);
+    //     html += `<button class="btn btn-warning">${e}</button>`;
+    // });
+    $('.filtering').text(`Lọc theo: ${isFiltering.join(',')}`);
+
+}
+
 async function reload() {
     let count = 0;
     let all = 0;
     let user_id = $('#user_id').val();
+
     await $.ajax({
         type: "GET",
         url: `/api/links/getAll?user_id=${user_id}`,
         success: function (response) {
-            console.log(response.links);
             all = response.links.length;
             if (response.status == 0) {
+                allRecord = response.links;
                 response.links.forEach((e) => {
                     if (e.link.type == 0) {
                         count++;
@@ -153,6 +307,9 @@ async function reload() {
     });
 
     $('.count-link').text(`Tổng số link quét: ${count}/${all}`);
+    //
+    tempAllRecord = [];
+    reloadAll();
 }
 
 $(document).on("click", ".btn-scan", function () {
@@ -173,6 +330,8 @@ $(document).on("click", ".btn-scan", function () {
                 if (response.status == 0) {
                     toastr.success("Cập nhật thành công");
                     dataTable.ajax.reload();
+                    tempAllRecord = [];
+                    reloadAll();
                 } else {
                     toastr.error(response.message);
                 }
@@ -204,6 +363,85 @@ $(document).on("click", ".btn-follow", function () {
     }
 });
 
+$(document).on("click", ".btn-follow-multiple", function () {
+    if (confirm("Bạn có muốn theo dõi các link đang hiển thị?")) {
+        if (tempAllRecord.length) {
+            $.ajax({
+                type: "POST",
+                url: `/api/links/updateLinkByLinkId`,
+                data: {
+                    ids: tempAllRecord,
+                    type: 1,
+                },
+                success: function (response) {
+                    if (response.status == 0) {
+                        toastr.success("Theo dõi thành công");
+                        reload();
+                        dataTable.ajax.reload();
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+            });
+        } else {
+            toastr.error('Link trống');
+        }
+    }
+});
+
+
+$(document).on("click", ".btn-scan-multiple", function () {
+    let is_scan = $(this).data("is_scan");
+    let text = is_scan == 0 ? 'tắt' : (is_scan == 1 ? 'mở' : 'làm mới');
+    if (confirm(`Bạn có muốn ${text} quét các link đang hiển thị?`)) {
+        if (tempAllRecord.length) {
+            $.ajax({
+                type: "POST",
+                url: `/api/links/updateLinkByLinkId`,
+                data: {
+                    ids: tempAllRecord,
+                    is_scan,
+                },
+                success: function (response) {
+                    if (response.status == 0) {
+                        toastr.success("Cập nhật thành công");
+                        dataTable.ajax.reload();
+                        tempAllRecord = [];
+                        reloadAll();
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+            });
+        } else {
+            toastr.error('Link trống');
+        }
+    }
+});
+
+$(document).on("click", ".btn-delete-multiple", function () {
+    if (confirm("Bạn có muốn xóa các link đang hiển thị?")) {
+        if (tempAllRecord.length) {
+            $.ajax({
+                type: "POST",
+                url: `/api/links/deleteAll`,
+                data: { ids: tempAllRecord },
+                success: function (response) {
+                    if (response.status == 0) {
+                        toastr.success("Xóa thành công");
+                        reload();
+                        dataTable.ajax.reload();
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+            });
+        } else {
+            toastr.error('Link trống');
+        }
+    }
+});
+
 $(document).on("click", ".btn-delete", function () {
     if (confirm("Bạn có muốn xóa?")) {
         let id = $(this).data("id");
@@ -223,3 +461,12 @@ $(document).on("click", ".btn-delete", function () {
         });
     }
 });
+
+function getListAccountNameByUserLink(userLinks = []) {
+    let rs = [];
+    userLinks.forEach((e) => {
+        rs.push(e.user.email || e.user.name);
+    });
+
+    return rs.join('|');
+}

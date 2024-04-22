@@ -33,6 +33,15 @@
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-lg-12 col-sm-12">
+                    <div class="form-group">
+                        <label for="menu">Note <span class="required">(*)</span></label>
+                        <input type="text" class="form-control" name="note" value="{{ old('note') ?? $link->note }}"
+                            placeholder="Nhập ghi chú">
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="card-footer">
             <button type="submit" class="btn btn-primary">Lưu</button>

@@ -107,7 +107,7 @@ function getQueryUrlWithParams() {
 function reloadAll() {
     // enable or disable button
     $('.btn-control').prop('disabled', tempAllRecord.length ? false : true);
-
+    $('.count-select').text(`Số lượng chọn: ${tempAllRecord.length}`);
 }
 
 $(document).on("click", ".btn-select-all", function () {
@@ -145,6 +145,7 @@ $(document).on("click", ".btn-select", async function () {
 
 $(document).on("click", ".btn-filter", async function () {
     isFiltering = [];
+    tempAllRecord = [];
     Array.from(searchParams).forEach(([key, values], index) => {
         searchParams.set(key, String($('#' + key).val()).length ? $('#' + key).val() : '');
         if ($('#' + key).val() && $('#' + key).attr('data-name')) {
@@ -166,18 +167,26 @@ $(document).on("click", ".btn-filter", async function () {
         url: `/api/comments/getAll?${getQueryUrlWithParams()}`,
         success: function (response) {
             if (response.status == 0) {
-                tempAllRecord = response.links;
+                response.comments.forEach((e) => {
+                    tempAllRecord.push(e.comment.id);
+                });
             }
         }
     });
+
+    // auto selected
+    tempAllRecord.forEach((e) => {
+        $(`.btn-select[data-id="${e}"]`).prop('checked', true);
+    });
+    $('.btn-select-all').prop('checked', true);
+    // reload all
+    reloadAll();
 });
 
 $(document).on("click", ".btn-refresh", function () {
-    // Array.from(searchParams).forEach(([key, values], index) => {
-    //     if (key != 'type') {
-    //         $('#' + key).val('');
-    //     }
-    // });
+    Array.from(searchParams).forEach(([key, values], index) => {
+        $('#' + key).val('');
+    });
 
     // display filtering
     isFiltering = [];

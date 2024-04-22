@@ -78,6 +78,13 @@ class CommentController extends Controller
                         $q->where('uid', 'like', "%$uid%");
                     });
                 })
+                // user
+                ->when($user, function ($q) use ($user) {
+                    return $q->whereHas('link.userLinks.user', function ($q) use ($user) {
+                        $q->where('name', 'like', "%$user%")
+                            ->orWhere('email', 'like', "%$user%");
+                    });
+                })
                 ->get()
         ]);
     }
