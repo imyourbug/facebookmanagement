@@ -37,12 +37,12 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return getListAccountNameByUserLink(d.link.user_links);
+                    return d.comment.created_at;
                 },
             },
             {
                 data: function (d) {
-                    return d.comment.created_at;
+                    return getListAccountNameByUserLink(d.link.user_links);
                 },
             },
             {
