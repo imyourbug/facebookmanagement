@@ -57,7 +57,6 @@ class LinkScanController extends Controller
 
             $data['is_scan'] = $userLinks->count() < Auth::user()->limit ? GlobalConstant::IS_ON : GlobalConstant::IS_OFF;
             $data['type'] = GlobalConstant::TYPE_SCAN;
-            $data['delay'] = '2000';
 
             DB::beginTransaction();
             $link = Link::firstOrCreate(
@@ -66,6 +65,7 @@ class LinkScanController extends Controller
                     'title' =>  $data['title'],
                     'is_scan' => $data['is_scan'],
                     'type' => $data['type'],
+                    'delay' => '2000'
                 ]
             );
             UserLink::create([
