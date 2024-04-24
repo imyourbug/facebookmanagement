@@ -91,7 +91,6 @@ class UserController extends Controller
                     : 'user.home');
             }
         } catch (Throwable $e) {
-            dd($e);
             Toastr::error($e->getMessage(), __('title.toastr.fail'));
         }
         Toastr::error('Tài khoản hoặc mật khẩu không chính xác', __('title.toastr.fail'));
