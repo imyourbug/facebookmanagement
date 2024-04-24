@@ -90,4 +90,26 @@ class SettingController extends Controller
             'settings' => Setting::all()
         ]);
     }
+
+    public function store(Request $request)
+    {
+        $data = $request->validate([
+            'settings' => 'required|array',
+            'settings.*.key' => 'required|string',
+            'settings.*.value' => 'required|string',
+            'settings.*.name' => 'nullable|string',
+        ]);
+        foreach ($data['settings'] as $value) {
+            Setting::updateOrCreate([
+                'key' => $value['key']
+            ], [
+                'value' => $value['value'],
+                'name' => $value['name'],
+            ]);
+        }
+
+        return response()->json([
+            'status' => 0,
+        ]);
+    }
 }

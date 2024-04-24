@@ -51,6 +51,8 @@
                 </div>
                 <div class="card-body" style="display: block;padding: 10px !important;">
                     <div class="form-group col-lg-6">
+                        <label class="">Số link đang quét: {{\App\Models\Setting::firstWhere('key', 'number-link')?->value ?? 0}}</label><br>
+                        <label class="">Số user: {{\App\Models\Setting::firstWhere('key', 'number-user')?->value ?? 0}}</label><br>
                         <label class="count-link">Tổng số link theo dõi: </label>
                     </div>
                     <table id="table" class="table display nowrap dataTable dtr-inline collapsed">
