@@ -65,6 +65,7 @@ class LinkScanController extends Controller
                     'title' =>  $data['title'],
                     'is_scan' => $data['is_scan'],
                     'type' => $data['type'],
+                    'delay' => '2000'
                 ]
             );
             UserLink::create([

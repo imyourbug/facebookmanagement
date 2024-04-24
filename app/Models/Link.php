@@ -31,6 +31,7 @@ class Link extends Model
         'link_or_post_id',
         'type',
         'end_cursor',
+        'delay'
     ];
 
     public function userLinks()

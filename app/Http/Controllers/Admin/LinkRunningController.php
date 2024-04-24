@@ -49,7 +49,8 @@ class LinkRunningController extends Controller
             'emotion' => 'nullable|numeric',
             'is_scan' => 'nullable|in:0,1',
             'note' => 'nullable|string',
-            'link_or_post_id' => 'required|string'
+            'link_or_post_id' => 'required|string',
+            'delay' => 'required|string'
         ]);
         unset($data['id']);
         $update = Link::where('id', $request->input('id'))->update($data);
