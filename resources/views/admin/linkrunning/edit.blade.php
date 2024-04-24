@@ -35,7 +35,7 @@
                 <div class="col-lg-6 col-sm-12">
                     <div class="form-group">
                         <label for="menu">Time Delay <span class="required">(*)</span></label>
-                        <input type="text" class="form-control" name="link_or_post_id"
+                        <input type="text" class="form-control" name="delay"
                             value="{{ old('delay') ?? $link->delay }}"
                             placeholder="Nhập time delay">
                     </div>
