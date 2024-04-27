@@ -106,7 +106,7 @@
         .tool-tip {
             position: relative;
             display: inline-block;
-            border-bottom: 1px dotted black;
+            /* border-bottom: 1px dotted black; */
         }
 
         .tool-tip:hover {
@@ -179,7 +179,7 @@
 
         $(document).on('click', '.show-uid', function() {
             let uid = $(this).data('uid');
-            window.open("#", '_blank').focus();
+            window.open(`https://www.facebook.com/${uid}`, '_blank').focus();
         });
 
         $(document).on('mouseleave', '.show-uid', function() {
@@ -202,7 +202,7 @@
         $(document).on('click', '.show-title', function() {
             let link_or_post_id = $(this).data('link_or_post_id');
             let id = $(this).data('id');
-            window.open("#", '_blank').focus();
+            window.open(`https://www.facebook.com/${link_or_post_id}`, '_blank').focus();
         });
         $(document).on('mouseenter', '.show-title', function() {
             let link_or_post_id = $(this).data('link_or_post_id');

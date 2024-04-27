@@ -73,8 +73,8 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return `<p class="show-history tool-tip" data-type="comment" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.comment_second} | ${parseInt(d.link.comment_second)
-                        - parseInt(d.link.comment_first)}<div style="display:none;
+                    return `<p class="show-history tool-tip" data-type="comment" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.comment_second}  ${getCountation(parseInt(d.link.comment_second)
+                        - parseInt(d.link.comment_first))}<div style="display:none;
                                                                         width: max-content;
                                                                         background-color: black;
                                                                         color: #fff;
@@ -85,8 +85,8 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return `<p class="show-history tool-tip" data-type="data" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.data_second} | ${parseInt(d.link.data_second)
-                        - parseInt(d.link.data_first)}<div style="display:none;
+                    return `<p class="show-history tool-tip" data-type="data" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.data_second}  ${getCountation(parseInt(d.link.data_second)
+                        - parseInt(d.link.data_first))}<div style="display:none;
                                                                         width: max-content;
                                                                         background-color: black;
                                                                         color: #fff;
@@ -97,8 +97,8 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return `<p class="show-history tool-tip" data-type="emotion" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.emotion_second} | ${parseInt(d.link.emotion_second)
-                        - parseInt(d.link.emotion_first)}<div style="display:none;
+                    return `<p class="show-history tool-tip" data-type="emotion" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.emotion_second}  ${getCountation(parseInt(d.link.emotion_second)
+                        - parseInt(d.link.emotion_first))}<div style="display:none;
                                                                         width: max-content;
                                                                         background-color: black;
                                                                         color: #fff;
@@ -146,6 +146,7 @@ var searchParams = new Map([
     ["title", ""],
     ["link_or_post_id", ""],
     ["type", ""],
+    ["is_scan", ""],
 ]);
 
 var isFiltering = [];
@@ -241,9 +242,7 @@ $(document).on("click", ".btn-filter", async function () {
 
 $(document).on("click", ".btn-refresh", function () {
     Array.from(searchParams).forEach(([key, values], index) => {
-        if (key != 'type') {
-            $('#' + key).val('');
-        }
+        $('#' + key).val('');
     });
 
     // display filtering
@@ -348,7 +347,7 @@ $(document).on("click", ".btn-scan-multiple", function () {
         if (tempAllRecord.length) {
             $.ajax({
                 type: "POST",
-                url: `/api/links/updateLinkByLinkId`,
+                url: `/api/links/updateLinkByListLinkId`,
                 data: {
                     ids: tempAllRecord,
                     type: 0,

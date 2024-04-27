@@ -29,7 +29,10 @@ class RecoverPasswordMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address(env('MAIL_FROM_ADDRESS', 'noreply@gmail.com'), 'Anonymous Person'),
+            from: new Address(
+                env('MAIL_FROM_ADDRESS', 'anchilogistics@gmail.com'),
+                env('MAIL_FROM_NAME', 'anchilogistics@gmail.com')
+            ),
             subject: 'Recover Password Mail',
         );
     }

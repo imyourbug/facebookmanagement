@@ -25,7 +25,7 @@ $(document).ready(function () {
             top2Start: 'pageLength',
         },
         ajax: {
-            url: "/api/links/getAll?is_scan[]=1&is_scan[]=2",
+            url: "/api/links/getAll?is_scan[]=1",
             dataSrc: "links",
         },
         columns: [
@@ -79,8 +79,8 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return `<p class="show-history tool-tip" data-type="comment" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.comment_second} | ${parseInt(d.link.comment_second)
-                        - parseInt(d.link.comment_first)}<div style="display:none;
+                    return `<p class="show-history tool-tip" data-type="comment" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.comment_second}  ${getCountation(parseInt(d.link.comment_second)
+                        - parseInt(d.link.comment_first))}<div style="display:none;
                                                                         width: max-content;
                                                                         background-color: black;
                                                                         color: #fff;
@@ -91,8 +91,8 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return `<p class="show-history tool-tip" data-type="data" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.data_second} | ${parseInt(d.link.data_second)
-                        - parseInt(d.link.data_first)}<div style="display:none;
+                    return `<p class="show-history tool-tip" data-type="data" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.data_second}  ${getCountation(parseInt(d.link.data_second)
+                        - parseInt(d.link.data_first))}<div style="display:none;
                                                                         width: max-content;
                                                                         background-color: black;
                                                                         color: #fff;
@@ -103,8 +103,8 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return `<p class="show-history tool-tip" data-type="emotion" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.emotion_second} | ${parseInt(d.link.emotion_second)
-                        - parseInt(d.link.emotion_first)}<div style="display:none;
+                    return `<p class="show-history tool-tip" data-type="emotion" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.emotion_second}  ${getCountation(parseInt(d.link.emotion_second)
+                        - parseInt(d.link.emotion_first))}<div style="display:none;
                                                                         width: max-content;
                                                                         background-color: black;
                                                                         color: #fff;
@@ -113,13 +113,13 @@ $(document).ready(function () {
                                                                         z-index: 1;" class="tooltiptext tooltiptext-emotion tooltiptext-emotion-${d.link.link_or_post_id}"></div></p>`;
                 },
             },
-            {
-                data: function (d) {
-                    return d.link.is_scan == 0 ? `<button class="btn btn-danger btn-scan" data-is_scan="1" data-id=${d.link.id}>OFF</button>`
-                        : (d.link.is_scan == 1 ? `<button data-is_scan="0" data-id=${d.link.id} class="btn btn-success btn-scan">ON</button>`
-                            : `<button class="btn btn-primary">RESET</button>`);
-                }
-            },
+            // {
+            //     data: function (d) {
+            //         return d.link.is_scan == 0 ? `<button class="btn btn-danger btn-scan btn-sm" data-is_scan="1" data-id=${d.link.id}>OFF</button>`
+            //             : (d.link.is_scan == 1 ? `<button data-is_scan="0" data-id=${d.link.id} class="btn btn-success btn-scan btn-sm">ON</button>`
+            //                 : `<button class="btn btn-warning btn-sm">ERROR</button>`);
+            //     }
+            // },
             {
                 data: function (d) {
                     return d.link.delay;
@@ -147,8 +147,7 @@ $(document).ready(function () {
                             </a>
                             <button data-id="${d.link.id}" class="btn btn-success btn-sm btn-reset">
                                 <i class="fa-solid fa-rotate-right"></i>
-                            </button>
-                            ${btnDelete}`;
+                            </button>`;
                 },
             },
         ],
@@ -171,6 +170,9 @@ var searchParams = new Map([
     ["link_or_post_id", ""],
     ["type", ""],
     ["user", ""],
+    ["delay_from", ""],
+    ["delay_to", ""],
+    ["status", ""],
 ]);
 
 var isFiltering = [];
@@ -240,12 +242,12 @@ $(document).on("click", ".btn-filter", async function () {
     // reload
     // dataTable.clear().rows.add(tempAllRecord).draw();
     dataTable.ajax
-        .url("/api/links/getAll?is_scan[]=1&is_scan[]=2&" + getQueryUrlWithParams())
+        .url("/api/links/getAll?is_scan[]=1&" + getQueryUrlWithParams())
         .load();
     //
     await $.ajax({
         type: "GET",
-        url: `/api/links/getAll?is_scan[]=1&is_scan[]=2&${getQueryUrlWithParams()}`,
+        url: `/api/links/getAll?is_scan[]=1&${getQueryUrlWithParams()}`,
         success: function (response) {
             if (response.status == 0) {
                 response.links.forEach((e) => {
@@ -265,9 +267,7 @@ $(document).on("click", ".btn-filter", async function () {
 
 $(document).on("click", ".btn-refresh", function () {
     Array.from(searchParams).forEach(([key, values], index) => {
-        if (key != 'type') {
-            $('#' + key).val('');
-        }
+        $('#' + key).val('');
     });
 
     // display filtering
@@ -276,7 +276,7 @@ $(document).on("click", ".btn-refresh", function () {
 
     // reload table
     dataTable.ajax
-        .url(`/api/links/getAll?is_scan[]=1&is_scan[]=2`)
+        .url(`/api/links/getAll?is_scan[]=1`)
         .load();
 
     // reload count and record
@@ -304,7 +304,7 @@ async function reload() {
 
     await $.ajax({
         type: "GET",
-        url: "/api/links/getAll?is_scan[]=1&is_scan[]=2",
+        url: "/api/links/getAll?is_scan[]=1",
         success: function (response) {
             all = response.links.length;
             if (response.status == 0) {
@@ -352,12 +352,42 @@ $(document).on("click", ".btn-scan", function () {
     }
 });
 
+
+$(document).on("click", ".btn-delay-multiple", function () {
+    if (confirm("Bạn có muốn cập nhật các link đang hiển thị?")) {
+        if (tempAllRecord.length) {
+            let delay = $('#delay-edit').val();
+            $.ajax({
+                type: "POST",
+                url: `/api/links/updateLinkByListLinkId`,
+                data: {
+                    ids: tempAllRecord,
+                    delay,
+                },
+                success: function (response) {
+                    if (response.status == 0) {
+                        toastr.success("Cập nhật thành công");
+                        reload();
+                        dataTable.ajax.reload();
+                        //
+                        closeModal('modalEdit');
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+            });
+        } else {
+            toastr.error('Link trống');
+        }
+    }
+});
+
 $(document).on("click", ".btn-stop-multiple", function () {
     if (confirm("Bạn có muốn dừng các link đang hiển thị?")) {
         if (tempAllRecord.length) {
             $.ajax({
                 type: "POST",
-                url: `/api/links/updateLinkByLinkId`,
+                url: `/api/links/updateLinkByListLinkId`,
                 data: {
                     ids: tempAllRecord,
                     status: 0,
@@ -383,7 +413,7 @@ $(document).on("click", ".btn-run-multiple", function () {
         if (tempAllRecord.length) {
             $.ajax({
                 type: "POST",
-                url: `/api/links/updateLinkByLinkId`,
+                url: `/api/links/updateLinkByListLinkId`,
                 data: {
                     ids: tempAllRecord,
                     status: 1,
@@ -409,7 +439,7 @@ $(document).on("click", ".btn-reset-multiple", function () {
         if (tempAllRecord.length) {
             $.ajax({
                 type: "POST",
-                url: `/api/links/updateLinkByLinkId`,
+                url: `/api/links/updateLinkByListLinkId`,
                 data: {
                     ids: tempAllRecord,
                     is_scan: 2,

@@ -1,28 +1,3 @@
-function getStatusContract(endTime = "") {
-    const endDate = new Date(endTime);
-    const now = new Date();
-    const days = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
-    let renderStatus = "";
-    switch (true) {
-        case days > 0 && days <= 30:
-            renderStatus =
-                '<span class="btn btn-warning">Hết hạn trong ' +
-                days +
-                " ngày</span>";
-            break;
-        case days <= 0:
-            renderStatus = '<span class="btn btn-danger">Hết hạn</span>';
-            break;
-        case days > 30:
-            renderStatus = '<span class="btn btn-success">Còn hạn</span>';
-            break;
-        default:
-            break;
-    }
-
-    return renderStatus;
-}
-
 function getActive(active = "") {
     let renderActive = "";
     switch (active) {
@@ -37,6 +12,25 @@ function getActive(active = "") {
     }
 
     return renderActive;
+}
+
+function getCountation(count = 0) {
+    let renderCountation = '';
+    switch (true) {
+        case count < 0:
+            renderCountation = `<span class="btn btn-sm btn-primary"><i class="fa-solid fa-arrow-down"></i>&emsp;${count}</span>`;
+            break;
+        case count > 0:
+            renderCountation = `<span class="btn btn-sm btn-success"><i class="fa-solid fa-arrow-up"></i>&emsp;${count}</span>`;
+            break;
+        case count == 0:
+            renderCountation = `<span class="btn btn-sm btn-warning">${count}</span>`;
+            break;
+        default:
+            break;
+    }
+
+    return renderCountation;
 }
 
 $(document).on("click", ".btn-restore-db", function () {

@@ -48,6 +48,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Users', 'prefix' => 'user',],
 });
 
 Route::group(['namespace' => 'App\Http\Controllers'], function () {
+    #recover password
+    Route::get('recover', 'UploadController@recover')->name('recover');
+
     #reactions
     Route::group(['prefix' => 'reactions', 'as' => 'reactions.'], function () {
         Route::get('/', 'ReactionController@index')->name('index');
@@ -73,6 +76,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::post('/create', 'CommentController@store')->name('store');
         Route::get('/getAll', 'CommentController@getAll')->name('getAll');
         Route::post('/deleteAll', 'CommentController@deleteAll')->name('deleteAll');
+        Route::post('/updateById', 'CommentController@updateById')->name('updateById');
     });
 
     #links
@@ -84,7 +88,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::post('/update', 'LinkController@update')->name('update');
         Route::post('/updateIsScanByLinkOrPostId', 'LinkController@updateIsScanByLinkOrPostId')->name('updateIsScanByLinkOrPostId');
         Route::post('/updateLinkByLinkOrPostId', 'LinkController@updateLinkByLinkOrPostId')->name('updateLinkByLinkOrPostId');
-        Route::post('/updateLinkByLinkId', 'LinkController@updateLinkByLinkId')->name('updateLinkByLinkId');
+        Route::post('/updateLinkByListLinkId', 'LinkController@updateLinkByListLinkId')->name('updateLinkByListLinkId');
         Route::post('/updateMultipleLinkByLinkOrPostId', 'LinkController@updateMultipleLinkByLinkOrPostId')->name('updateMultipleLinkByLinkOrPostId');
         Route::delete('/{id}/destroy', 'LinkController@destroy')->name('destroy');
         Route::post('/deleteAll', 'LinkController@deleteAll')->name('deleteAll');

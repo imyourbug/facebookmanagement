@@ -67,6 +67,7 @@ class CommentController extends Controller
                 'comments.*.uid' => 'nullable|string',
                 'comments.*.phone' => 'nullable|string',
                 'comments.*.content' => 'nullable|string',
+                'comments.*.name_facebook' => 'nullable|string',
                 'comments.*.note' => 'nullable|string',
                 'comments.*.comment_id' => 'nullable|string',
             ]);
@@ -100,6 +101,7 @@ class CommentController extends Controller
             'data' => 'nullable|numeric',
             'emotion' => 'nullable|numeric',
             'note' => 'nullable|string',
+            'name_facebook' => 'nullable|string',
             'comment_id' => 'nullable|string',
             'link_or_post_id' => 'required|string'
         ]);

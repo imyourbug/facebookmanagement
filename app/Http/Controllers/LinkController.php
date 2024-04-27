@@ -19,6 +19,8 @@ class LinkController extends Controller
     {
         $comment_from = $request->comment_from;
         $comment_to = $request->comment_to;
+        $delay_from = $request->delay_from;
+        $delay_to = $request->delay_to;
         $data_from = $request->data_from;
         $data_to = $request->data_to;
         $reaction_from = $request->reaction_from;
@@ -36,6 +38,7 @@ class LinkController extends Controller
         $link_or_post_id = $request->link_or_post_id;
         $title = $request->title;
         $content = $request->content;
+        $status = $request->status;
 
         $query = '(HOUR(CURRENT_TIMESTAMP()) * 60 + MINUTE(CURRENT_TIMESTAMP()) - HOUR(updated_at) * 60 - MINUTE(updated_at))/60 + DATEDIFF(CURRENT_TIMESTAMP(), updated_at) * 24';
 
@@ -65,6 +68,25 @@ class LinkController extends Controller
             })
             ->when($link_id, function ($q) use ($link_id) {
                 return $q->where('link_id', $link_id);
+            })
+            // delay
+            ->when(strlen($delay_from), function ($q) use ($delay_from, $delay_to) {
+                return $q->when(strlen($delay_to), function ($q) use ($delay_from, $delay_to) {
+                    return $q->whereHas('link', function ($q) use ($delay_from, $delay_to) {
+                        $q->whereRaw('delay >= ?', $delay_from)
+                            ->whereRaw('delay <= ?', $delay_to);
+                    });
+                }, function ($q) use ($delay_from) {
+                    return $q->whereHas('link', function ($q) use ($delay_from) {
+                        $q->whereRaw('delay >= ?', $delay_from);
+                    });
+                });
+            }, function ($q) use ($delay_to) {
+                return $q->when(strlen($delay_to), function ($q) use ($delay_to) {
+                    return $q->whereHas('link', function ($q) use ($delay_to) {
+                        $q->whereRaw('delay <= ?', $delay_to);
+                    });
+                });
             })
             // data
             ->when(strlen($data_from), function ($q) use ($data_from, $data_to) {
@@ -191,6 +213,12 @@ class LinkController extends Controller
             ->when(in_array($type, GlobalConstant::LINK_STATUS), function ($q) use ($type) {
                 return $q->whereHas('link', function ($q) use ($type) {
                     $q->where('type', $type);
+                });
+            })
+            // status
+            ->when(strlen($status), function ($q) use ($status) {
+                return $q->whereHas('link', function ($q) use ($status) {
+                    $q->where('status', $status);
                 });
             })
             ->get()?->toArray() ?? [];
@@ -464,7 +492,7 @@ class LinkController extends Controller
         ]);
     }
 
-    public function updateLinkByLinkId(Request $request)
+    public function updateLinkByListLinkId(Request $request)
     {
         $data = $request->validate([
             'ids' => 'required|array',
@@ -480,6 +508,7 @@ class LinkController extends Controller
             'is_scan' => 'nullable|in:0,1,2',
             'status' => 'nullable|in:0,1',
             'note' => 'nullable|string',
+            'delay' => 'nullable|string',
             'end_cursor' => 'nullable|string',
             'type' => 'nullable|in:0,1,2',
         ]);

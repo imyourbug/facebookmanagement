@@ -45,7 +45,7 @@
                                 <th>Thời gian</th>
                                 <th>Tài khoản</th>
                                 <th>Tên bài</th>
-                                <th>UID</th>
+                                <th>Tên Facebook</th>
                                 <th>Số điện thoại</th>
                                 <th>Bình luận</th>
                                 <th>Note</th>
@@ -55,6 +55,38 @@
                         <tbody>
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modalEditComment" style="display: none;" aria-modal="true" role="dialog">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Cập nhật</h4>
+                    <button type="button" class="closeModalEditComment close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-12 col-sm-12">
+                            <div class="form-group">
+                                <label for="menu">Ghi chú</label>
+                                <input type="text" data-name="Ghi chú" class="form-control" id="note-edit"
+                                    value="" placeholder="Ghi chú">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <button style="width: 100%" class="btn btn-primary btn-save">Lưu</button>
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" id="id-editting" />
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
                 </div>
             </div>
         </div>

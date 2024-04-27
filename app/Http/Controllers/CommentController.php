@@ -107,6 +107,7 @@ class CommentController extends Controller
                 'comments.*.phone' => 'nullable|string',
                 'comments.*.content' => 'nullable|string',
                 'comments.*.note' => 'nullable|string',
+                'comments.*.name_facebook' => 'nullable|string',
                 'comments.*.comment_id' => 'nullable|string',
                 'comments.*.created_at' => 'nullable|string',
             ]);
@@ -147,6 +148,28 @@ class CommentController extends Controller
         }
     }
 
+    public function updateById(Request $request)
+    {
+        $data = $request->validate([
+            'id' => 'required|integer',
+            'title' => 'nullable|string',
+            'content' => 'nullable|string',
+            'comment' => 'nullable|string',
+            'data' => 'nullable|numeric',
+            'emotion' => 'nullable|numeric',
+            'note' => 'nullable|string',
+            'name_facebook' => 'nullable|string',
+            'comment_id' => 'nullable|string',
+            'link_or_post_id' => 'nullable|string'
+        ]);
+        unset($data['id']);
+        Comment::where('id', $request->input('id'))->update($data);
+
+        return response()->json([
+            'status' => 0,
+        ]);
+    }
+
     public function update(Request $request)
     {
         $data = $request->validate([
@@ -157,6 +180,7 @@ class CommentController extends Controller
             'data' => 'nullable|numeric',
             'emotion' => 'nullable|numeric',
             'note' => 'nullable|string',
+            'name_facebook' => 'nullable|string',
             'comment_id' => 'nullable|string',
             'link_or_post_id' => 'required|string'
         ]);

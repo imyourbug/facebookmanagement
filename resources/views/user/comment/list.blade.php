@@ -27,15 +27,18 @@
                 </div>
                 <div class="card-body" style="display: block;padding: 10px !important;">
                     <div class="form-group col-lg-6">
-                        <label class="">Số link đang quét: {{\App\Models\Setting::firstWhere('key', 'number-link')?->value ?? 0}}</label><br>
-                        <label class="">Số user: {{\App\Models\Setting::firstWhere('key', 'number-user')?->value ?? 0}}</label><br>
+                        <label class="">Số link đang quét:
+                            {{ \App\Models\Setting::firstWhere('key', 'number-link')?->value ?? 0 }}</label><br>
+                        <label class="">Số user:
+                            {{ \App\Models\Setting::firstWhere('key', 'number-user')?->value ?? 0 }}</label><br>
                         <label class="count-comment">Tổng số bình luận: </label><br>
                         <label class="filtering">Lọc theo: Không</label><br>
                         <label class="count-select">Số lượng chọn: 0</label>
                     </div>
                     <div class="form-group col-lg-6">
                         <button disabled class="btn-control btn btn-danger btn-delete-multiple">Xóa</button>
-                        <button data-target="#modalFilter" data-toggle="modal" class="btn btn-primary btn-choose-filter">Chọn</button>
+                        <button data-target="#modalFilter" data-toggle="modal"
+                            class="btn btn-primary btn-choose-filter">Chọn</button>
                     </div>
                     <table id="table" class="table display nowrap dataTable dtr-inline collapsed">
                         <thead>
@@ -43,7 +46,7 @@
                                 <th><input class="btn-select-all" type="checkbox" /></th>
                                 <th>Thời gian</th>
                                 <th>Tên bài</th>
-                                <th>UID</th>
+                                <th>Tên Facebook</th>
                                 <th>Số điện thoại</th>
                                 <th>Bình luận</th>
                                 <th>Note</th>
@@ -69,7 +72,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="row">
-                         <div class="col-lg-6 col-sm-12">
+                        <div class="col-lg-6 col-sm-12">
                             <div class="form-group">
                                 <label for="menu">UID</label>
                                 <input type="text" data-name="UID" class="form-control" id="uid" value=""
@@ -81,12 +84,12 @@
                                 <label for="menu">Ngày tạo </label>
                                 <div class="row">
                                     <div class="col-lg-6">
-                                        <input type="date" class="form-control" data-name="Ngày tạo" id="from" value=""
-                                            placeholder="Từ">
+                                        <input type="date" class="form-control" data-name="Ngày tạo" id="from"
+                                            value="" placeholder="Từ">
                                     </div>
                                     <div class="col-lg-6">
-                                        <input type="date" class="form-control" data-name="Ngày tạo" id="to" value=""
-                                            placeholder="Đến">
+                                        <input type="date" class="form-control" data-name="Ngày tạo" id="to"
+                                            value="" placeholder="Đến">
                                     </div>
                                 </div>
                             </div>
@@ -99,11 +102,12 @@
                                 <input type="text" data-name="SĐT" class="form-control" id="phone" value=""
                                     placeholder="SĐT">
                             </div>
-                        </div><div class="col-lg-6 col-sm-12">
+                        </div>
+                        <div class="col-lg-6 col-sm-12">
                             <div class="form-group">
                                 <label for="menu">Bình luận</label>
-                                <input type="text" data-name="Bình luận" class="form-control" id="content" value=""
-                                    placeholder="Bình luận">
+                                <input type="text" data-name="Bình luận" class="form-control" id="content"
+                                    value="" placeholder="Bình luận">
                             </div>
                         </div>
 
@@ -112,13 +116,45 @@
                         <div class="col-lg-6 col-sm-12">
                             <div class="form-group">
                                 <label for="menu">Ghi chú</label>
-                                <input type="text" data-name="Ghi chú" class="form-control" id="note" value=""
-                                    placeholder="Ghi chú">
+                                <input type="text" data-name="Ghi chú" class="form-control" id="note"
+                                    value="" placeholder="Ghi chú">
                             </div>
                         </div>
                     </div>
                     <button class="btn btn-rounded btn-warning btn-filter">Chọn</button>
                     <button class="btn btn-rounded btn-success btn-refresh">Làm mới</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modalEditComment" style="display: none;" aria-modal="true" role="dialog">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Cập nhật</h4>
+                    <button type="button" class="closeModalEditComment close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-12 col-sm-12">
+                            <div class="form-group">
+                                <label for="menu">Ghi chú</label>
+                                <input type="text" data-name="Ghi chú" class="form-control" id="note-edit"
+                                    value="" placeholder="Ghi chú">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <button style="width: 100%" class="btn btn-primary btn-save">Lưu</button>
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" id="id-editting" />
+                <div class="modal-footer justify-content-between">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
                 </div>
             </div>

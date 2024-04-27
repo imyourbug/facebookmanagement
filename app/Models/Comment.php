@@ -24,6 +24,7 @@ class Comment extends Model
         'phone',
         'content',
         'note',
+        'name_facebook',
         'comment_id',
         'created_at'
     ];

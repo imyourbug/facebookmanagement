@@ -10,7 +10,6 @@
 
 <body>
     <h2>New password: {{ $password }}</h2>
-    <h4>Return login page: <a href="http://localhost:8080/login">Login</a></h4>
 </body>
 
 </html>

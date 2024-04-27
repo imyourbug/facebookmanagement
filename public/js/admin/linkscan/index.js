@@ -79,8 +79,8 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return `<p class="show-history tool-tip" data-type="comment" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.comment_second} | ${parseInt(d.link.comment_second)
-                        - parseInt(d.link.comment_first)}<div style="display:none;
+                    return `<p class="show-history tool-tip" data-type="comment" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.comment_second}  ${getCountation(parseInt(d.link.comment_second)
+                        - parseInt(d.link.comment_first)) }<div style="display:none;
                                                                         width: max-content;
                                                                         background-color: black;
                                                                         color: #fff;
@@ -91,8 +91,8 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return `<p class="show-history tool-tip" data-type="data" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.data_second} | ${parseInt(d.link.data_second)
-                        - parseInt(d.link.data_first)}<div style="display:none;
+                    return `<p class="show-history tool-tip" data-type="data" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.data_second}  ${getCountation(parseInt(d.link.data_second)
+                        - parseInt(d.link.data_first))}<div style="display:none;
                                                                         width: max-content;
                                                                         background-color: black;
                                                                         color: #fff;
@@ -103,8 +103,8 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return `<p class="show-history tool-tip" data-type="emotion" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.emotion_second} | ${parseInt(d.link.emotion_second)
-                        - parseInt(d.link.emotion_first)}<div style="display:none;
+                    return `<p class="show-history tool-tip" data-type="emotion" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.emotion_second}  ${getCountation(parseInt(d.link.emotion_second)
+                        - parseInt(d.link.emotion_first))}<div style="display:none;
                                                                         width: max-content;
                                                                         background-color: black;
                                                                         color: #fff;
@@ -115,9 +115,9 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return d.link.is_scan == 0 ? `<button class="btn btn-danger btn-scan" data-is_scan="1" data-id=${d.link.id}>OFF</button>`
-                        : (d.link.is_scan == 1 ? `<button data-is_scan="0" data-id=${d.link.id} class="btn btn-success btn-scan">ON</button>`
-                            : `<button class="btn btn-primary">RESET</button>`);
+                    return d.link.is_scan == 0 ? `<button class="btn btn-danger btn-scan btn-sm" data-is_scan="1" data-id=${d.link.id}>OFF</button>`
+                        : (d.link.is_scan == 1 ? `<button data-is_scan="0" data-id=${d.link.id} class="btn btn-success btn-scan btn-sm">ON</button>`
+                            : `<button class="btn btn-warning btn-sm">ERROR</button>`);
                 }
             },
             {
@@ -159,6 +159,7 @@ var searchParams = new Map([
     ["title", ""],
     ["link_or_post_id", ""],
     ["user", ""],
+    ["is_scan", ""],
 ]);
 
 var isFiltering = [];
@@ -253,9 +254,7 @@ $(document).on("click", ".btn-filter", async function () {
 
 $(document).on("click", ".btn-refresh", function () {
     Array.from(searchParams).forEach(([key, values], index) => {
-        if (key != 'type') {
-            $('#' + key).val('');
-        }
+        $('#' + key).val('');
     });
 
     // display filtering
@@ -368,7 +367,7 @@ $(document).on("click", ".btn-follow-multiple", function () {
         if (tempAllRecord.length) {
             $.ajax({
                 type: "POST",
-                url: `/api/links/updateLinkByLinkId`,
+                url: `/api/links/updateLinkByListLinkId`,
                 data: {
                     ids: tempAllRecord,
                     type: 1,
@@ -397,7 +396,7 @@ $(document).on("click", ".btn-scan-multiple", function () {
         if (tempAllRecord.length) {
             $.ajax({
                 type: "POST",
-                url: `/api/links/updateLinkByLinkId`,
+                url: `/api/links/updateLinkByListLinkId`,
                 data: {
                     ids: tempAllRecord,
                     is_scan,

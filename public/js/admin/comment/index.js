@@ -52,7 +52,7 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return `<p class="show-uid tool-tip" data-id="${d.comment.id}" data-value="${d.comment.uid}" data-uid="${d.comment.uid}">${d.comment.uid}
+                    return `<p class="show-uid tool-tip" data-id="${d.comment.id}" data-value="${d.comment.uid}" data-uid="${d.comment.uid}">${d.comment.name_facebook || ''}
                     <div style="display:none;width: max-content;
                                 background-color: black;
                                 color: #fff;
@@ -80,12 +80,47 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return `<button data-id="${d.comment.id}" class="btn btn-danger btn-sm btn-delete">
+                    return `<button class="btn btn-sm btn-primary btn-edit" data-note="${d.comment.note}"
+                            data-target="#modalEditComment" data-toggle="modal" data-id=${d.comment.id}>
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button data-id="${d.comment.id}" class="btn btn-danger btn-sm btn-delete">
                                 <i class="fas fa-trash"></i>
                             </button>`;
                 },
             },
         ],
+    });
+});
+
+$(document).on('click', '.btn-edit', function () {
+    let id = $(this).data('id');
+    let note = $(this).data('note');
+    $('#note-edit').val(note);
+    $('#id-editting').val(id);
+});
+
+$(document).on('click', '.btn-save', function () {
+    let id = $('#id-editting').val();
+    let note = $('#note-edit').val();
+    $.ajax({
+        type: "POST",
+        url: `/api/comments/updateById`,
+        data: {
+            id,
+            note
+        },
+        success: function (response) {
+            if (response.status == 0) {
+                toastr.success("Cập nhật thành công");
+                dataTable.ajax.reload();
+                reload();
+                //
+                closeModal('modalEditComment');
+            } else {
+                toastr.error(response.message);
+            }
+        },
     });
 });
 

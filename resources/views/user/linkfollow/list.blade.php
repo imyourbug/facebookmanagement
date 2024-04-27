@@ -165,7 +165,7 @@
                                     <option value="">ALL</option>
                                     <option value="0">OFF</option>
                                     <option value="1">ON</option>
-                                    <option value="2">RESET</option>
+                                    <option value="2">ERROR</option>
                                 </select>
                             </div>
                         </div>
