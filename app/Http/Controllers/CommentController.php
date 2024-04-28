@@ -85,6 +85,10 @@ class CommentController extends Controller
                             ->orWhere('email', 'like', "%$user%");
                     });
                 })
+                // order
+                ->whereHas('comment', function ($q) {
+                    $q->orderByDesc('created_at');
+                })
                 ->get()
         ]);
     }

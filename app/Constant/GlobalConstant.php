@@ -24,4 +24,23 @@ class GlobalConstant
     public const LINK_STATUS = [
         '0', '1', '2'
     ];
+
+    public const ROLE_ALL = [
+        '0' => 'Số điện thoại: hiện cột SDT trong bảng comments',
+        '1' => 'Count: hiện các cột count trong bảng link quét và link theo dõi',
+        '2' => 'Link theo dõi : hiện bảng link theo dõi',
+        '3' => 'Cảm xúc: hiện bảng cảm xúc',
+    ];
+    public const ROLE_PHONE = [
+        '0',
+    ];
+    public const ROLE_COUNT = [
+        '1',
+    ];
+    public const ROLE_FOLLOW = [
+        '2',
+    ];
+    public const ROLE_REACTION = [
+        '3',
+    ];
 }

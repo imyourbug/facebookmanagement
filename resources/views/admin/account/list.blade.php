@@ -20,8 +20,8 @@
                 <div class="col-lg-6 col-sm-12">
                     <div class="form-group">
                         <label for="menu">Tài khoản <span class="required">(*)</span></label>
-                        <input type="text" class="form-control" name="tel_or_email" value="{{ old('tel_or_email') }}"
-                            placeholder="Nhập tiêu đề">
+                        <input type="text" class="form-control" name="name" value="{{ old('name') }}"
+                            placeholder="Nhập tài khoản">
                     </div>
                 </div>
                 <div class="col-lg-6 col-sm-12">
@@ -42,14 +42,21 @@
                 </div>
                 <div class="col-lg-6 col-sm-12">
                     <div class="form-group">
-                        <label for="menu">Limit post quét <span class="required">(*)</span></label>
+                        <label for="menu">Limit quét <span class="required">(*)</span></label>
                         <input type="number" min="0" class="form-control" name="limit"
                             value="{{ $setting['craw-count'] ?? old('limit') }}" placeholder="Nhập limit post quét">
                     </div>
                 </div>
             </div>
             <div class="row">
-                <div class="col-lg-12 col-sm-12">
+                <div class="col-lg-6 col-sm-12">
+                    <div class="form-group">
+                        <label for="menu">Limit follow <span class="required">(*)</span></label>
+                        <input type="number" min="0" class="form-control" name="limit_follow"
+                            value="{{ $setting['craw-count'] ?? old('limit') }}" placeholder="Nhập limit post quét">
+                    </div>
+                </div>
+                <div class="col-lg-6 col-sm-12">
                     <div class="form-group">
                         <label for="menu">Số ngày hết hạn <span class="required">(*)</span></label>
                         <input type="number" min="0" class="form-control" name="expire" value="{{ old('expire') }}"
@@ -58,21 +65,19 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-lg-12">
+                <div class="col-lg-12 col-sm-12">
                     <div class="form-group">
-                        <label>Phân quyền <span class="required">(*)</span></label>
-                        <div class="custom-control custom-radio">
-                            <input class="custom-control-input" type="radio" id="user" value="0" name="role"
-                                checked>
-                            <label for="user" class="custom-control-label">Người dùng</label>
-                        </div>
-                        <div class="custom-control custom-radio">
-                            <input class="custom-control-input" type="radio" id="admin" value="1" name="role">
-                            <label for="admin" class="custom-control-label">Quản lý</label>
-                        </div>
+                        <label for="menu">Phân quyền</label>
+                        @foreach ($roles as $key => $item)
+                            <br />
+                            <input type="checkbox" id="role{{ $key }}" name="roles[]"
+                                value="{{ $key }}" />
+                            <label for="role{{ $key }}">{{ $item }}</label>
+                        @endforeach
                     </div>
                 </div>
             </div>
+            <input class="custom-control-input" type="hidden" value="0" name="role" />
         </div>
         <div class="card-footer">
             <button type="submit" class="btn btn-primary">Lưu</button>
@@ -98,9 +103,9 @@
                                 <th>Tên</th>
                                 <th>Email</th>
                                 <th>Delay time mặc định</th>
-                                <th>Limit post quét</th>
+                                <th>Limit quét</th>
+                                <th>Limit follow</th>
                                 <th>Số ngày hết hạn</th>
-                                <th>Quyền</th>
                                 <th>Thao tác</th>
                             </tr>
                         </thead>

@@ -308,6 +308,7 @@ $(document).on("click", ".btn-scan", function () {
             data: {
                 id,
                 type: 0,
+                is_scan: 1,
             },
             success: function (response) {
                 if (response.status == 0) {
@@ -351,6 +352,7 @@ $(document).on("click", ".btn-scan-multiple", function () {
                 data: {
                     ids: tempAllRecord,
                     type: 0,
+                    is_scan: 1,
                 },
                 success: function (response) {
                     if (response.status == 0) {

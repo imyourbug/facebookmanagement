@@ -25,6 +25,7 @@ class User extends Authenticatable
         'password',
         'delay',
         'limit',
+        'limit_follow',
         'expire',
         'role',
     ];

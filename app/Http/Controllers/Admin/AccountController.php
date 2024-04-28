@@ -8,6 +8,7 @@ use App\Http\Requests\Admin\Accounts\CreateAccountRequest;
 use App\Http\Requests\Admin\Accounts\UpdateAccountRequest;
 use App\Models\Setting;
 use App\Models\User;
+use App\Models\UserRole;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -32,23 +33,40 @@ class AccountController extends Controller
                 'password' => 'required|string',
                 'delay' => 'required|integer',
                 'limit' => 'required|integer',
+                'limit_follow' => 'required|integer',
                 'expire' => 'required|integer',
                 'role' => 'required|in:0,1',
+                'roles' => 'nullable|array',
+                'roles.*' => 'nullable|integer|in:0,1,2,3',
             ]);
             $check = User::firstWhere('name', $data['name']);
             if ($check) {
                 throw new Exception('Tài khoản đã có người đăng ký!');
             }
-            User::create([
+            DB::beginTransaction();
+            $user = User::create([
                 'name' => $data['name'],
                 'password' => Hash::make($data['password']),
                 'role' => $data['role'],
                 'delay' => $data['delay'],
                 'limit' => $data['limit'],
+                'limit_follow' => $data['limit_follow'],
                 'expire' => $data['expire'],
             ]);
+            $data['roles'] = array_map(function ($item) use ($user) {
+                return [
+                    'user_id' => $user->id,
+                    'role' => $item,
+                    'name' => GlobalConstant::ROLE_ALL[$item],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }, $data['roles']);
+            UserRole::insert($data['roles']);
             Toastr::success('Tạo tài khoản thành công', __('title.toastr.success'));
+            DB::commit();
         } catch (Throwable $e) {
+            DB::rollBack();
             Toastr::error($e->getMessage(), __('title.toastr.fail'));
         }
 
@@ -86,6 +104,7 @@ class AccountController extends Controller
 
         return view('admin.account.list', [
             'title' => 'Danh sách tài khoản',
+            'roles' => GlobalConstant::ROLE_ALL,
             'setting' => Setting::all()->pluck('value', 'key')->toArray(),
         ]);
     }

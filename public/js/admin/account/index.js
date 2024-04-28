@@ -36,26 +36,28 @@ $(document).ready(function () {
                 data: "limit",
             },
             {
-                data: "expire",
+                data: "limit_follow",
             },
             {
-                data: function (d) {
-                    return `${d.role == 1 ? "Quản lý" : "Người dùng"}`;
-                },
+                data: "expire",
             },
             {
                 data: function (d) {
                     let btnDelete = `<button data-id="${d.id}" class="btn btn-danger btn-sm btn-delete">
                                     <i class="fas fa-trash"></i>
                                 </button>`;
-                    let btnInfo = `<a class="btn btn-success btn-sm" href='/admin/linkscans?user_id=${d.id}'>
-                                    <i class="fas fa-info"></i>
+                    let btnLinkScan = `<a class="btn btn-success btn-sm" href='/admin/linkscans?user_id=${d.id}'>
+                                    <i class="fas fa-solid fa-barcode"></i>
+                                </a>`;
+                    let btnLinkFollow = `<a class="btn btn-success btn-sm" href='/admin/linkfollows?user_id=${d.id}'>
+                                    <i class="fa-solid fa-user-plus"></i>
                                 </a>`;
 
                     return `<a class="btn btn-primary btn-sm" href='/admin/accounts/update/${d.id}'>
                             <i class="fas fa-edit"></i>
                             </a>
-                            ${d.role == 0 ? btnInfo : ""}
+                            ${d.role == 0 ? btnLinkScan : ""}
+                            ${d.role == 0 ? btnLinkFollow : ""}
                             ${$("#logging_user_id").val() != d.id &&
                             $("#editing_user_id").val() != d.id
                             ? btnDelete

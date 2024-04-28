@@ -20,8 +20,8 @@
                 <div class="col-lg-6 col-sm-12">
                     <div class="form-group">
                         <label for="menu">Tài khoản <span class="required">(*)</span></label>
-                        <input type="text" class="form-control" id="name" value="{{ $user->name ?? $user->email }}"
-                            placeholder="Nhập tên người dùng" disabled>
+                        <input type="text" class="form-control" id="name" value="{{ $user->name }}"
+                            placeholder="Nhập tài khoản" disabled>
                     </div>
                 </div>
                 <div class="col-lg-6 col-sm-12">
@@ -42,14 +42,21 @@
                 </div>
                 <div class="col-lg-6 col-sm-12">
                     <div class="form-group">
-                        <label for="menu">Limit post quét <span class="required">(*)</span></label>
+                        <label for="menu">Limit quét <span class="required">(*)</span></label>
                         <input type="number" min="0" class="form-control" name="limit"
-                            value="{{ old('limit') ?? $user->limit }}" placeholder="Nhập limit post quét">
+                            value="{{ old('limit') ?? $user->limit }}" placeholder="Nhập limit quét">
                     </div>
                 </div>
             </div>
             <div class="row">
-                <div class="col-lg-12 col-sm-12">
+                <div class="col-lg-6 col-sm-12">
+                    <div class="form-group">
+                        <label for="menu">Limit follow <span class="required">(*)</span></label>
+                        <input type="number" min="0" class="form-control" name="limit_follow"
+                            value="{{ old('limit_follow') ?? $user->limit_follow }}" placeholder="Nhập limit follow">
+                    </div>
+                </div>
+                <div class="col-lg-6 col-sm-12">
                     <div class="form-group">
                         <label for="menu">Số ngày hết hạn <span class="required">(*)</span></label>
                         <input type="number" min="0" class="form-control" name="expire"
@@ -57,23 +64,7 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="form-group">
-                        <label>Phân quyền <span class="required">(*)</span></label>
-                        <div class="custom-control custom-radio">
-                            <input class="custom-control-input" type="radio" id="user" value="0" name="role"
-                                {{ $user->role == 0 ? 'checked' : '' }}>
-                            <label for="user" class="custom-control-label">Người dùng</label>
-                        </div>
-                        <div class="custom-control custom-radio">
-                            <input class="custom-control-input" type="radio" id="admin" value="1"
-                                name="role"{{ $user->role == 1 ? 'checked' : '' }}>
-                            <label for="admin" class="custom-control-label">Quản lý</label>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <input class="custom-control-input" type="hidden" value="{{$user->role}}" name="role" />
         </div>
         <div class="card-footer">
             <button type="submit" class="btn btn-primary">Lưu</button>

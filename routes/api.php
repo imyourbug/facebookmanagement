@@ -51,6 +51,9 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
     #recover password
     Route::get('recover', 'UploadController@recover')->name('recover');
 
+    #upload uid
+    Route::post('uploadUid', 'UidController@uploadUid')->name('uploadUid');
+
     #reactions
     Route::group(['prefix' => 'reactions', 'as' => 'reactions.'], function () {
         Route::get('/', 'ReactionController@index')->name('index');

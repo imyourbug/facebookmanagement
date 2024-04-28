@@ -84,16 +84,22 @@ class UserController extends Controller
                 'name'  => $data['name'],
                 'password' => $request->input('password')
             ])) {
-                Toastr::success('Đăng nhập thành công', __('title.toastr.success'));
                 $user = Auth::user();
+                $date_diff = date('d', strtotime($user->updated_at) - strtotime(now()));
+                if ($date_diff > $user->expire) {
+                    Toastr::error('Tài khoản đã quá hạn. Liên hệ admin', __('title.toastr.fail'));
+                    return redirect()->back();
+                }
+                Toastr::success('Đăng nhập thành công', __('title.toastr.success'));
 
                 return redirect()->route($user->role == GlobalConstant::ROLE_ADMIN ? 'admin.index'
                     : 'user.home');
+            } else {
+                throw new Exception('Tài khoản hoặc mật khẩu không chính xác');
             }
         } catch (Throwable $e) {
             Toastr::error($e->getMessage(), __('title.toastr.fail'));
         }
-        Toastr::error('Tài khoản hoặc mật khẩu không chính xác', __('title.toastr.fail'));
 
         return redirect()->back();
     }

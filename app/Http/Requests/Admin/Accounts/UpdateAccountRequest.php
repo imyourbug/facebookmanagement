@@ -18,6 +18,7 @@ class UpdateAccountRequest extends BaseRequest
             'password' => 'nullable|string',
             'delay' => 'required|integer',
             'limit' => 'required|integer',
+            'limit_follow' => 'required|integer',
             'expire' => 'required|integer',
             'role' => 'required|in:0,1',
         ];
