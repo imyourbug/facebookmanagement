@@ -37,17 +37,39 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return getListAccountNameByUserLink(d.link.user_links);
-                },
-            },
-            {
-                data: function (d) {
                     return d.reaction.created_at;
                 },
             },
             {
                 data: function (d) {
-                    return d.reaction.title;
+                    return getListAccountNameByUserLink(d.link.user_links);
+                },
+            },
+
+            {
+                data: function (d) {
+                    return `<p class="show-title tool-tip" data-content="${d.comment.content}" data-link_or_post_id="${d.link.link_or_post_id}" data-id="${d.comment.id}">${d.comment.title}
+                    <div style="display:none;width: max-content;
+                                background-color: black;
+                                color: #fff;
+                                border-radius: 6px;
+                                padding: 5px 10px;
+                                position: absolute;
+                                z-index: 1;" class="tooltip-title tooltip-title-${d.comment.id}">
+                    </div></p>`;
+                },
+            },
+            {
+                data: function (d) {
+                    return `<p class="show-name_facebook tool-tip" data-id="${d.reaction.id}" data-value="${d.reaction.uid}" data-uid="${d.reaction.uid}">${d.reaction.name_facebook || ''}
+                    <div style="display:none;width: max-content;
+                                background-color: black;
+                                color: #fff;
+                                border-radius: 6px;
+                                padding: 5px 10px;
+                                position: absolute;
+                                z-index: 1;" class="tooltip-name_facebook tooltip-name_facebook-${d.reaction.id}">
+                    </div></p>`;
                 },
             },
             {
@@ -96,6 +118,9 @@ var searchParams = new Map([
     ["phone", ""],
     ["note", ""],
     ["uid", ""],
+    ["name_facebook", ""],
+    ["title", ""],
+    ["link_or_post_id", ""],
 ]);
 
 var isFiltering = [];
@@ -121,7 +146,7 @@ function getListAccountNameByUserLink(userLinks = []) {
 function reloadAll() {
     // enable or disable button
     $('.btn-control').prop('disabled', tempAllRecord.length ? false : true);
-    $('.count-select').text(`Số lượng chọn: ${tempAllRecord.length}`);
+    $('.count-select').text(`Đã chọn: ${tempAllRecord.length}`);
 }
 
 $(document).on("click", ".btn-select-all", function () {

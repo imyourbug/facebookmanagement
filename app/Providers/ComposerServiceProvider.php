@@ -20,8 +20,13 @@ class ComposerServiceProvider extends ServiceProvider
     public function boot(): void
     {
         view()->composer(
-            'admin.menu',
-            'App\Http\ViewComposers\MenuComposer'
+            [
+                'admin.sidebar',
+                'user.linkfollow.list',
+                'user.linkrunning.list',
+                'user.linkscan.list',
+            ],
+            'App\Http\ViewComposers\RoleComposer'
         );
     }
 }

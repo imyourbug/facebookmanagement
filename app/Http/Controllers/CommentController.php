@@ -28,6 +28,9 @@ class CommentController extends Controller
         $uid = $request->uid;
         $note = $request->note;
         $phone = $request->phone;
+        $link_or_post_id = $request->link_or_post_id;
+        $title = $request->title;
+        $name_facebook = $request->name_facebook;
 
         return response()->json([
             'status' => 0,
@@ -53,6 +56,24 @@ class CommentController extends Controller
                 })
                 ->when($comment_id, function ($q) use ($comment_id) {
                     return $q->where('comment_id', $comment_id);
+                })
+                // title
+                ->when($title, function ($q) use ($title) {
+                    return $q->whereHas('comment', function ($q) use ($title) {
+                        $q->where('title', 'like', "%$title%");
+                    });
+                })
+                // link_or_post_id
+                ->when($link_or_post_id, function ($q) use ($link_or_post_id) {
+                    return $q->whereHas('link', function ($q) use ($link_or_post_id) {
+                        $q->where('link_or_post_id', 'like', "%$link_or_post_id%");
+                    });
+                })
+                // name_facebook
+                ->when($name_facebook, function ($q) use ($name_facebook) {
+                    return $q->whereHas('comment', function ($q) use ($name_facebook) {
+                        $q->where('name_facebook', 'like', "%$name_facebook%");
+                    });
                 })
                 // note
                 ->when($note, function ($q) use ($note) {
@@ -86,9 +107,8 @@ class CommentController extends Controller
                     });
                 })
                 // order
-                ->whereHas('comment', function ($q) {
-                    $q->orderByDesc('created_at');
-                })
+                ->orderByDesc('created_at')
+                // ->orderBy('created_at')
                 ->get()
         ]);
     }
@@ -132,6 +152,7 @@ class CommentController extends Controller
                 LinkComment::create([
                     'link_id' => $link->id,
                     'comment_id' => $comment->id,
+                    'created_at' => $comment->created_at,
                 ]);
                 $count++;
             }

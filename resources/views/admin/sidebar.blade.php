@@ -39,10 +39,10 @@
                     @break
 
                     @case(1)
-                        <a href="{{ route('admin.index') }}" class="d-block">{{  Auth::user()->name ?? Auth::user()->email }}</a>
+                        <a href="{{ route('admin.index') }}" class="d-block">{{ Auth::user()->name ?? Auth::user()->email }}</a>
                     @break
                 @endswitch
-                <p style="color: white">Số ngày hết hạn: {{Auth::user()?->expire}}</p>
+                <p style="color: white">Số ngày hết hạn: {{ Auth::user()?->expire }}</p>
             </div>
         </div>
         <!-- Sidebar Menu -->
@@ -63,17 +63,19 @@
                                 </p>
                             </a>
                         </li>
-                        <li
-                            class="nav-item {{ in_array(request()->route()->getName(), ['user.linkfollows.index', 'user.linkfollows.create'])
-                                ? 'menu-is-opening menu-open'
-                                : '' }}">
-                            <a href="{{ route('user.linkfollows.index') }}" class="nav-link">
-                                <i class="nav-icon fa-solid fa-user-plus"></i>
-                                <p>
-                                    Link theo dõi
-                                </p>
-                            </a>
-                        </li>
+                        @if (in_array(App\Constant\GlobalConstant::ROLE_FOLLOW, $userRoles))
+                            <li
+                                class="nav-item {{ in_array(request()->route()->getName(), ['user.linkfollows.index', 'user.linkfollows.create'])
+                                    ? 'menu-is-opening menu-open'
+                                    : '' }}">
+                                <a href="{{ route('user.linkfollows.index') }}" class="nav-link">
+                                    <i class="nav-icon fa-solid fa-user-plus"></i>
+                                    <p>
+                                        Link theo dõi
+                                    </p>
+                                </a>
+                            </li>
+                        @endif
                         <li
                             class="nav-item {{ in_array(request()->route()->getName(), ['user.comments.index', 'user.comments.create'])
                                 ? 'menu-is-opening menu-open'
@@ -85,36 +87,19 @@
                                 </p>
                             </a>
                         </li>
-                        <li
-                            class="nav-item {{ in_array(request()->route()->getName(), ['user.reactions.index', 'user.reactions.create'])
-                                ? 'menu-is-opening menu-open'
-                                : '' }}">
-                            <a href="{{ route('user.reactions.index') }}" class="nav-link">
-                                <i class="nav-icon fa-solid fa-face-smile"></i>
-                                <p>
-                                    Cảm xúc
-                                </p>
-                            </a>
-                        </li>
-                        {{-- <li
-                            class="nav-item {{ in_array(request()->route()->getName(), ['user.me']) ? 'menu-is-opening menu-open' : '' }}">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fa-solid fa-user"></i>
-                                <p>
-                                    Thông tin cá nhân
-                                    <i class="right fas fa-angle-left"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="{{ route('user.me') }}"
-                                        class="nav-link {{ request()->route()->getName() == 'user.me' ? 'option-open' : '' }}">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Cập nhật</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li> --}}
+                        @if (in_array(App\Constant\GlobalConstant::ROLE_REACTION, $userRoles))
+                            <li
+                                class="nav-item {{ in_array(request()->route()->getName(), ['user.reactions.index', 'user.reactions.create'])
+                                    ? 'menu-is-opening menu-open'
+                                    : '' }}">
+                                <a href="{{ route('user.reactions.index') }}" class="nav-link">
+                                    <i class="nav-icon fa-solid fa-face-smile"></i>
+                                    <p>
+                                        Cảm xúc
+                                    </p>
+                                </a>
+                            </li>
+                        @endif
                     @break
 
                     {{-- Admin --}}
@@ -130,48 +115,6 @@
                                 </p>
                             </a>
                         </li>
-                        {{-- <li
-                            class="nav-item {{ in_array(request()->route()->getName(), ['admin.linkscans.index', 'admin.linkscans.create'])
-                                ? 'menu-is-opening menu-open'
-                                : '' }}">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fa-solid fa-barcode"></i>
-                                <p>
-                                    Link quét
-                                    <i class="right fas fa-angle-left"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li
-                                    class="nav-item {{ request()->route()->getName() == 'admin.linkscans.index' ? 'option-open' : '' }}">
-                                    <a href="{{ route('admin.linkscans.index') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Danh sách link quét</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li
-                            class="nav-item {{ in_array(request()->route()->getName(), ['admin.linkfollows.index', 'admin.linkfollows.create'])
-                                ? 'menu-is-opening menu-open'
-                                : '' }}">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fa-solid fa-user-plus"></i>
-                                <p>
-                                    Link theo dõi
-                                    <i class="right fas fa-angle-left"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li
-                                    class="nav-item {{ request()->route()->getName() == 'admin.linkfollows.index' ? 'option-open' : '' }}">
-                                    <a href="{{ route('admin.linkfollows.index') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Danh sách link theo dõi</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li> --}}
                         <li
                             class="nav-item {{ in_array(request()->route()->getName(), ['admin.linkrunnings.index', 'admin.linkrunnings.create'])
                                 ? 'menu-is-opening menu-open'
@@ -215,6 +158,7 @@
                             </a>
                         </li>
                     @break
+
                 @endswitch
             </ul>
         </nav>

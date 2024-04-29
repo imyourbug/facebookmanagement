@@ -21,6 +21,8 @@ class Reaction extends Model
         'uid',
         'phone',
         'reaction',
+        'content',
+        'name_facebook',
         'note',
     ];
 

@@ -169,6 +169,23 @@
             // $(document).tooltip();
             $(' .card-body').css('overflow-x', '');
         });
+        // show name_facebook
+        $(document).on('mouseenter', '.show-name_facebook', async function() {
+            let uid = $(this).data('uid');
+            let id = $(this).data('id');
+            $('.tooltip-name_facebook-' + id).css('display', 'block');
+            $('.tooltip-name_facebook-' + id).html(`UID: ${uid || 'Trống'}`);
+        });
+
+        $(document).on('click', '.show-name_facebook', function() {
+            let uid = $(this).data('uid');
+            window.open(`https://www.facebook.com/${uid}`, '_blank').focus();
+        });
+
+        $(document).on('mouseleave', '.show-name_facebook', function() {
+            $('.tooltip-name_facebook').html('');
+            $('.tooltip-name_facebook').css('display', 'none');
+        })
         // show uid
         $(document).on('mouseenter', '.show-uid', async function() {
             let uid = $(this).data('uid');
@@ -205,10 +222,10 @@
             window.open(`https://www.facebook.com/${link_or_post_id}`, '_blank').focus();
         });
         $(document).on('mouseenter', '.show-title', function() {
-            let link_or_post_id = $(this).data('link_or_post_id');
+            let content = $(this).data('content');
             let id = $(this).data('id');
             $('.tooltip-title-' + id).css('display', 'block');
-            $('.tooltip-title-' + id).html(`Link|PostID: ${link_or_post_id}`);
+            $('.tooltip-title-' + id).html(`Nội dung: ${content || ''}`);
         });
 
         $(document).on('mouseleave', '.show-title', function() {

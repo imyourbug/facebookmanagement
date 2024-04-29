@@ -33,7 +33,7 @@
                             {{ \App\Models\Setting::firstWhere('key', 'number-user')?->value ?? 0 }}</label><br>
                         <label class="count-link">Tổng số link đang chạy: </label><br>
                         <label class="filtering">Lọc theo: Không</label><br>
-                        <label class="count-select">Số lượng chọn: 0</label>
+                        <label class="count-select">Đã chọn: 0</label>
                     </div>
                     <div class="form-group col-lg-6">
                         {{-- <button disabled class="btn-control btn btn-warning btn-reset-multiple">Reset</button> --}}

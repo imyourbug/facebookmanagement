@@ -41,7 +41,7 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return `<p class="show-title tool-tip" data-link_or_post_id="${d.link.link_or_post_id}" data-id="${d.reaction.id}">${d.reaction.title}
+                    return `<p class="show-title tool-tip" data-content="${d.reaction.content}" data-link_or_post_id="${d.link.link_or_post_id}" data-id="${d.reaction.id}">${d.reaction.title}
                     <div style="display:none;width: max-content;
                                 background-color: black;
                                 color: #fff;
@@ -49,6 +49,19 @@ $(document).ready(function () {
                                 padding: 5px 10px;
                                 position: absolute;
                                 z-index: 1;" class="tooltip-title tooltip-title-${d.reaction.id}">
+                    </div></p>`;
+                },
+            },
+            {
+                data: function (d) {
+                    return `<p class="show-name_facebook tool-tip" data-id="${d.reaction.id}" data-value="${d.reaction.uid}" data-uid="${d.reaction.uid}">${d.reaction.name_facebook || ''}
+                    <div style="display:none;width: max-content;
+                                background-color: black;
+                                color: #fff;
+                                border-radius: 6px;
+                                padding: 5px 10px;
+                                position: absolute;
+                                z-index: 1;" class="tooltip-name_facebook tooltip-name_facebook-${d.reaction.id}">
                     </div></p>`;
                 },
             },
@@ -98,6 +111,9 @@ var searchParams = new Map([
     ["phone", ""],
     ["note", ""],
     ["uid", ""],
+    ["name_facebook", ""],
+    ["title", ""],
+    ["link_or_post_id", ""],
 ]);
 
 var isFiltering = [];
@@ -114,7 +130,7 @@ function getQueryUrlWithParams() {
 function reloadAll() {
     // enable or disable button
     $('.btn-control').prop('disabled', tempAllRecord.length ? false : true);
-    $('.count-select').text(`Số lượng chọn: ${tempAllRecord.length}`);
+    $('.count-select').text(`Đã chọn: ${tempAllRecord.length}`);
 }
 
 $(document).on("click", ".btn-select-all", function () {

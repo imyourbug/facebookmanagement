@@ -42,19 +42,27 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return d.comment.title;
-                },
-            },
-            {
-                data: function (d) {
-                    return `<p class="show-uid tool-tip" data-id="${d.comment.id}" data-value="${d.comment.uid}" data-uid="${d.comment.uid}">${d.comment.name_facebook || ''}
+                    return `<p class="show-title tool-tip" data-content="${d.comment.content}" data-link_or_post_id="${d.link.link_or_post_id}" data-id="${d.comment.id}">${d.comment.title}
                     <div style="display:none;width: max-content;
                                 background-color: black;
                                 color: #fff;
                                 border-radius: 6px;
                                 padding: 5px 10px;
                                 position: absolute;
-                                z-index: 1;" class="tooltip-uid tooltip-uid-${d.comment.id}">
+                                z-index: 1;" class="tooltip-title tooltip-title-${d.comment.id}">
+                    </div></p>`;
+                },
+            },
+            {
+                data: function (d) {
+                    return `<p class="show-name_facebook tool-tip" data-id="${d.comment.id}" data-value="${d.comment.uid}" data-uid="${d.comment.uid}">${d.comment.name_facebook || ''}
+                    <div style="display:none;width: max-content;
+                                background-color: black;
+                                color: #fff;
+                                border-radius: 6px;
+                                padding: 5px 10px;
+                                position: absolute;
+                                z-index: 1;" class="tooltip-name_facebook tooltip-name_facebook-${d.comment.id}">
                     </div></p>`;
                 },
             },
@@ -95,6 +103,9 @@ var searchParams = new Map([
     ["phone", ""],
     ["note", ""],
     ["uid", ""],
+    ["name_facebook", ""],
+    ["title", ""],
+    ["link_or_post_id", ""],
 ]);
 
 var isFiltering = [];
@@ -142,7 +153,7 @@ function getQueryUrlWithParams() {
 function reloadAll() {
     // enable or disable button
     $('.btn-control').prop('disabled', tempAllRecord.length ? false : true);
-    $('.count-select').text(`Số lượng chọn: ${tempAllRecord.length}`);
+    $('.count-select').text(`Đã chọn: ${tempAllRecord.length}`);
 }
 
 $(document).on("click", ".btn-select-all", function () {

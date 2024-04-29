@@ -1,6 +1,7 @@
 var dataTable = null;
 var allRecord = [];
 var tempAllRecord = [];
+var is_display_count = $('#is_display_count').val();
 $(document).ready(function () {
     reload();
 
@@ -74,8 +75,10 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return `<p class="show-history tool-tip" data-type="comment" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.comment_second}  ${getCountation(parseInt(d.link.comment_second)
-                        - parseInt(d.link.comment_first))}<div style="display:none;
+                    return !is_display_count ?
+                        `<button class="btn-sm btn btn-primary"><i class="fa-solid fa-eye-low-vision"></i></button>`
+                        : `<p class="show-history tool-tip" data-type="comment" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.comment_second}  ${getCountation(parseInt(d.link.comment_second)
+                            - parseInt(d.link.comment_first))}<div style="display:none;
                                                                         width: max-content;
                                                                         background-color: black;
                                                                         color: #fff;
@@ -86,8 +89,10 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return `<p class="show-history tool-tip" data-type="data" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.data_second}  ${getCountation(parseInt(d.link.data_second)
-                        - parseInt(d.link.data_first))}<div style="display:none;
+                    return !is_display_count ?
+                        `<button class="btn-sm btn btn-primary"><i class="fa-solid fa-eye-low-vision"></i></button>`
+                        : `<p class="show-history tool-tip" data-type="data" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.data_second}  ${getCountation(parseInt(d.link.data_second)
+                            - parseInt(d.link.data_first))}<div style="display:none;
                                                                         width: max-content;
                                                                         background-color: black;
                                                                         color: #fff;
@@ -98,8 +103,10 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return `<p class="show-history tool-tip" data-type="emotion" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.emotion_second}  ${getCountation(parseInt(d.link.emotion_second)
-                        - parseInt(d.link.emotion_first))}<div style="display:none;
+                    return !is_display_count ?
+                        `<button class="btn-sm btn btn-primary"><i class="fa-solid fa-eye-low-vision"></i></button>`
+                        : `<p class="show-history tool-tip" data-type="emotion" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.emotion_second}  ${getCountation(parseInt(d.link.emotion_second)
+                            - parseInt(d.link.emotion_first))}<div style="display:none;
                                                                         width: max-content;
                                                                         background-color: black;
                                                                         color: #fff;
@@ -171,7 +178,7 @@ function getQueryUrlWithParams() {
 function reloadAll() {
     // enable or disable button
     $('.btn-control').prop('disabled', tempAllRecord.length ? false : true);
-    $('.count-select').text(`Số lượng chọn: ${tempAllRecord.length}`);
+    $('.count-select').text(`Đã chọn: ${tempAllRecord.length}`);
 
 }
 

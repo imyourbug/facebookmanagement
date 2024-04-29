@@ -31,7 +31,7 @@
                         <label class="">Số user: {{\App\Models\Setting::firstWhere('key', 'number-user')?->value ?? 0}}</label><br>
                         <label class="count-reaction">Tổng số cảm xúc: 0</label><br>
                         <label class="filtering">Lọc theo: Không</label><br>
-                        <label class="count-select">Số lượng chọn: 0</label>
+                        <label class="count-select">Đã chọn: 0</label>
                     </div>
                     <div class="form-group col-lg-6">
                         <button disabled class="btn-control btn btn-danger btn-delete-multiple">Xóa</button>
@@ -43,6 +43,7 @@
                                 <th><input class="btn-select-all" type="checkbox" /></th>
                                 <th>Thời gian</th>
                                 <th>Tên bài</th>
+                                <th>Tên Facebook</th>
                                 <th>UID</th>
                                 <th>Số điện thoại</th>
                                 <th>Cảm xúc</th>
@@ -106,9 +107,31 @@
                                     placeholder="Cảm xúc">
                             </div>
                         </div>
-
                     </div>
                     <div class="row">
+                        <div class="col-lg-6 col-sm-12">
+                            <div class="form-group">
+                                <label for="menu">Tiêu đề</label>
+                                <input type="text" data-name="Tiêu đề" class="form-control" id="title"
+                                    value="" placeholder="Tiêu đề">
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-sm-12">
+                            <div class="form-group">
+                                <label for="menu">Link|PostID</label>
+                                <input type="text" data-name="Link|PostID" class="form-control" id="link_or_post_id"
+                                    value="" placeholder="Link|PostID">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-sm-12">
+                            <div class="form-group">
+                                <label for="menu">Tên Facebook</label>
+                                <input type="text" data-name="Tên Facebook" class="form-control" id="name_facebook"
+                                    value="" placeholder="Tên Facebook">
+                            </div>
+                        </div>
                         <div class="col-lg-6 col-sm-12">
                             <div class="form-group">
                                 <label for="menu">Ghi chú</label>

@@ -29,6 +29,9 @@ class ReactionController extends Controller
         $uid = $request->uid;
         $note = $request->note;
         $phone = $request->phone;
+        $link_or_post_id = $request->link_or_post_id;
+        $title = $request->title;
+        $name_facebook = $request->name_facebook;
 
         return response()->json([
             'status' => 0,
@@ -54,6 +57,24 @@ class ReactionController extends Controller
                 })
                 ->when($reaction_id, function ($q) use ($reaction_id) {
                     return $q->where('reaction_id', $reaction_id);
+                })
+                // title
+                ->when($title, function ($q) use ($title) {
+                    return $q->whereHas('reaction', function ($q) use ($title) {
+                        $q->where('title', 'like', "%$title%");
+                    });
+                })
+                // link_or_post_id
+                ->when($link_or_post_id, function ($q) use ($link_or_post_id) {
+                    return $q->whereHas('link', function ($q) use ($link_or_post_id) {
+                        $q->where('link_or_post_id', 'like', "%$link_or_post_id%");
+                    });
+                })
+                // name_facebook
+                ->when($name_facebook, function ($q) use ($name_facebook) {
+                    return $q->whereHas('reaction', function ($q) use ($name_facebook) {
+                        $q->where('name_facebook', 'like', "%$name_facebook%");
+                    });
                 })
                 // note
                 ->when($note, function ($q) use ($note) {
@@ -100,6 +121,7 @@ class ReactionController extends Controller
                 'reactions.*.uid' => 'nullable|string',
                 'reactions.*.phone' => 'nullable|string',
                 'reactions.*.reaction' => 'nullable|string',
+                'reactions.*.name_facebook' => 'nullable|string',
                 'reactions.*.note' => 'nullable|string',
             ]);
             DB::beginTransaction();
@@ -139,6 +161,7 @@ class ReactionController extends Controller
             'data' => 'nullable|numeric',
             'emotion' => 'nullable|numeric',
             'note' => 'nullable|string',
+            'name_facebook' => 'nullable|string',
             'link_or_post_id' => 'required|string'
         ]);
         unset($data['id']);

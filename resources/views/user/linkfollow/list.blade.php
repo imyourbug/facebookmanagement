@@ -31,13 +31,16 @@
                         <label class="">Số user: {{\App\Models\Setting::firstWhere('key', 'number-user')?->value ?? 0}}</label><br>
                         <label class="count-link">Tổng số link theo dõi: </label><br>
                         <label class="filtering">Lọc theo: Không</label><br>
-                        <label class="count-select">Số lượng chọn: 0</label>
+                        <label class="count-select">Đã chọn: 0</label>
                     </div>
                     <div class="form-group col-lg-6">
                         <button disabled class="btn-control btn btn-warning btn-scan-multiple">Quét</button>
                         <button disabled class="btn-control btn btn-danger btn-delete-multiple">Xóa</button>
                         <button data-target="#modalFilter" data-toggle="modal" class="btn btn-primary btn-choose-filter">Chọn</button>
                     </div>
+                    @php
+                        $is_display_count = in_array(App\Constant\GlobalConstant::ROLE_COUNT, $userRoles);
+                    @endphp
                     <table id="table" class="table display nowrap dataTable dtr-inline collapsed">
                         <thead>
                             <tr>
@@ -61,6 +64,7 @@
         </div>
     </div>
     <input type="hidden" value="{{ Auth::id() }}" name="" id="user_id" />
+    <input type="hidden" value="{{ $is_display_count }}" id="is_display_count" />
     <div class="modal fade" id="modalFilter" style="display: none;" aria-modal="true" role="dialog">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">

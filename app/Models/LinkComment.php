@@ -19,6 +19,7 @@ class LinkComment extends Model
     protected $fillable = [
         'comment_id',
         'link_id',
+        'created_at'
     ];
 
     public function comment()

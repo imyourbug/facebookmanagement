@@ -64,7 +64,20 @@
                     </div>
                 </div>
             </div>
-            <input class="custom-control-input" type="hidden" value="{{$user->role}}" name="role" />
+            <div class="row">
+                <div class="col-lg-12 col-sm-12">
+                    <div class="form-group">
+                        <label for="menu">Phân quyền</label>
+                        @foreach ($roles as $key => $item)
+                            <br />
+                            <input type="checkbox" id="role{{ $key }}" name="roles[]" value="{{ $key }}"
+                                {{ in_array($key, $myRoles) ? 'checked' : '' }} />
+                            <label for="role{{ $key }}">{{ $item }}</label>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+            <input type="hidden" name="user_id" value="{{ request()->id }}" />
         </div>
         <div class="card-footer">
             <button type="submit" class="btn btn-primary">Lưu</button>

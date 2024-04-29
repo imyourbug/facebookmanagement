@@ -65,19 +65,26 @@
                 </div>
                 <div class="card-body" style="display: block;padding: 10px !important;">
                     <div class="form-group col-lg-6">
-                        <label class="">Số link đang quét: {{\App\Models\Setting::firstWhere('key', 'number-link')?->value ?? 0}}</label><br>
-                        <label class="">Số user: {{\App\Models\Setting::firstWhere('key', 'number-user')?->value ?? 0}}</label><br>
+                        <label class="">Số link đang quét:
+                            {{ \App\Models\Setting::firstWhere('key', 'number-link')?->value ?? 0 }}</label><br>
+                        <label class="">Số user:
+                            {{ \App\Models\Setting::firstWhere('key', 'number-user')?->value ?? 0 }}</label><br>
                         <label class="count-link">Tổng số link quét: 0</label><br>
                         <label class="filtering">Lọc theo: Không</label><br>
-                        <label class="count-select">Số lượng chọn: 0</label>
+                        <label class="count-select">Đã chọn: 0</label>
                     </div>
                     <div class="form-group col-lg-6">
                         <button disabled class="btn-control btn btn-warning btn-follow-multiple">Theo dõi</button>
-                        <button disabled data-is_scan="0" class="btn-control btn btn-danger btn-scan btn-sm-multiple">OFF</button>
+                        <button disabled data-is_scan="0"
+                            class="btn-control btn btn-danger btn-scan btn-sm-multiple">OFF</button>
                         <button disabled data-is_scan="1" class="btn-control btn btn-success btn-scan-multiple">ON</button>
                         <button disabled class="btn-control btn btn-danger btn-delete-multiple">Xóa</button>
-                        <button data-target="#modalFilter" data-toggle="modal" class="btn btn-primary btn-choose-filter">Chọn</button>
+                        <button data-target="#modalFilter" data-toggle="modal"
+                            class="btn btn-primary btn-choose-filter">Chọn</button>
                     </div>
+                    @php
+                        $is_display_count = in_array(App\Constant\GlobalConstant::ROLE_COUNT, $userRoles);
+                    @endphp
                     <table id="table" class="table display nowrap dataTable dtr-inline collapsed">
                         <thead>
                             <tr>
@@ -101,7 +108,8 @@
             </div>
         </div>
     </div>
-    <input type="hidden" value="{{ Auth::id() }}" name="" id="user_id" />
+    <input type="hidden" value="{{ Auth::id() }}" id="user_id" />
+    <input type="hidden" value="{{ $is_display_count }}" id="is_display_count" />
     <div class="modal fade" id="modalFilter" style="display: none;" aria-modal="true" role="dialog">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
@@ -118,12 +126,12 @@
                                 <label for="menu">Data cuối</label>
                                 <div class="row">
                                     <div class="col-lg-6">
-                                        <input type="text" class="form-control" data-name="Data cuối" id="time_from" value=""
-                                            placeholder="Từ">
+                                        <input type="text" class="form-control" data-name="Data cuối" id="time_from"
+                                            value="" placeholder="Từ">
                                     </div>
                                     <div class="col-lg-6">
-                                        <input type="text" class="form-control" data-name="Data cuối" id="time_to" value=""
-                                            placeholder="Đến">
+                                        <input type="text" class="form-control" data-name="Data cuối" id="time_to"
+                                            value="" placeholder="Đến">
                                     </div>
                                 </div>
                             </div>
@@ -133,12 +141,12 @@
                                 <label for="menu">Ngày tạo </label>
                                 <div class="row">
                                     <div class="col-lg-6">
-                                        <input type="date" class="form-control" data-name="Ngày tạo" id="from" value=""
-                                            placeholder="Từ">
+                                        <input type="date" class="form-control" data-name="Ngày tạo" id="from"
+                                            value="" placeholder="Từ">
                                     </div>
                                     <div class="col-lg-6">
-                                        <input type="date" class="form-control" data-name="Ngày tạo" id="to" value=""
-                                            placeholder="Đến">
+                                        <input type="date" class="form-control" data-name="Ngày tạo" id="to"
+                                            value="" placeholder="Đến">
                                     </div>
                                 </div>
                             </div>
@@ -157,12 +165,12 @@
                                 <label for="menu">Bình luận</label>
                                 <div class="row">
                                     <div class="col-lg-6">
-                                        <input type="text" class="form-control" data-name="Bình luận" id="comment_from" value=""
-                                            placeholder="Từ">
+                                        <input type="text" class="form-control" data-name="Bình luận"
+                                            id="comment_from" value="" placeholder="Từ">
                                     </div>
                                     <div class="col-lg-6">
-                                        <input type="text" class="form-control" data-name="Bình luận" id="comment_to" value=""
-                                            placeholder="Đến">
+                                        <input type="text" class="form-control" data-name="Bình luận" id="comment_to"
+                                            value="" placeholder="Đến">
                                     </div>
                                 </div>
                             </div>
@@ -172,12 +180,12 @@
                                 <label for="menu">Data</label>
                                 <div class="row">
                                     <div class="col-lg-6">
-                                        <input type="text" data-name="Data" class="form-control" id="data_from" value=""
-                                            placeholder="Từ">
+                                        <input type="text" data-name="Data" class="form-control" id="data_from"
+                                            value="" placeholder="Từ">
                                     </div>
                                     <div class="col-lg-6">
-                                        <input type="text" data-name="Data" class="form-control" id="data_to" value=""
-                                            placeholder="Đến">
+                                        <input type="text" data-name="Data" class="form-control" id="data_to"
+                                            value="" placeholder="Đến">
                                     </div>
                                 </div>
                             </div>
@@ -189,12 +197,12 @@
                                 <label for="menu">Cảm xúc</label>
                                 <div class="row">
                                     <div class="col-lg-6">
-                                        <input data-name="Cảm xúc" type="text" class="form-control" id="reaction_from" value=""
-                                            placeholder="Từ">
+                                        <input data-name="Cảm xúc" type="text" class="form-control"
+                                            id="reaction_from" value="" placeholder="Từ">
                                     </div>
                                     <div class="col-lg-6">
-                                        <input data-name="Cảm xúc" type="text" class="form-control" id="reaction_to" value=""
-                                            placeholder="Đến">
+                                        <input data-name="Cảm xúc" type="text" class="form-control" id="reaction_to"
+                                            value="" placeholder="Đến">
                                     </div>
                                 </div>
                             </div>
@@ -215,24 +223,24 @@
                         <div class="col-lg-6 col-sm-12">
                             <div class="form-group">
                                 <label for="menu">Tiêu đề</label>
-                                <input type="text" data-name="Tiêu đề" class="form-control" id="title" value=""
-                                    placeholder="Tiêu đề">
-                            </div>
-                        </div><div class="col-lg-6 col-sm-12">
-                            <div class="form-group">
-                                <label for="menu">Link|PostID</label>
-                                <input type="text" data-name="Link|PostID" class="form-control" id="link_or_post_id" value=""
-                                    placeholder="Link|PostID">
+                                <input type="text" data-name="Tiêu đề" class="form-control" id="title"
+                                    value="" placeholder="Tiêu đề">
                             </div>
                         </div>
-
+                        <div class="col-lg-6 col-sm-12">
+                            <div class="form-group">
+                                <label for="menu">Link|PostID</label>
+                                <input type="text" data-name="Link|PostID" class="form-control" id="link_or_post_id"
+                                    value="" placeholder="Link|PostID">
+                            </div>
+                        </div>
                     </div>
                     <div class="row">
                         <div class="col-lg-6 col-sm-12">
                             <div class="form-group">
                                 <label for="menu">Nội dung</label>
-                                <input type="text" data-name="Nội dung" class="form-control" id="content" value=""
-                                    placeholder="Nội dung">
+                                <input type="text" data-name="Nội dung" class="form-control" id="content"
+                                    value="" placeholder="Nội dung">
                             </div>
                         </div>
                     </div>

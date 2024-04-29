@@ -56,6 +56,11 @@ class User extends Authenticatable
         return $this->hasMany(UserLink::class, 'user_id', 'id');
     }
 
+    public function userRoles()
+    {
+        return $this->hasMany(UserRole::class, 'user_id', 'id');
+    }
+
     public function userComments()
     {
         return $this->hasMany(UserComment::class, 'user_id', 'id');

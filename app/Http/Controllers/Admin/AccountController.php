@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Models\UserRole;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Throwable;
@@ -73,22 +74,54 @@ class AccountController extends Controller
         return redirect()->back();
     }
 
-    public function update(UpdateAccountRequest $request)
+    public function update(Request $request)
     {
-        $data = $request->validated();
-        foreach ($data as $key => &$item) {
-            if (!strlen($item)) {
-                unset($data[$key]);
+        try {
+            $data = $request->validate([
+                'user_id' => 'required|string',
+                'password' => 'nullable|string',
+                'delay' => 'required|integer',
+                'limit' => 'required|integer',
+                'limit_follow' => 'required|integer',
+                'expire' => 'required|integer',
+                'roles' => 'nullable|array',
+                'roles.*' => 'nullable|in:0,1,2,3',
+            ]);
+            $user_id = $data['user_id'];
+            $dataUpdate = [
+                'delay' => $data['delay'],
+                'limit' => $data['limit'],
+                'limit_follow' => $data['limit_follow'],
+                'expire' => $data['expire'],
+            ];
+            if (strlen($data['password'])) {
+                $dataUpdate = array_merge($dataUpdate, [
+                    'password' => Hash::make($data['password']),
+                ]);
             }
-            if ($key === 'password') {
-                $item = Hash::make($item);
+            DB::beginTransaction();
+            User::where('id', $user_id)->update($dataUpdate);
+            UserRole::where('user_id', $user_id)->whereNotIn('role', $data['roles'] ?? [])->delete();
+            if (!empty($data['roles'])) {
+                $data['roles'] = array_map(function ($item) use ($user_id) {
+                    return [
+                        'user_id' => $user_id,
+                        'role' => $item,
+                    ];
+                }, $data['roles']);
+                UserRole::upsert(
+                    $data['roles'],
+                    ['user_id', 'role'],
+                    ['role']
+                );
             }
-        }
-        unset($data['id']);
-        $update = User::where('id', $request->input('id'))->update($data);
-        if ($update) {
+            DB::commit();
+
             Toastr::success(__('message.success.update'), __('title.toastr.success'));
-        } else Toastr::error(__('message.fail.update'), __('title.toastr.fail'));
+        } catch (Throwable $e) {
+            DB::rollBack();
+            Toastr::error($e->getMessage(), __('title.toastr.fail'));
+        }
 
         return redirect()->back();
     }
@@ -111,9 +144,14 @@ class AccountController extends Controller
 
     public function show($id)
     {
+        $user = User::with(['userRoles'])->firstWhere('id', $id);
+        $myRoles = $user->userRoles->pluck('role')->toArray() ?? [];
+
         return view('admin.account.edit', [
             'title' => 'Chi tiết tài khoản',
-            'user' => User::firstWhere('id', $id)
+            'roles' => GlobalConstant::ROLE_ALL,
+            'user' => $user,
+            'myRoles' => $myRoles,
         ]);
     }
 

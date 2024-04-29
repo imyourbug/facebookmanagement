@@ -2,10 +2,11 @@
 
 namespace App\Http\ViewComposers;
 
-use App\Models\Type;
+use App\Models\UserRole;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
-class MenuComposer
+class RoleComposer
 {
     /**
      * Bind data to the view.
@@ -15,5 +16,6 @@ class MenuComposer
      */
     public function compose(View $view)
     {
+        $view->with('userRoles', UserRole::where('user_id', Auth::id())->pluck('role')->toArray() ?? []);
     }
 }
