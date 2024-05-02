@@ -318,12 +318,12 @@ $(document).on("click", ".btn-scan", function () {
     let user_id = $('#user_id').val();
     let text = is_scan == 0 ? 'tắt' : 'mở';
     if (confirm(`Bạn có muốn ${text} quét link`)) {
-        let link_id = $(this).data("id");
+        let id = $(this).data("id");
         $.ajax({
             type: "POST",
-            url: `/api/user/linkscans/changeIsScan`,
+            url: `/api/links/update`,
             data: {
-                link_id,
+                id,
                 is_scan,
                 user_id,
             },

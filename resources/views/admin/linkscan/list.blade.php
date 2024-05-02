@@ -72,7 +72,7 @@
                     </div>
                     <div class="form-group col-lg-6">
                         <button disabled class="btn-control btn btn-warning btn-follow-multiple">Theo dõi</button>
-                        <button disabled data-is_scan="0" class="btn-control btn btn-danger btn-scan btn-sm-multiple">OFF</button>
+                        <button disabled data-is_scan="0" class="btn-control btn btn-danger btn-scan-multiple">OFF</button>
                         <button disabled data-is_scan="1" class="btn-control btn btn-success btn-scan-multiple">ON</button>
                         <button disabled class="btn-control btn btn-danger btn-delete-multiple">Xóa</button>
                         <button data-target="#modalFilter" data-toggle="modal"

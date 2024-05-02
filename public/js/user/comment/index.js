@@ -68,7 +68,7 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return d.comment.get_uid.phone || '';
+                    return d.comment.get_uid ? d.comment.get_uid.phone : '';
                 },
             },
             {

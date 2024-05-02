@@ -448,8 +448,9 @@ class LinkController extends Controller
                 'user_id' => 'nullable|integer',
             ]);
 
+            $type = $data['type'] ?? '';
             // check limit follow
-            if ((int)$data['type'] === GlobalConstant::TYPE_FOLLOW) {
+            if (strlen($type) && (int)$type === GlobalConstant::TYPE_FOLLOW) {
                 $user = User::firstWhere('id', $data['user_id']);
                 $userLinks = UserLink::with(['link', 'user'])
                     ->where('user_id', $user->id)
@@ -463,7 +464,7 @@ class LinkController extends Controller
             }
 
             // check limit scan
-            if ((int)$data['type'] === GlobalConstant::TYPE_SCAN) {
+            if (strlen($type) && (int)$type === GlobalConstant::TYPE_SCAN) {
                 $user = User::firstWhere('id', $data['user_id']);
                 $userLinks = UserLink::with(['link', 'user'])
                     ->where('user_id', $user->id)
@@ -547,8 +548,9 @@ class LinkController extends Controller
 
         $links = Link::whereIn('id', $data['ids']);
 
+        $type = $data['type'] ?? '';
         // check limit follow
-        if ((int)$data['type'] === GlobalConstant::TYPE_FOLLOW && $data['user_id']) {
+        if (strlen($type) && (int)$type === GlobalConstant::TYPE_FOLLOW && $data['user_id']) {
             $user = User::firstWhere('id', $data['user_id']);
 
             $userLinks = UserLink::with(['link', 'user'])
@@ -564,7 +566,7 @@ class LinkController extends Controller
         }
 
         // check limit scan
-        if ((int)$data['type'] === GlobalConstant::TYPE_SCAN && $data['user_id']) {
+        if (strlen($type) && (int)$type === GlobalConstant::TYPE_SCAN && $data['user_id']) {
             $user = User::firstWhere('id', $data['user_id']);
 
             $userLinks = UserLink::with(['link', 'user'])
