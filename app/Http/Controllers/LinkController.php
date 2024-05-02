@@ -6,6 +6,7 @@ use App\Constant\GlobalConstant;
 use App\Http\Controllers\Controller;
 use App\Models\Link;
 use App\Models\LinkHistory;
+use App\Models\User;
 use App\Models\UserLink;
 use Exception;
 use Illuminate\Http\Request;
@@ -444,9 +445,39 @@ class LinkController extends Controller
                 'end_cursor' => 'nullable|string',
                 'link_or_post_id' => 'nullable|string',
                 'type' => 'nullable|in:0,1,2',
+                'user_id' => 'nullable|integer',
             ]);
 
+            // check limit follow
+            if ((int)$data['type'] === GlobalConstant::TYPE_FOLLOW) {
+                $user = User::firstWhere('id', $data['user_id']);
+                $userLinks = UserLink::with(['link', 'user'])
+                    ->where('user_id', $user->id)
+                    ->whereHas('link', function ($q) {
+                        $q->where('type', GlobalConstant::TYPE_FOLLOW);
+                    })
+                    ->get();
+                if ($userLinks->count() >= $user->limit_follow) {
+                    throw new Exception('Quá giới hạn link theo dõi');
+                }
+            }
+
+            // check limit scan
+            if ((int)$data['type'] === GlobalConstant::TYPE_SCAN) {
+                $user = User::firstWhere('id', $data['user_id']);
+                $userLinks = UserLink::with(['link', 'user'])
+                    ->where('user_id', $user->id)
+                    ->whereHas('link', function ($q) {
+                        $q->where('type', GlobalConstant::TYPE_SCAN);
+                    })
+                    ->get();
+                if ($userLinks->count() >= $user->limit) {
+                    throw new Exception('Quá giới hạn link quét');
+                }
+            }
+
             unset($data['id']);
+            unset($data['user_id']);
             Link::where('id', $request->input('id'))->update($data);
 
             return response()->json([
@@ -511,13 +542,47 @@ class LinkController extends Controller
             'delay' => 'nullable|string',
             'end_cursor' => 'nullable|string',
             'type' => 'nullable|in:0,1,2',
+            'user_id' => 'nullable|integer',
         ]);
 
         $links = Link::whereIn('id', $data['ids']);
-        if ($links->count() === 0) {
+
+        // check limit follow
+        if ((int)$data['type'] === GlobalConstant::TYPE_FOLLOW && $data['user_id']) {
+            $user = User::firstWhere('id', $data['user_id']);
+
+            $userLinks = UserLink::with(['link', 'user'])
+                ->where('user_id', $user->id)
+                ->whereHas('link', function ($q) use ($data) {
+                    $q->where('type', GlobalConstant::TYPE_FOLLOW);
+                })
+                ->get();
+            if ($userLinks->count() >= $user->limit_follow) {
+                throw new Exception('Quá giới hạn link theo dõi');
+            }
+            $links = $links->limit($user->limit_follow - $userLinks->count());
+        }
+
+        // check limit scan
+        if ((int)$data['type'] === GlobalConstant::TYPE_SCAN && $data['user_id']) {
+            $user = User::firstWhere('id', $data['user_id']);
+
+            $userLinks = UserLink::with(['link', 'user'])
+                ->where('user_id', $user->id)
+                ->whereHas('link', function ($q) use ($data) {
+                    $q->where('type', GlobalConstant::TYPE_SCAN);
+                })
+                ->get();
+            if ($userLinks->count() >= $user->limit) {
+                throw new Exception('Quá giới hạn link quét');
+            }
+            $links = $links->limit($user->limit - $userLinks->count());
+        }
+
+        if ($links->get()->count() === 0) {
             throw new Exception('Link không tồn tại');
         }
-        unset($data['ids']);
+        unset($data['ids'], $data['user_id']);
         $links->update($data);
 
         return response()->json([

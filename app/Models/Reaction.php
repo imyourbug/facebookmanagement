@@ -26,6 +26,11 @@ class Reaction extends Model
         'note',
     ];
 
+    public function getUid()
+    {
+        return $this->hasOne(Uid::class, 'uid', 'uid');
+    }
+
     public function reactionLinks()
     {
         return $this->hasMany(LinkReaction::class, 'reaction_id', 'id');

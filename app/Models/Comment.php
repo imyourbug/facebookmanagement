@@ -29,6 +29,11 @@ class Comment extends Model
         'created_at'
     ];
 
+    public function getUid()
+    {
+        return $this->hasOne(Uid::class, 'uid', 'uid');
+    }
+
     public function commentLinks()
     {
         return $this->hasMany(LinkComment::class, 'comment_id', 'id');

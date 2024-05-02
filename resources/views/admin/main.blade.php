@@ -225,6 +225,7 @@
             let content = $(this).data('content');
             let id = $(this).data('id');
             $('.tooltip-title-' + id).css('display', 'block');
+            console.log(content);
             $('.tooltip-title-' + id).html(`Nội dung: ${content || ''}`);
         });
 

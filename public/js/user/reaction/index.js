@@ -80,7 +80,7 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return d.reaction.phone;
+                    return d.reaction.get_uid.phone || '';
                 },
             },
             {

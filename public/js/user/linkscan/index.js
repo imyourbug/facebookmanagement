@@ -37,13 +37,13 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return getDateDiffInHours(new Date(d.link.updated_at), new Date()) + "h";
+                    return getDateDiffInHours(new Date(d.updated_at), new Date()) + "h";
                 }
             },
             {
                 data: function (d) {
-                    return d.link.created_at;
-                    return d.link.updated_at;
+                    return d.created_at;
+                    return d.updated_at;
                 },
             },
             {
@@ -307,7 +307,7 @@ async function reload() {
         }
     });
 
-    $('.count-link').text(`Tổng số link quét: ${count}/${all}`);
+    $('.count-link').text(`Số link: ${count}/${all}`);
     //
     tempAllRecord = [];
     reloadAll();
@@ -344,12 +344,15 @@ $(document).on("click", ".btn-scan", function () {
 $(document).on("click", ".btn-follow", function () {
     if (confirm("Bạn có muốn theo dõi link này?")) {
         let id = $(this).data("id");
+        let user_id = $('#user_id').val();
         $.ajax({
             type: "POST",
             url: `/api/links/update`,
             data: {
                 id,
                 type: 1,
+                is_scan: 1,
+                user_id
             },
             success: function (response) {
                 if (response.status == 0) {
@@ -367,12 +370,15 @@ $(document).on("click", ".btn-follow", function () {
 $(document).on("click", ".btn-follow-multiple", function () {
     if (confirm("Bạn có muốn theo dõi các link đang hiển thị?")) {
         if (tempAllRecord.length) {
+            let user_id = $('#user_id').val();
             $.ajax({
                 type: "POST",
                 url: `/api/links/updateLinkByListLinkId`,
                 data: {
                     ids: tempAllRecord,
                     type: 1,
+                    is_scan: 1,
+                    user_id
                 },
                 success: function (response) {
                     if (response.status == 0) {

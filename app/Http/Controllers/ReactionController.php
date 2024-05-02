@@ -2,13 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Constant\GlobalConstant;
 use App\Http\Controllers\Controller;
-use App\Models\Comment;
 use App\Models\Link;
 use App\Models\LinkReaction;
 use App\Models\Reaction;
-use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -35,7 +32,7 @@ class ReactionController extends Controller
 
         return response()->json([
             'status' => 0,
-            'reactions' => LinkReaction::with(['reaction', 'link.userLinks.user'])
+            'reactions' => LinkReaction::with(['reaction.getUid', 'link.userLinks.user'])
             ->when($user_id, function ($q) use ($user_id) {
                 return $q->whereHas('link.userLinks', function ($q) use ($user_id) {
                     $q->where('user_id', $user_id);

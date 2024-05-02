@@ -38,12 +38,12 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return getDateDiffInHours(new Date(d.link.updated_at), new Date()) + "h";
+                    return getDateDiffInHours(new Date(d.updated_at), new Date()) + "h";
                 }
             },
             {
                 data: function (d) {
-                    return d.link.created_at;
+                    return d.created_at;
                 },
             },
             {
@@ -310,6 +310,7 @@ async function reload() {
 $(document).on("click", ".btn-scan", function () {
     if (confirm("Bạn có muốn quét link này?")) {
         let id = $(this).data("id");
+        let user_id = $('#user_id').val();
         $.ajax({
             type: "POST",
             url: `/api/links/update`,
@@ -317,6 +318,7 @@ $(document).on("click", ".btn-scan", function () {
                 id,
                 type: 0,
                 is_scan: 1,
+                user_id
             },
             success: function (response) {
                 if (response.status == 0) {
@@ -354,6 +356,7 @@ $(document).on("click", ".btn-delete", function () {
 $(document).on("click", ".btn-scan-multiple", function () {
     if (confirm("Bạn có muốn quét các link đang hiển thị?")) {
         if (tempAllRecord.length) {
+            let user_id = $('#user_id').val();
             $.ajax({
                 type: "POST",
                 url: `/api/links/updateLinkByListLinkId`,
@@ -361,6 +364,7 @@ $(document).on("click", ".btn-scan-multiple", function () {
                     ids: tempAllRecord,
                     type: 0,
                     is_scan: 1,
+                    user_id
                 },
                 success: function (response) {
                     if (response.status == 0) {

@@ -42,7 +42,7 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return `<p class="show-title tool-tip" data-content="${d.comment.content}" data-link_or_post_id="${d.link.link_or_post_id}" data-id="${d.comment.id}">${d.comment.title}
+                    return `<p class="show-title tool-tip" data-content="${d.link.content}" data-link_or_post_id="${d.link.link_or_post_id}" data-id="${d.comment.id}">${d.comment.title}
                     <div style="display:none;width: max-content;
                                 background-color: black;
                                 color: #fff;
@@ -68,7 +68,7 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return d.comment.phone;
+                    return d.comment.get_uid.phone || '';
                 },
             },
             {

@@ -106,17 +106,6 @@ class LinkRunningController extends Controller
         }
     }
 
-    public function changeIsScan(Request $request)
-    {
-        Link::where('id', $request->id)->update([
-            'is_scan' => $request->is_scan
-        ]);
-
-        return response()->json([
-            'status' => 0,
-        ]);
-    }
-
     public function getAll()
     {
         return response()->json([

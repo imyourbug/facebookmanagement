@@ -34,7 +34,7 @@ class LinkHistoryController extends Controller
                     return  $q->where('created_at', '>=',  $from);
                 })
                 ->orderByDesc('id')
-                ->limit(5)
+                ->limit(10)
                 ->get()
         ]);
     }

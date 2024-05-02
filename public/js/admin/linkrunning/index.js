@@ -36,13 +36,13 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return getDateDiffInHours(new Date(d.link.updated_at), new Date()) + "h";
+                    return getDateDiffInHours(new Date(d.updated_at), new Date()) + "h";
                 }
             },
             {
                 data: function (d) {
-                    return d.link.created_at;
-                    return d.link.updated_at;
+                    return d.created_at;
+                    return d.updated_at;
                 },
             },
             {
@@ -298,7 +298,7 @@ function displayFiltering() {
 }
 
 async function reload() {
-    let count = 0;
+    let count = $('#number-link').val();
     let all = 0;
     let user_id = $('#user_id').val();
 
@@ -307,18 +307,10 @@ async function reload() {
         url: "/api/links/getAll?is_scan[]=1",
         success: function (response) {
             all = response.links.length;
-            if (response.status == 0) {
-                allRecord = response.links;
-                response.links.forEach((e) => {
-                    if (e.link.is_scan == 1 || e.link.is_scan == 2) {
-                        count++;
-                    }
-                });
-            }
         }
     });
 
-    $('.count-link').text(`Tổng số link đang chạy: ${count}/${all}`);
+    $('.count-link').text(`Số luồng: ${count}/${all}`);
     //
     tempAllRecord = [];
     reloadAll();

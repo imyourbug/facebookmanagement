@@ -40,8 +40,20 @@ class LinkScanController extends Controller
                 'note' => 'nullable|string',
                 'link_or_post_id' => 'required|string',
             ]);
+            $user = User::firstWhere('id', $data['user_id']);
+
             $userLinks = UserLink::with(['link', 'user'])
-                ->where('user_id', $data['user_id'])
+                ->where('user_id', $user->id)
+                ->whereHas('link', function ($q) use ($data) {
+                    $q->where('type', GlobalConstant::TYPE_SCAN);
+                })
+                ->get();
+            if ($userLinks->count() >= $user->limit) {
+                throw new Exception('Đã quá giới hạn link được thêm');
+            }
+
+            $userLinks = UserLink::with(['link', 'user'])
+                ->where('user_id', $user->id)
                 ->whereHas('link', function ($q) use ($data) {
                     $q->where('link_or_post_id', $data['link_or_post_id']);
                 })
@@ -51,16 +63,17 @@ class LinkScanController extends Controller
                 throw new Exception('Đã tồn tại link hoặc post ID');
             }
 
-            $userLinks = UserLink::with(['link', 'user'])
-                ->where('user_id', $data['user_id'])
-                ->whereHas('link', function ($q) use ($data) {
-                    $q->where('is_scan', GlobalConstant::IS_ON);
-                })
-                ->get();
-
-            $data['is_scan'] = $userLinks->count() < (User::firstWhere('id', $data['user_id'])->limit ?? 0)
-                ? GlobalConstant::IS_ON : GlobalConstant::IS_OFF;
+            $data['is_scan'] = GlobalConstant::IS_OFF;
             $data['type'] = GlobalConstant::TYPE_SCAN;
+
+            // check link_or_post_id
+            if (!is_numeric($data['link_or_post_id'])) {
+                if (!(str_contains($data['link_or_post_id'], 'videos') || str_contains($data['link_or_post_id'], 'reel'))) {
+                    throw new Exception('Link không đúng định dạng');
+                }
+                $link_or_post_id = explode('/', $data['link_or_post_id']);
+                $data['link_or_post_id'] = $link_or_post_id[count($link_or_post_id) - 1];
+            }
 
             DB::beginTransaction();
             $link = Link::firstOrCreate(
@@ -149,47 +162,6 @@ class LinkScanController extends Controller
                 'message' => $e->getMessage()
             ]);
         }
-    }
-
-    public function changeIsScan(Request $request)
-    {
-        try {
-            $data = $request->validate([
-                'user_id' => 'required|integer',
-                'link_id' => 'required|integer',
-                'is_scan' => 'nullable|in:0,1,2',
-            ]);
-
-            if ($data['is_scan'] == GlobalConstant::IS_ON) {
-                $userLinks = UserLink::with(['link', 'user'])
-                    ->where('user_id', $data['user_id'])
-                    ->whereHas('link', function ($q) {
-                        $q->where('is_scan', GlobalConstant::IS_ON);
-                    })
-                    ->get();
-                $limit = User::firstWhere('id', $data['user_id'])->limit ?? 0;
-
-                if ($userLinks->count() >= $limit) {
-                    return response()->json([
-                        'status' => GlobalConstant::STATUS_ERROR,
-                        'message' => 'Vượt quá số lượng link cho phép'
-                    ]);
-                }
-            }
-
-            Link::firstWhere('id', $data['link_id'])->update([
-                'is_scan' => $data['is_scan']
-            ]);
-        } catch (Throwable $e) {
-            return response()->json([
-                'status' => GlobalConstant::STATUS_ERROR,
-                'message' => $e->getMessage()
-            ]);
-        }
-
-        return response()->json([
-            'status' => GlobalConstant::STATUS_OK,
-        ]);
     }
 
     public function getAll()

@@ -8,6 +8,7 @@ use App\Http\Requests\Admin\Accounts\CreateAccountRequest;
 use App\Http\Requests\Admin\Accounts\UpdateAccountRequest;
 use App\Models\Setting;
 use App\Models\User;
+use App\Models\UserLink;
 use App\Models\UserRole;
 use Exception;
 use Illuminate\Http\Request;
@@ -100,6 +101,34 @@ class AccountController extends Controller
                 ]);
             }
             DB::beginTransaction();
+
+            $user = User::firstWhere('id', $data['user_id']);
+
+            // check limit scan
+            $userLinks = UserLink::with(['link', 'user'])
+                ->where('user_id', $user->id)
+                ->whereHas('link', function ($q) {
+                    $q->where('type', GlobalConstant::TYPE_SCAN);
+                })
+                ->orderBy('created_at');
+            if ($userLinks->get()->count() >= $user->limit) {
+                $userLinks->take($userLinks->get()->count() - $user->limit)
+                    ->delete();
+            }
+
+            // check limit follow
+            $userLinks = UserLink::with(['link', 'user'])
+                ->where('user_id', $user->id)
+                ->whereHas('link', function ($q) {
+                    $q->where('type', GlobalConstant::TYPE_FOLLOW);
+                })
+                ->orderBy('created_at');
+            if ($userLinks->get()->count() >= $user->limit_follow) {
+                $userLinks->take($userLinks->get()->count() - $user->limit_follow)
+                    ->delete();
+            }
+
+            // setting role
             User::where('id', $user_id)->update($dataUpdate);
             UserRole::where('user_id', $user_id)->whereNotIn('role', $data['roles'] ?? [])->delete();
             if (!empty($data['roles'])) {

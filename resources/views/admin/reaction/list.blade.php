@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.0.1/css/buttons.dataTables.css">
 @endpush
 @push('scripts')
-    <script src="/js/admin/reaction/index.js"></script>
+    <script src="/js/admin/reaction/index.js?v=3"></script>
     <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
     <script src="https://cdn.datatables.net/2.0.2/js/dataTables.js"></script>
@@ -27,10 +27,6 @@
                 </div>
                 <div class="card-body" style="display: block;padding: 10px !important;">
                     <div class="form-group col-lg-6">
-                        <label class="">Số link đang quét:
-                            {{ \App\Models\Setting::firstWhere('key', 'number-link')?->value ?? 0 }}</label><br>
-                        <label class="">Số user:
-                            {{ \App\Models\Setting::firstWhere('key', 'number-user')?->value ?? 0 }}</label><br>
                         <label class="count-reaction">Tổng số cảm xúc: 0</label><br>
                         <label class="filtering">Lọc theo: Không</label><br>
                         <label class="count-select">Đã chọn: 0</label>

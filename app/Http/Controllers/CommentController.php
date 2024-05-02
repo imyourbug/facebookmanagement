@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Constant\GlobalConstant;
 use App\Http\Controllers\Controller;
 use App\Models\Comment;
 use App\Models\Link;
 use App\Models\LinkComment;
-use App\Models\User;
-use Exception;
+use App\Models\Uid;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Throwable;
@@ -34,7 +32,7 @@ class CommentController extends Controller
 
         return response()->json([
             'status' => 0,
-            'comments' => LinkComment::with(['comment', 'link.userLinks.user'])
+            'comments' => LinkComment::with(['comment.getUid', 'link.userLinks.user'])
                 ->when($user_id, function ($q) use ($user_id) {
                     return $q->whereHas('link.userLinks', function ($q) use ($user_id) {
                         $q->where('user_id', $user_id);
@@ -154,6 +152,18 @@ class CommentController extends Controller
                     'comment_id' => $comment->id,
                     'created_at' => $comment->created_at,
                 ]);
+                //
+                $uid = Uid::firstWhere('uid', $comment->uid);
+                if (!$uid) {
+                    Uid::create([
+                        'uid' => $comment->uid,
+                        'phone' => $comment->phone,
+                    ]);
+                } else {
+                    DB::table('uids')
+                        ->where('uid', $comment->uid)
+                        ->update(['phone' => $uid->phone . ',' . $comment->phone]);
+                }
                 $count++;
             }
             DB::commit();

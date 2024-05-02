@@ -112,7 +112,6 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin'], function () {
 
     #linkscans
     Route::group(['prefix' => 'linkscans', 'as' => 'linkscans.'], function () {
-        Route::post('/changeIsScan', 'LinkScanController@changeIsScan')->name('changeIsScan');
         Route::get('/getAll', 'LinkScanController@getAll')->name('getAll');
         Route::delete('/{id}/destroy', 'LinkScanController@destroy')->name('destroy');
     });

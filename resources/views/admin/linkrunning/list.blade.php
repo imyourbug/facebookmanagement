@@ -27,11 +27,12 @@
                 </div>
                 <div class="card-body" style="display: block;padding: 10px !important;">
                     <div class="form-group col-lg-6">
+                        <input type="hidden" value="{{ \App\Models\Setting::firstWhere('key', 'number-link')?->value ?? 0 }}" id="number-link" />
                         <label class="">Số link đang quét:
                             {{ \App\Models\Setting::firstWhere('key', 'number-link')?->value ?? 0 }}</label><br>
                         <label class="">Số user:
                             {{ \App\Models\Setting::firstWhere('key', 'number-user')?->value ?? 0 }}</label><br>
-                        <label class="count-link">Tổng số link đang chạy: </label><br>
+                        <label class="count-link">Số luồng: </label><br>
                         <label class="filtering">Lọc theo: Không</label><br>
                         <label class="count-select">Đã chọn: 0</label>
                     </div>
