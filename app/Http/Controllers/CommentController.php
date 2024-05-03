@@ -154,15 +154,19 @@ class CommentController extends Controller
                 ]);
                 //
                 $uid = Uid::firstWhere('uid', $comment->uid);
+                // get data phone
+                $pattern = '/\d{10,11}/';
+                preg_match_all($pattern, $comment->content, $matches);
+                $dataPhone = $comment->phone . ',' . implode(',', $matches);
                 if (!$uid) {
                     Uid::create([
                         'uid' => $comment->uid,
-                        'phone' => $comment->phone,
+                        'phone' => $dataPhone,
                     ]);
                 } else {
                     DB::table('uids')
                         ->where('uid', $comment->uid)
-                        ->update(['phone' => $uid->phone . ',' . $comment->phone]);
+                        ->update(['phone' => $uid->phone . ',' . $dataPhone]);
                 }
                 $count++;
             }
