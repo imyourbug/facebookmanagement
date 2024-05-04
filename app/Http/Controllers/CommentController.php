@@ -157,7 +157,7 @@ class CommentController extends Controller
                 // get data phone
                 $pattern = '/\d{10,11}/';
                 preg_match_all($pattern, $comment->content, $matches);
-                $dataPhone = $comment->phone . ',' . implode(',', $matches);
+                $dataPhone = $comment->phone . ',' . implode(',', $matches[0]);
                 if (!$uid) {
                     Uid::create([
                         'uid' => $comment->uid,
@@ -290,7 +290,8 @@ class CommentController extends Controller
     {
         try {
             DB::beginTransaction();
-            Comment::whereIn('id', $request->ids)->delete();
+            $comment_ids = LinkComment::whereIn('id', $request->ids)->pluck('comment_id');
+            Comment::whereIn('id', $comment_ids)->delete();
 
             DB::commit();
             return response()->json([
