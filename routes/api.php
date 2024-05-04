@@ -86,7 +86,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::get('/', 'LinkController@index')->name('index');
         Route::get('/getByType', 'LinkController@getByType')->name('getByType');
         Route::get('/getAll', 'LinkController@getAll')->name('getAll');
-        // Route::post('/create', 'LinkController@store')->name('store');
+        Route::post('/create', 'LinkController@store')->name('store');
         Route::post('/update', 'LinkController@update')->name('update');
         Route::post('/updateLinkByLinkOrPostId', 'LinkController@updateLinkByLinkOrPostId')->name('updateLinkByLinkOrPostId');
         Route::post('/updateLinkByListLinkId', 'LinkController@updateLinkByListLinkId')->name('updateLinkByListLinkId');
