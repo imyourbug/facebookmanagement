@@ -28,6 +28,8 @@ class LinkController extends Controller
         $reaction_to = $request->reaction_to;
         $time_from = $request->time_from;
         $time_to = $request->time_to;
+        $last_data_from = $request->last_data_from;
+        $last_data_to = $request->last_data_to;
         $from = $request->from;
         $to = $request->to;
         $user_id = $request->user_id;
@@ -42,10 +44,11 @@ class LinkController extends Controller
         $status = $request->status;
 
         $query = '(HOUR(CURRENT_TIMESTAMP()) * 60 + MINUTE(CURRENT_TIMESTAMP()) - HOUR(updated_at) * 60 - MINUTE(updated_at))/60 + DATEDIFF(CURRENT_TIMESTAMP(), updated_at) * 24';
+        $queryLastData = '(HOUR(CURRENT_TIMESTAMP()) * 60 + MINUTE(CURRENT_TIMESTAMP()) - HOUR(created_at) * 60 - MINUTE(created_at))/60 + DATEDIFF(CURRENT_TIMESTAMP(), created_at) * 24';
 
         // DB::enableQueryLog();
 
-        $userLinks = UserLink::with(['link', 'user'])
+        $userLinks = UserLink::with(['link.commentLinks.comment', 'user'])
             // title
             ->when($title, function ($q) use ($title) {
                 return $q->whereHas('link', function ($q) use ($title) {
@@ -146,7 +149,26 @@ class LinkController extends Controller
                     });
                 });
             })
-            // time
+            // last data
+            ->when(strlen($last_data_from), function ($q) use ($last_data_from, $last_data_to, $queryLastData) {
+                return $q->when(strlen($last_data_to), function ($q) use ($last_data_from, $last_data_to, $queryLastData) {
+                    return $q->whereHas('link.commentLinks', function ($q) use ($last_data_from, $last_data_to, $queryLastData) {
+                        $q->whereRaw("$queryLastData >= ?", $last_data_from)
+                            ->whereRaw("$queryLastData <= ?", $last_data_to);
+                    });
+                }, function ($q) use ($last_data_from, $queryLastData) {
+                    return $q->whereHas('link.commentLinks', function ($q) use ($last_data_from, $queryLastData) {
+                        $q->whereRaw("$queryLastData >= ?", $last_data_from);
+                    });
+                });
+            }, function ($q) use ($last_data_to, $queryLastData) {
+                return $q->when(strlen($last_data_to), function ($q) use ($last_data_to, $queryLastData) {
+                    return $q->whereHas('link.commentLinks', function ($q) use ($last_data_to, $queryLastData) {
+                        $q->whereRaw("$queryLastData <= ?", $last_data_to);
+                    });
+                });
+            })
+            // data update count
             ->when(strlen($time_from), function ($q) use ($time_from, $time_to, $query) {
                 return $q->when(strlen($time_to), function ($q) use ($time_from, $time_to, $query) {
                     return $q->whereHas('link', function ($q) use ($time_from, $time_to, $query) {
@@ -238,53 +260,8 @@ class LinkController extends Controller
 
         return response()->json([
             'status' => 0,
-            'links' => $userLinks
-        ]);
-    }
-
-    public function updateMultipleLinkByLinkOrPostId(Request $request)
-    {
-        try {
-            $data = $request->validate([
-                'links' => 'required|array',
-                'links.*.link_or_post_id' => 'required|string',
-                'links.*.title' => 'nullable|string',
-                'links.*.time' => 'nullable|string',
-                'links.*.content' => 'nullable|string',
-                'links.*.comment_first' => 'nullable|string',
-                'links.*.comment_second' => 'nullable|string',
-                'links.*.data_first' => 'nullable|string',
-                'links.*.data_second' => 'nullable|string',
-                'links.*.emotion_first' => 'nullable|string',
-                'links.*.emotion_second' => 'nullable|string',
-                'links.*.is_scan' => 'nullable|in:0,1,2',
-                'links.*.status' => 'nullable|in:0,1',
-                'links.*.note' => 'nullable|string',
-                'links.*.end_cursor' => 'nullable|string',
-                'links.*.type' => 'nullable|in:0,1,2',
-            ]);
-
-            DB::beginTransaction();
-
-            foreach ($data['links'] as $value) {
-                # code...
-                $link = Link::firstWhere('link_or_post_id', $value['link_or_post_id']);
-                if (!$link) {
-                    throw new Exception('link_or_post_id không tồn tại');
-                }
-                $link->update($value);
-            }
-            DB::commit();
-        } catch (Throwable $e) {
-            DB::rollBack();
-
-            return response()->json([
-                'status' => 1,
-                'message' => $e->getMessage()
-            ]);
-        }
-        return response()->json([
-            'status' => 0,
+            'links' => $userLinks,
+            'user' => User::firstWhere('id', $user_id),
         ]);
     }
 
@@ -372,7 +349,8 @@ class LinkController extends Controller
             $link = Link::create($data);
             UserLink::create([
                 'user_id' => $data['user_id'],
-                'link_id' => $link->id
+                'link_id' => $link->id,
+                'is_scan' => $link->is_scan,
             ]);
             DB::commit();
             Toastr::success('Thêm thành công', 'Thông báo');
@@ -477,51 +455,31 @@ class LinkController extends Controller
                 }
             }
 
+            DB::beginTransaction();
+            $is_scan = $data['is_scan'] ?? '';
+            if (strlen($is_scan)) {
+                UserLink::where('user_id', $data['user_id'])
+                    ->where('link_id', $data['id'])
+                    ->update([
+                        'is_scan' => $is_scan
+                    ]);
+            }
             unset($data['id']);
             unset($data['user_id']);
             Link::where('id', $request->input('id'))->update($data);
+            DB::commit();
 
             return response()->json([
                 'status' => 0,
             ]);
         } catch (Throwable $e) {
+            DB::rollBack();
+
             return response()->json([
                 'status' => 1,
                 'message' => $e->getMessage()
             ]);
         }
-    }
-
-    public function updateIsScanByLinkOrPostId(Request $request)
-    {
-        $data = $request->validate([
-            'link_or_post_id' => 'required|array',
-            'title' => 'nullable|string',
-            'time' => 'nullable|string',
-            'content' => 'nullable|string',
-            'comment_first' => 'nullable|string',
-            'comment_second' => 'nullable|string',
-            'data_first' => 'nullable|string',
-            'data_second' => 'nullable|string',
-            'emotion_first' => 'nullable|string',
-            'emotion_second' => 'nullable|string',
-            'is_scan' => 'nullable|in:0,1,2',
-            'status' => 'nullable|in:0,1',
-            'note' => 'nullable|string',
-            'end_cursor' => 'nullable|string',
-            'type' => 'nullable|in:0,1,2',
-        ]);
-
-        $links = Link::whereIn('link_or_post_id', $data['link_or_post_id']);
-        if ($links->count() === 0) {
-            throw new Exception('link_or_post_id không tồn tại');
-        }
-        unset($data['link_or_post_id']);
-        $links->update($data);
-
-        return response()->json([
-            'status' => 0,
-        ]);
     }
 
     public function updateLinkByListLinkId(Request $request)
@@ -584,6 +542,16 @@ class LinkController extends Controller
         if ($links->get()->count() === 0) {
             throw new Exception('Link không tồn tại');
         }
+        //
+        $is_scan = $data['is_scan'] ?? '';
+        if (strlen($is_scan)) {
+            $userLinks = UserLink::whereIn('link_id', $data['ids'])
+                ->where('user_id', $data['user_id'])
+                ->update([
+                    'is_scan' => $is_scan,
+                ]);
+        }
+
         unset($data['ids'], $data['user_id']);
         $links->update($data);
 

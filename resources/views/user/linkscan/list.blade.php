@@ -71,8 +71,7 @@
                     </div>
                     <div class="form-group col-lg-6">
                         <button disabled class="btn-control btn btn-warning btn-follow-multiple">Theo dõi</button>
-                        <button disabled data-is_scan="0"
-                            class="btn-control btn btn-danger btn-scan-multiple">OFF</button>
+                        <button disabled data-is_scan="0" class="btn-control btn btn-danger btn-scan-multiple">OFF</button>
                         <button disabled data-is_scan="1" class="btn-control btn btn-success btn-scan-multiple">ON</button>
                         <button disabled class="btn-control btn btn-danger btn-delete-multiple">Xóa</button>
                         <button data-target="#modalFilter" data-toggle="modal"
@@ -122,11 +121,11 @@
                                 <label for="menu">Data cuối</label>
                                 <div class="row">
                                     <div class="col-lg-6">
-                                        <input type="text" class="form-control" data-name="Data cuối" id="time_from"
+                                        <input type="text" class="form-control" data-name="Data cuối" id="last_data_from"
                                             value="" placeholder="Từ">
                                     </div>
                                     <div class="col-lg-6">
-                                        <input type="text" class="form-control" data-name="Data cuối" id="time_to"
+                                        <input type="text" class="form-control" data-name="Data cuối" id="last_data_to"
                                             value="" placeholder="Đến">
                                     </div>
                                 </div>
@@ -237,6 +236,21 @@
                                 <label for="menu">Nội dung</label>
                                 <input type="text" data-name="Nội dung" class="form-control" id="content"
                                     value="" placeholder="Nội dung">
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-sm-12">
+                            <div class="form-group">
+                                <label for="menu">Data update count</label>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <input type="text" class="form-control" data-name="Data update count"
+                                            id="time_from" value="" placeholder="Từ">
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <input type="text" class="form-control" data-name="Data update count"
+                                            id="time_to" value="" placeholder="Đến">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

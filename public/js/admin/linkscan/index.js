@@ -36,7 +36,8 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return getDateDiffInHours(new Date(d.updated_at), new Date()) + "h";
+                    let commentLink = d.link.comment_links ? d.link.comment_links[0] : '';
+                    return commentLink ? getDateDiffInHours(new Date(commentLink.created_at), new Date()) + 'h' : 'Trống';
                 }
             },
             {
@@ -115,8 +116,8 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return d.link.is_scan == 0 ? `<button class="btn btn-danger btn-scan btn-sm" data-is_scan="1" data-id=${d.link.id}>OFF</button>`
-                        : (d.link.is_scan == 1 ? `<button data-is_scan="0" data-id=${d.link.id} class="btn btn-success btn-scan btn-sm">ON</button>`
+                    return d.is_scan == 0 ? `<button class="btn btn-danger btn-scan btn-sm" data-is_scan="1" data-id=${d.link.id}>OFF</button>`
+                        : (d.is_scan == 1 ? `<button data-is_scan="0" data-id=${d.link.id} class="btn btn-success btn-scan btn-sm">ON</button>`
                             : `<button class="btn btn-warning btn-sm">ERROR</button>`);
                 }
             },
@@ -147,6 +148,8 @@ $(document).ready(function () {
 var searchParams = new Map([
     ["time_from", ""],
     ["time_to", ""],
+    ["last_data_from", ""],
+    ["last_data_to", ""],
     ["data_from", ""],
     ["data_to", ""],
     ["comment_from", ""],
@@ -286,14 +289,12 @@ function displayFiltering() {
 
 async function reload() {
     let count = 0;
-    let all = 0;
     let user_id = $('#user_id').val();
 
     await $.ajax({
         type: "GET",
         url: `/api/links/getAll?user_id=${user_id}`,
         success: function (response) {
-            all = response.links.length;
             if (response.status == 0) {
                 allRecord = response.links;
                 response.links.forEach((e) => {
@@ -301,11 +302,10 @@ async function reload() {
                         count++;
                     }
                 });
+                $('.count-link').text(`Số link: ${count}/${response.user ? response.user.limit : 0}`);
             }
         }
     });
-
-    $('.count-link').text(`Số link: ${count}/${all}`);
     //
     tempAllRecord = [];
     reloadAll();
@@ -316,12 +316,15 @@ $(document).on("click", ".btn-scan", function () {
     let text = is_scan == 0 ? 'tắt' : 'mở';
     if (confirm(`Bạn có muốn ${text} quét link`)) {
         let id = $(this).data("id");
+        let user_id = $('#user_id').val();
         $.ajax({
             type: "POST",
             url: `/api/links/update`,
             data: {
                 id,
                 is_scan,
+                status: 1,
+                user_id
             },
             success: function (response) {
                 if (response.status == 0) {
@@ -347,7 +350,7 @@ $(document).on("click", ".btn-follow", function () {
             data: {
                 id,
                 type: 1,
-                is_scan: 1,
+                is_scan: 0,
                 user_id
             },
             success: function (response) {
@@ -373,7 +376,7 @@ $(document).on("click", ".btn-follow-multiple", function () {
                 data: {
                     ids: tempAllRecord,
                     type: 1,
-                    is_scan: 1,
+                    is_scan: 0,
                     user_id,
                 },
                 success: function (response) {
@@ -398,12 +401,15 @@ $(document).on("click", ".btn-scan-multiple", function () {
     let text = is_scan == 0 ? 'tắt' : (is_scan == 1 ? 'mở' : 'làm mới');
     if (confirm(`Bạn có muốn ${text} quét các link đang hiển thị?`)) {
         if (tempAllRecord.length) {
+            let user_id = $('#user_id').val();
             $.ajax({
                 type: "POST",
                 url: `/api/links/updateLinkByListLinkId`,
                 data: {
                     ids: tempAllRecord,
                     is_scan,
+                    status: 1,
+                    user_id
                 },
                 success: function (response) {
                     if (response.status == 0) {

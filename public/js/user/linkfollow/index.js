@@ -38,7 +38,8 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return getDateDiffInHours(new Date(d.updated_at), new Date()) + "h";
+                    let commentLink = d.link.comment_links ? d.link.comment_links[0] : '';
+                    return commentLink ? getDateDiffInHours(new Date(commentLink.created_at), new Date()) + 'h' : 'Trống';
                 }
             },
             {
@@ -142,6 +143,8 @@ $(document).ready(function () {
 var searchParams = new Map([
     ["time_from", ""],
     ["time_to", ""],
+    ["last_data_from", ""],
+    ["last_data_to", ""],
     ["data_from", ""],
     ["data_to", ""],
     ["comment_from", ""],
@@ -281,7 +284,6 @@ function displayFiltering() {
 }
 async function reload() {
     let count = 0;
-    let all = 0;
     let user_id = $('#user_id').val();
 
     await $.ajax({
@@ -297,11 +299,10 @@ async function reload() {
                         count++;
                     }
                 });
+                $('.count-link').text(`Số link: ${count}/${response.user ? response.user.limit_follow : 0}`);
             }
         }
     });
-
-    $('.count-link').text(`Tổng số link theo dõi: ${count}/${all}`);
     //
     tempAllRecord = [];
     reloadAll();

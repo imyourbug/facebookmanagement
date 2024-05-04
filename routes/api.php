@@ -88,10 +88,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::get('/getAll', 'LinkController@getAll')->name('getAll');
         // Route::post('/create', 'LinkController@store')->name('store');
         Route::post('/update', 'LinkController@update')->name('update');
-        Route::post('/updateIsScanByLinkOrPostId', 'LinkController@updateIsScanByLinkOrPostId')->name('updateIsScanByLinkOrPostId');
         Route::post('/updateLinkByLinkOrPostId', 'LinkController@updateLinkByLinkOrPostId')->name('updateLinkByLinkOrPostId');
         Route::post('/updateLinkByListLinkId', 'LinkController@updateLinkByListLinkId')->name('updateLinkByListLinkId');
-        Route::post('/updateMultipleLinkByLinkOrPostId', 'LinkController@updateMultipleLinkByLinkOrPostId')->name('updateMultipleLinkByLinkOrPostId');
         Route::delete('/{id}/destroy', 'LinkController@destroy')->name('destroy');
         Route::post('/deleteAll', 'LinkController@deleteAll')->name('deleteAll');
     });

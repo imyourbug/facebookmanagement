@@ -41,7 +41,7 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return `<p class="show-title tool-tip" data-content="${d.reaction.content}" data-link_or_post_id="${d.link.link_or_post_id}" data-id="${d.reaction.id}">${d.reaction.title}
+                    return `<p class="show-title tool-tip" data-type='content' data-content="${d.reaction.content}" data-link_or_post_id="${d.link.link_or_post_id}" data-id="${d.reaction.id}">${d.reaction.title}
                     <div style="display:none;width: max-content;
                                 background-color: black;
                                 color: #fff;

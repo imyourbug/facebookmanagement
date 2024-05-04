@@ -41,7 +41,7 @@ class Link extends Model
 
     public function commentLinks()
     {
-        return $this->hasMany(LinkComment::class, 'link_id', 'id');
+        return $this->hasMany(LinkComment::class, 'link_id', 'id')->orderByDesc('created_at');
     }
 
     public function reactionLinks()

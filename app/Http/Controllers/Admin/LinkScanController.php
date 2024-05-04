@@ -65,6 +65,7 @@ class LinkScanController extends Controller
 
             $data['is_scan'] = GlobalConstant::IS_OFF;
             $data['type'] = GlobalConstant::TYPE_SCAN;
+            $data['delay'] = $user->delay;
 
             // check link_or_post_id
             if (!is_numeric($data['link_or_post_id'])) {
@@ -82,11 +83,13 @@ class LinkScanController extends Controller
                     'title' =>  $data['title'],
                     'is_scan' => $data['is_scan'],
                     'type' => $data['type'],
+                    'delay' => $data['delay'],
                 ]
             );
             UserLink::create([
                 'user_id' => $data['user_id'],
-                'link_id' => $link->id
+                'link_id' => $link->id,
+                'is_scan' => $link->is_scan,
             ]);
             Toastr::success('Thêm thành công', 'Thông báo');
             DB::commit();

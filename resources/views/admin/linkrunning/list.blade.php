@@ -27,7 +27,9 @@
                 </div>
                 <div class="card-body" style="display: block;padding: 10px !important;">
                     <div class="form-group col-lg-6">
-                        <input type="hidden" value="{{ \App\Models\Setting::firstWhere('key', 'number-link')?->value ?? 0 }}" id="number-link" />
+                        <input type="hidden"
+                            value="{{ \App\Models\Setting::firstWhere('key', 'number-link')?->value ?? 0 }}"
+                            id="number-link" />
                         <label class="">Số link đang quét:
                             {{ \App\Models\Setting::firstWhere('key', 'number-link')?->value ?? 0 }}</label><br>
                         <label class="">Số user:
@@ -118,12 +120,12 @@
                                 <label for="menu">Data cuối</label>
                                 <div class="row">
                                     <div class="col-lg-6">
-                                        <input type="text" class="form-control" data-name="Data cuối" id="time_from"
-                                            value="" placeholder="Từ">
+                                        <input type="text" class="form-control" data-name="Data cuối"
+                                            id="last_data_from" value="" placeholder="Từ">
                                     </div>
                                     <div class="col-lg-6">
-                                        <input type="text" class="form-control" data-name="Data cuối" id="time_to"
-                                            value="" placeholder="Đến">
+                                        <input type="text" class="form-control" data-name="Data cuối"
+                                            id="last_data_to" value="" placeholder="Đến">
                                     </div>
                                 </div>
                             </div>
@@ -261,6 +263,21 @@
                                     <option value="0">Stop</option>
                                     <option value="1">Running</option>
                                 </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-sm-12">
+                            <div class="form-group">
+                                <label for="menu">Data update count</label>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <input type="text" class="form-control" data-name="Data update count"
+                                            id="time_from" value="" placeholder="Từ">
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <input type="text" class="form-control" data-name="Data update count"
+                                            id="time_to" value="" placeholder="Đến">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

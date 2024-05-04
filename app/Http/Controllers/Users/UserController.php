@@ -85,10 +85,12 @@ class UserController extends Controller
                 'password' => $request->input('password')
             ])) {
                 $user = Auth::user();
-                $date_diff = date('d', strtotime($user->updated_at) - strtotime(now()));
-                if ($date_diff > $user->expire) {
-                    Toastr::error('Tài khoản đã quá hạn. Liên hệ admin', __('title.toastr.fail'));
-                    return redirect()->back();
+                if ($user->role == GlobalConstant::ROLE_USER) {
+                    $date_diff = date('d', strtotime($user->updated_at) - strtotime(now()));
+                    if ($date_diff > $user->expire) {
+                        Toastr::error('Tài khoản đã quá hạn. Liên hệ admin', __('title.toastr.fail'));
+                        return redirect()->back();
+                    }
                 }
                 Toastr::success('Đăng nhập thành công', __('title.toastr.success'));
 

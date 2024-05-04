@@ -50,7 +50,8 @@ class LinkFollowController extends Controller
             $link = Link::create($data);
             UserLink::create([
                 'user_id' => Auth::id(),
-                'link_id' => $link->id
+                'link_id' => $link->id,
+                'is_scan' => $link->is_scan,
             ]);
             Toastr::success('Tạo link theo dõi thành công', __('title.toastr.success'));
             DB::commit();

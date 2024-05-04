@@ -223,10 +223,12 @@
         });
         $(document).on('mouseenter', '.show-title', function() {
             let content = $(this).data('content');
+            let link_or_post_id = $(this).data('link_or_post_id');
             let id = $(this).data('id');
+            let type = $(this).data('type');
             $('.tooltip-title-' + id).css('display', 'block');
-            console.log(content);
-            $('.tooltip-title-' + id).html(`Nội dung: ${content || ''}`);
+            $('.tooltip-title-' + id).html(type == 'content' ? `Nội dung: ${content || ''}` :
+                `Link|PostId: ${link_or_post_id || ''}`);
         });
 
         $(document).on('mouseleave', '.show-title', function() {
@@ -243,7 +245,6 @@
                 'emotion'
             ];
             var html = '';
-            var name = type === 'comment' ? 'Bình luận' : (type === 'data' ? 'Data' : 'Cảm xúc');
             await $.ajax({
                 type: "GET",
                 url: `/api/linkHistories/getAll?link_or_post_id=${link_or_post_id}`,
@@ -253,24 +254,18 @@
                             switch (type) {
                                 case "comment":
                                     html += `<tr>
-                                                <td>${e.comment_first}</td>
-                                                <td>${e.comment_second}</td>
                                                 <td>${e.comment_second - e.comment_first}</td>
                                                 <td>${e.created_at}</td>
                                             </tr>`;
                                     break;
                                 case "data":
                                     html += `<tr>
-                                                <td>${e.data_first}</td>
-                                                <td>${e.data_second}</td>
                                                 <td>${e.data_second - e.data_first}</td>
                                                 <td>${e.created_at}</td>
                                             </tr>`;
                                     break;
                                 case "emotion":
                                     html += `<tr>
-                                                <td>${e.emotion_first}</td>
-                                                <td>${e.emotion_second}</td>
                                                 <td>${e.emotion_second - e.emotion_first}</td>
                                                 <td>${e.created_at}</td>
                                             </tr>`;
@@ -286,8 +281,6 @@
             $(`.tooltiptext-${type}-${link_or_post_id}`).html(`
                     <table style="width: 100%">
                         <thead>
-                            <th style="" class="">${name} trước</th>
-                            <th style="" class="">${name} sau</th>
                             <th style="" class="">Chênh</th>
                             <th>Thời gian</th>
                         </thead>

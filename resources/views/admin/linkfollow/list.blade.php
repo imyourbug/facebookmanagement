@@ -27,7 +27,7 @@
                 </div>
                 <div class="card-body" style="display: block;padding: 10px !important;">
                     <div class="form-group col-lg-6">
-                        <label class="count-link">Tổng số link theo dõi: </label><br>
+                        <label class="count-link">Số link: 0</label><br>
                         <label class="filtering">Lọc theo: Không</label><br>
                         <label class="count-select">Đã chọn: 0</label>
                     </div>
@@ -75,12 +75,12 @@
                                 <label for="menu">Data cuối</label>
                                 <div class="row">
                                     <div class="col-lg-6">
-                                        <input type="text" class="form-control" data-name="Data cuối" id="time_from" value=""
-                                            placeholder="Từ">
+                                        <input type="text" class="form-control" data-name="Data cuối" id="last_data_from"
+                                            value="" placeholder="Từ">
                                     </div>
                                     <div class="col-lg-6">
-                                        <input type="text" class="form-control" data-name="Data cuối" id="time_to" value=""
-                                            placeholder="Đến">
+                                        <input type="text" class="form-control" data-name="Data cuối" id="last_data_to"
+                                            value="" placeholder="Đến">
                                     </div>
                                 </div>
                             </div>
@@ -187,6 +187,23 @@
                                 <label for="menu">Link|PostID</label>
                                 <input type="text" data-name="Link|PostID" class="form-control" id="link_or_post_id" value=""
                                     placeholder="Link|PostID">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-sm-12">
+                            <div class="form-group">
+                                <label for="menu">Data update count</label>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <input type="text" class="form-control" data-name="Data update count" id="time_from"
+                                            value="" placeholder="Từ">
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <input type="text" class="form-control" data-name="Data update count" id="time_to"
+                                            value="" placeholder="Đến">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
