@@ -93,14 +93,17 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::delete('/{id}/destroy', 'LinkController@destroy')->name('destroy');
         Route::post('/deleteAll', 'LinkController@deleteAll')->name('deleteAll');
     });
+
+    #settings
+    Route::group(['prefix' => 'settings', 'as' => 'settings.'], function () {
+        Route::post('/uploadmap', 'SettingController@uploadmap')->name('uploadmap');
+        Route::post('/create', 'SettingController@store')->name('store');
+        Route::get('/getAll', 'SettingController@getAll')->name('getAll');
+    });
 });
 
 Route::group(['namespace' => 'App\Http\Controllers\Admin'], function () {
-    #settings
-    Route::group(['prefix' => 'settings', 'as' => 'settings.'], function () {
-        Route::post('uploadmap', 'SettingController@uploadmap')->name('uploadmap');
-        Route::post('create', 'SettingController@store')->name('store');
-    });
+
 
     #accounts
     Route::group(['prefix' => 'accounts', 'as' => 'accounts.'], function () {

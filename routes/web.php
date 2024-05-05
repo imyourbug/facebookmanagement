@@ -150,12 +150,13 @@ Route::group([
         Route::get('/update/{id}', 'LinkScanController@show')->name('show');
         Route::post('/update', 'LinkScanController@update')->name('update');
     });
+});
 
+Route::group(['namespace' => 'App\Http\Controllers'], function () {
     #settings
     Route::group(['prefix' => 'settings', 'as' => 'settings.'], function () {
         Route::get('/', 'SettingController@index')->name('index');
         Route::post('update', 'SettingController@update')->name('update');
         Route::get('backup', 'SettingController@backup')->name('backup');
-        Route::get('reload', 'SettingController@reload')->name('reload');
     });
 });

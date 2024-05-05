@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
@@ -110,6 +110,14 @@ class SettingController extends Controller
 
         return response()->json([
             'status' => 0,
+        ]);
+    }
+
+    public function getAll()
+    {
+        return response()->json([
+            'status' => 0,
+            'settings' => Setting::all(),
         ]);
     }
 }
