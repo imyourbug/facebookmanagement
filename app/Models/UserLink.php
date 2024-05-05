@@ -20,6 +20,8 @@ class UserLink extends Model
         'user_id',
         'link_id',
         'is_scan',
+        'title',
+        'note',
     ];
 
     public function user()

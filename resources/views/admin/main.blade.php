@@ -207,8 +207,9 @@
         $(document).on('mouseenter', '.show-content', async function() {
             let content = $(this).data('content');
             let link_or_post_id = $(this).data('link_or_post_id');
-            $('.tooltip-content-' + link_or_post_id).css('display', 'block');
-            $('.tooltip-content-' + link_or_post_id).html(`Nội dung: ${content || 'Trống'}`);
+            let id = $(this).data('id');
+            $('.tooltip-content-' + id).css('display', 'block');
+            $('.tooltip-content-' + id).html(`Nội dung: ${content || 'Trống'}`);
         });
 
         $(document).on('mouseleave', '.show-content', function() {
@@ -238,6 +239,7 @@
         // show
         $(document).on('click', '.show-history', async function() {
             let link_or_post_id = $(this).data('link_or_post_id');
+            let id = $(this).data('id');
             let type = $(this).data('type');
             const allType = [
                 'comment',
@@ -251,22 +253,23 @@
                 success: function(response) {
                     if (response.status == 0) {
                         response.histories.forEach(e => {
-                            switch (type) {
-                                case "comment":
+                            console.log(e);
+                            switch (true) {
+                                case type == "comment" && e.type == 0:
                                     html += `<tr>
-                                                <td>${e.comment_second - e.comment_first}</td>
+                                                <td>${e.diff_comment}</td>
                                                 <td>${e.created_at}</td>
                                             </tr>`;
                                     break;
-                                case "data":
+                                case type == "data" && e.type == 1:
                                     html += `<tr>
-                                                <td>${e.data_second - e.data_first}</td>
+                                                <td>${e.diff_data}</td>
                                                 <td>${e.created_at}</td>
                                             </tr>`;
                                     break;
-                                case "emotion":
+                                case type == "emotion" && e.type == 2:
                                     html += `<tr>
-                                                <td>${e.emotion_second - e.emotion_first}</td>
+                                                <td>${e.diff_reaction}</td>
                                                 <td>${e.created_at}</td>
                                             </tr>`;
                                     break;
@@ -277,8 +280,8 @@
                     }
                 },
             });
-            $(`.tooltiptext-${type}-${link_or_post_id}`).css('display', 'block');
-            $(`.tooltiptext-${type}-${link_or_post_id}`).html(`
+            $(`.tooltiptext-${type}-${id}`).css('display', 'block');
+            $(`.tooltiptext-${type}-${id}`).html(`
                     <table style="width: 100%">
                         <thead>
                             <th style="" class="">Chênh</th>

@@ -96,18 +96,18 @@ class LinkController extends Controller
             ->when(strlen($data_from), function ($q) use ($data_from, $data_to) {
                 return $q->when(strlen($data_to), function ($q) use ($data_from, $data_to) {
                     return $q->whereHas('link', function ($q) use ($data_from, $data_to) {
-                        $q->whereRaw('(data_second - data_first) >= ?', $data_from)
-                            ->whereRaw('(data_second - data_first) <= ?', $data_to);
+                        $q->whereRaw('diff_data >= ?', $data_from)
+                            ->whereRaw('diff_data <= ?', $data_to);
                     });
                 }, function ($q) use ($data_from) {
                     return $q->whereHas('link', function ($q) use ($data_from) {
-                        $q->whereRaw('(data_second - data_first) >= ?', $data_from);
+                        $q->whereRaw('diff_data >= ?', $data_from);
                     });
                 });
             }, function ($q) use ($data_to) {
                 return $q->when(strlen($data_to), function ($q) use ($data_to) {
                     return $q->whereHas('link', function ($q) use ($data_to) {
-                        $q->whereRaw('(data_second - data_first) <= ?', $data_to);
+                        $q->whereRaw('diff_data <= ?', $data_to);
                     });
                 });
             })
@@ -115,18 +115,18 @@ class LinkController extends Controller
             ->when(strlen($reaction_from), function ($q) use ($reaction_from, $reaction_to) {
                 return $q->when(strlen($reaction_to), function ($q) use ($reaction_from, $reaction_to) {
                     return $q->whereHas('link', function ($q) use ($reaction_from, $reaction_to) {
-                        $q->whereRaw('(emotion_second - emotion_first) >= ?', $reaction_from)
-                            ->whereRaw('(emotion_second - emotion_first) <= ?', $reaction_to);
+                        $q->whereRaw('diff_reaction >= ?', $reaction_from)
+                            ->whereRaw('diff_reaction <= ?', $reaction_to);
                     });
                 }, function ($q) use ($reaction_from) {
                     return $q->whereHas('link', function ($q) use ($reaction_from) {
-                        $q->whereRaw('(emotion_second - emotion_first) >= ?', $reaction_from);
+                        $q->whereRaw('diff_reaction >= ?', $reaction_from);
                     });
                 });
             }, function ($q) use ($reaction_to) {
                 return $q->when(strlen($reaction_to), function ($q) use ($reaction_to) {
                     return $q->whereHas('link', function ($q) use ($reaction_to) {
-                        $q->whereRaw('(emotion_second - emotion_first) <= ?', $reaction_to);
+                        $q->whereRaw('diff_reaction <= ?', $reaction_to);
                     });
                 });
             })
@@ -134,18 +134,18 @@ class LinkController extends Controller
             ->when(strlen($comment_from), function ($q) use ($comment_from, $comment_to) {
                 return $q->when(strlen($comment_to), function ($q) use ($comment_from, $comment_to) {
                     return $q->whereHas('link', function ($q) use ($comment_from, $comment_to) {
-                        $q->whereRaw('(comment_second - comment_first) >= ?', $comment_from)
-                            ->whereRaw('(comment_second - comment_first) <= ?', $comment_to);
+                        $q->whereRaw('diff_comment >= ?', $comment_from)
+                            ->whereRaw('diff_comment <= ?', $comment_to);
                     });
                 }, function ($q) use ($comment_from) {
                     return $q->whereHas('link', function ($q) use ($comment_from) {
-                        $q->whereRaw('(comment_second - comment_first) >= ?', $comment_from);
+                        $q->whereRaw('diff_comment >= ?', $comment_from);
                     });
                 });
             }, function ($q) use ($comment_to) {
                 return $q->when(strlen($comment_to), function ($q) use ($comment_to) {
                     return $q->whereHas('link', function ($q) use ($comment_to) {
-                        $q->whereRaw('(comment_second - comment_first) <= ?', $comment_to);
+                        $q->whereRaw('diff_comment <= ?', $comment_to);
                     });
                 });
             })
@@ -244,6 +244,7 @@ class LinkController extends Controller
                     $q->where('status', $status);
                 });
             })
+            ->orderByDesc('created_at')
             ->get()?->toArray() ?? [];
 
         // dd(DB::getRawQueryLog());
@@ -274,12 +275,12 @@ class LinkController extends Controller
                 'links.*.title' => 'nullable|string',
                 'links.*.time' => 'nullable|string',
                 'links.*.content' => 'nullable|string',
-                'links.*.comment_first' => 'nullable|string',
-                'links.*.comment_second' => 'nullable|string',
-                'links.*.data_first' => 'nullable|string',
-                'links.*.data_second' => 'nullable|string',
-                'links.*.emotion_first' => 'nullable|string',
-                'links.*.emotion_second' => 'nullable|string',
+                'links.*.comment' => 'nullable|string',
+                // 'links.*.diff_comment' => 'nullable|string',
+                'links.*.data' => 'nullable|string',
+                // 'links.*.diff_data' => 'nullable|string',
+                'links.*.reaction' => 'nullable|string',
+                // 'links.*.diff_reaction' => 'nullable|string',
                 'links.*.is_scan' => 'nullable|in:0,1,2',
                 'links.*.status' => 'nullable|in:0,1',
                 'links.*.note' => 'nullable|string',
@@ -290,18 +291,57 @@ class LinkController extends Controller
             DB::beginTransaction();
 
             foreach ($data['links'] as $key => &$value) {
-                # code...
                 $link = Link::firstWhere('link_or_post_id', $value['link_or_post_id']);
                 if (!$link) {
                     throw new Exception('link_or_post_id không tồn tại');
                 }
+                // get and set diff
+                if (isset($value['comment']) && strlen($value['comment'])) {
+                    $lastHistory = LinkHistory::where('link_id', $link->id)
+                        ->where('type', GlobalConstant::TYPE_COMMENT)
+                        ->orderByDesc('id')
+                        ->first();
+                    $value['diff_comment'] = $lastHistory?->comment ? ((int)$value['comment'] - (int)$lastHistory->comment) : (int)$value['comment'];
+                    LinkHistory::create([
+                        'comment' => $value['comment'],
+                        'diff_comment' => $value['diff_comment'],
+                        'link_id' => $link->id,
+                        'type' => GlobalConstant::TYPE_COMMENT
+                    ]);
+                }
+                if (isset($value['data']) && strlen($value['data'])) {
+                    $lastHistory = LinkHistory::where('link_id', $link->id)
+                        ->where('type', GlobalConstant::TYPE_DATA)
+                        ->orderByDesc('id')
+                        ->first();
+                    $value['diff_data'] = $lastHistory?->data ? ((int)$value['data'] - (int)$lastHistory->data) : (int)$value['data'];
+                    LinkHistory::create([
+                        'data' => $value['data'],
+                        'diff_data' => $value['diff_data'],
+                        'link_id' => $link->id,
+                        'type' => GlobalConstant::TYPE_DATA
+                    ]);
+                }
+                if (isset($value['reaction']) && strlen($value['reaction'])) {
+                    $lastHistory = LinkHistory::where('link_id', $link->id)
+                        ->where('type', GlobalConstant::TYPE_REACTION)
+                        ->orderByDesc('id')
+                        ->first();
+                    $value['diff_reaction'] = $lastHistory?->reaction ? ((int)$value['reaction'] - (int)$lastHistory->reaction) : (int)$value['reaction'];
+                    LinkHistory::create([
+                        'reaction' => $value['reaction'],
+                        'diff_reaction' => $value['diff_reaction'],
+                        'link_id' => $link->id,
+                        'type' => GlobalConstant::TYPE_REACTION
+                    ]);
+                }
+                //
                 unset($value['link_or_post_id']);
                 $link->update($value);
                 $value['link_id'] = $link->id;
                 $value['created_at'] = now();
                 $value['updated_at'] = now();
             }
-            LinkHistory::insert($data['links']);
             DB::commit();
         } catch (Throwable $e) {
             DB::rollBack();
@@ -331,12 +371,12 @@ class LinkController extends Controller
             'links.*.title' => 'nullable|string',
             'links.*.time' => 'nullable|string',
             'links.*.content' => 'nullable|string',
-            'links.*.comment_first' => 'nullable|string',
-            'links.*.comment_second' => 'nullable|string',
-            'links.*.data_first' => 'nullable|string',
-            'links.*.data_second' => 'nullable|string',
-            'links.*.emotion_first' => 'nullable|string',
-            'links.*.emotion_second' => 'nullable|string',
+            'links.*.comment' => 'nullable|string',
+            'links.*.diff_comment' => 'nullable|string',
+            'links.*.data' => 'nullable|string',
+            'links.*.diff_data' => 'nullable|string',
+            'links.*.reaction' => 'nullable|string',
+            'links.*.diff_reaction' => 'nullable|string',
             'links.*.is_scan' => 'nullable|in:0,1,2',
             'links.*.note' => 'nullable|string',
             'links.*.link_or_post_id' => 'required|string',
@@ -365,12 +405,12 @@ class LinkController extends Controller
                 'links.*.title' => 'nullable|string',
                 'links.*.time' => 'nullable|string',
                 'links.*.content' => 'nullable|string',
-                'links.*.comment_first' => 'nullable|string',
-                'links.*.comment_second' => 'nullable|string',
-                'links.*.data_first' => 'nullable|string',
-                'links.*.data_second' => 'nullable|string',
-                'links.*.emotion_first' => 'nullable|string',
-                'links.*.emotion_second' => 'nullable|string',
+                'links.*.comment' => 'nullable|string',
+                'links.*.diff_comment' => 'nullable|string',
+                'links.*.data' => 'nullable|string',
+                'links.*.diff_data' => 'nullable|string',
+                'links.*.reaction' => 'nullable|string',
+                'links.*.diff_reaction' => 'nullable|string',
                 'links.*.is_scan' => 'nullable|in:0,1,2',
                 'links.*.note' => 'nullable|string',
                 'links.*.link_or_post_id' => 'required|string',
@@ -406,12 +446,12 @@ class LinkController extends Controller
                 'title' => 'nullable|string',
                 'time' => 'nullable|string',
                 'content' => 'nullable|string',
-                'comment_first' => 'nullable|string',
-                'comment_second' => 'nullable|string',
-                'data_first' => 'nullable|string',
-                'data_second' => 'nullable|string',
-                'emotion_first' => 'nullable|string',
-                'emotion_second' => 'nullable|string',
+                'comment' => 'nullable|string',
+                'diff_comment' => 'nullable|string',
+                'data' => 'nullable|string',
+                'diff_data' => 'nullable|string',
+                'reaction' => 'nullable|string',
+                'diff_reaction' => 'nullable|string',
                 'is_scan' => 'nullable|in:0,1,2',
                 'status' => 'nullable|in:0,1',
                 'note' => 'nullable|string',
@@ -452,15 +492,24 @@ class LinkController extends Controller
 
             DB::beginTransaction();
             $is_scan = $data['is_scan'] ?? '';
-            if (strlen($is_scan)) {
-                UserLink::where('user_id', $data['user_id'])
+            $user_id = $data['user_id'] ?? '';
+            if (strlen($is_scan) && strlen($user_id)) {
+                $check = UserLink::where('user_id', '!=', $user_id)
+                    ->where('link_id', $data['id'])
+                    ->where('is_scan', GlobalConstant::IS_ON)
+                    ->get();
+                // check any link is on
+                if ($check->count()) {
+                    $data['is_scan'] = GlobalConstant::IS_ON;
+                }
+                UserLink::where('user_id', $user_id)
                     ->where('link_id', $data['id'])
                     ->update([
                         'is_scan' => $is_scan
                     ]);
+                unset($data['user_id']);
             }
             unset($data['id']);
-            unset($data['user_id']);
             Link::where('id', $request->input('id'))->update($data);
             DB::commit();
 
@@ -484,12 +533,12 @@ class LinkController extends Controller
             'title' => 'nullable|string',
             'time' => 'nullable|string',
             'content' => 'nullable|string',
-            'comment_first' => 'nullable|string',
-            'comment_second' => 'nullable|string',
-            'data_first' => 'nullable|string',
-            'data_second' => 'nullable|string',
-            'emotion_first' => 'nullable|string',
-            'emotion_second' => 'nullable|string',
+            'comment' => 'nullable|string',
+            'diff_comment' => 'nullable|string',
+            'data' => 'nullable|string',
+            'diff_data' => 'nullable|string',
+            'reaction' => 'nullable|string',
+            'diff_reaction' => 'nullable|string',
             'is_scan' => 'nullable|in:0,1,2',
             'status' => 'nullable|in:0,1',
             'note' => 'nullable|string',

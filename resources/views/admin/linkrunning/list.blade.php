@@ -39,7 +39,6 @@
                         <label class="count-select">Đã chọn: 0</label>
                     </div>
                     <div class="form-group col-lg-6">
-                        {{-- <button disabled class="btn-control btn btn-warning btn-reset-multiple">Reset</button> --}}
                         <button disabled data-is_scan="0" class="btn-control btn btn-primary btn-run-multiple">Run</button>
                         <button disabled data-is_scan="1" class="btn-control btn btn-danger btn-stop-multiple">Stop</button>
                         {{-- <button disabled class="btn-control btn btn-danger btn-delete-multiple">Xóa</button> --}}

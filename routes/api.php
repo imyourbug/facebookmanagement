@@ -103,8 +103,6 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
 });
 
 Route::group(['namespace' => 'App\Http\Controllers\Admin'], function () {
-
-
     #accounts
     Route::group(['prefix' => 'accounts', 'as' => 'accounts.'], function () {
         Route::delete('/{id}/destroy', 'AccountController@destroy')->name('destroy');

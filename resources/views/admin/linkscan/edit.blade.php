@@ -20,7 +20,7 @@
                 <div class="col-lg-6 col-sm-12">
                     <div class="form-group">
                         <label for="menu">Tiêu đề <span class="required">(*)</span></label>
-                        <input type="text" class="form-control" name="title" value="{{ old('title') ?? $link->title }}"
+                        <input type="text" class="form-control" name="title" value="{{ old('title') ?? $userLink->title }}"
                             placeholder="Nhập tiêu đề">
                     </div>
                 </div>
@@ -37,7 +37,7 @@
                 <div class="col-lg-12 col-sm-12">
                     <div class="form-group">
                         <label for="menu">Note <span class="required">(*)</span></label>
-                        <input type="text" class="form-control" name="note" value="{{ old('note') ?? $link->note }}"
+                        <input type="text" class="form-control" name="note" value="{{ old('note') ?? $userLink->note }}"
                             placeholder="Nhập ghi chú">
                     </div>
                 </div>
@@ -48,6 +48,7 @@
             <a href="{{ route('admin.linkscans.index', ['user_id' => request()->user_id]) }}" class="btn btn-success">Xem
                 danh sách</a>
         </div>
+        <input type="hidden" name="user_id" value="{{ request()->user_id }}">
         @csrf
     </form>
 @endsection

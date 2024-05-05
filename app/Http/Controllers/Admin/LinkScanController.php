@@ -15,13 +15,6 @@ use Toastr;
 
 class LinkScanController extends Controller
 {
-    public function create()
-    {
-        return view('admin.linkscan.add', [
-            'title' => 'Thêm link quét'
-        ]);
-    }
-
     public function store(Request $request)
     {
         try {
@@ -30,12 +23,12 @@ class LinkScanController extends Controller
                 'title' => 'nullable|string',
                 'time' => 'nullable|string',
                 'content' => 'nullable|string',
-                'comment_first' => 'nullable|string',
-                'comment_second' => 'nullable|string',
-                'data_first' => 'nullable|string',
-                'data_second' => 'nullable|string',
-                'emotion_first' => 'nullable|string',
-                'emotion_second' => 'nullable|string',
+                'comment' => 'nullable|string',
+                'diff_comment' => 'nullable|string',
+                'data' => 'nullable|string',
+                'diff_data' => 'nullable|string',
+                'reaction' => 'nullable|string',
+                'diff_reaction' => 'nullable|string',
                 'is_scan' => 'nullable|in:0,1,2',
                 'note' => 'nullable|string',
                 'link_or_post_id' => 'required|string',
@@ -63,8 +56,9 @@ class LinkScanController extends Controller
                 throw new Exception('Đã tồn tại link hoặc post ID');
             }
 
-            $data['is_scan'] = GlobalConstant::IS_OFF;
+            $data['is_scan'] = GlobalConstant::IS_ON;
             $data['type'] = GlobalConstant::TYPE_SCAN;
+            $data['status'] = GlobalConstant::STATUS_RUNNING;
             $data['delay'] = $user->delay;
 
             // check link_or_post_id
@@ -84,12 +78,15 @@ class LinkScanController extends Controller
                     'is_scan' => $data['is_scan'],
                     'type' => $data['type'],
                     'delay' => $data['delay'],
+                    'status' => $data['status'],
                 ]
             );
             UserLink::create([
                 'user_id' => $data['user_id'],
                 'link_id' => $link->id,
                 'is_scan' => $link->is_scan,
+                'title' => $data['title'],
+                'note' => $link->note,
             ]);
             Toastr::success('Thêm thành công', 'Thông báo');
             DB::commit();
@@ -103,23 +100,40 @@ class LinkScanController extends Controller
 
     public function update(Request $request)
     {
-        $data = $request->validate([
-            'id' => 'required|integer',
-            'title' => 'nullable|string',
-            'content' => 'nullable|string',
-            'comment' => 'nullable|string',
-            'data' => 'nullable|numeric',
-            'emotion' => 'nullable|numeric',
-            'is_scan' => 'nullable|in:0,1',
-            'note' => 'nullable|string',
-            'link_or_post_id' => 'required|string'
-        ]);
-        unset($data['id']);
-        $update = Link::where('id', $request->input('id'))->update($data);
-
-        if ($update) {
-            Toastr::success(__('message.success.update'), __('title.toastr.success'));
-        } else Toastr::error(__('message.fail.update'), __('title.toastr.fail'));
+        try {
+            $data = $request->validate([
+                'id' => 'required|integer',
+                'title' => 'nullable|string',
+                'content' => 'nullable|string',
+                'comment' => 'nullable|string',
+                'diff_comment' => 'nullable|string',
+                'data' => 'nullable|string',
+                'diff_data' => 'nullable|string',
+                'reaction' => 'nullable|string',
+                'diff_reaction' => 'nullable|string',
+                'is_scan' => 'nullable|in:0,1',
+                'note' => 'nullable|string',
+                'link_or_post_id' => 'required|string',
+                'user_id' => 'required|string',
+            ]);
+            unset($data['id']);
+            DB::beginTransaction();
+            $link = Link::firstWhere('id', $request->input('id'));
+            if ($link) {
+                $link->update($data);
+                UserLink::where('user_id', $data['user_id'])
+                    ->where('link_id', $link->id)
+                    ->update([
+                        'title' => $link->title,
+                        'note' => $link->note,
+                    ]);
+            }
+        } catch (Throwable $e) {
+            DB::rollBack();
+            Toastr::error($e->getMessage(), __('title.toastr.fail'));
+        }
+        DB::commit();
+        Toastr::success(__('message.success.update'), __('title.toastr.success'));
 
         return redirect()->back();
     }
@@ -141,11 +155,14 @@ class LinkScanController extends Controller
         ]);
     }
 
-    public function show($id)
+    public function show($id, Request $request)
     {
         return view('admin.linkscan.edit', [
             'title' => 'Chi tiết link quét',
-            'link' => Link::firstWhere('id', $id)
+            'link' => Link::firstWhere('id', $id),
+            'userLink' => UserLink::where('link_id', $id)
+                ->where('user_id', $request->user_id)
+                ->first(),
         ]);
     }
 

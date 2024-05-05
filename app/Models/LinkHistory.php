@@ -17,13 +17,21 @@ class LinkHistory extends Model
     ];
 
     protected $fillable = [
-        'comment_first',
-        'comment_second',
-        'data_first',
-        'data_second',
-        'emotion_first',
-        'emotion_second',
         'link_id',
+        'comment',
+        'diff_comment',
+        'data',
+        'diff_data',
+        'reaction',
+        'diff_reaction',
+        'type',
+        //
+        // 'comment_first',
+        // 'comment_second',
+        // 'data_first',
+        // 'data_second',
+        // 'emotion_first',
+        // 'emotion_second',
     ];
 
     public function comment()

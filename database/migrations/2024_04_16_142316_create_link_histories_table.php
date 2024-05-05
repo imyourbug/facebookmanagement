@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('link_histories', function (Blueprint $table) {
             $table->id();
-            $table->string('comment_first')->default(0);
-            $table->string('comment_second')->default(0);
-            $table->string('data_first')->default(0);
-            $table->string('data_second')->default(0);
-            $table->string('emotion_first')->default(0);
-            $table->string('emotion_second')->default(0);
+            // $table->string('comment_first')->default(0);
+            // $table->string('comment_second')->default(0);
+            // $table->string('data_first')->default(0);
+            // $table->string('data_second')->default(0);
+            // $table->string('emotion_first')->default(0);
+            // $table->string('emotion_second')->default(0);
             $table->unsignedBigInteger('link_id')->nullable();
             $table->foreign('link_id')->references('id')->on('links')->onDelete('cascade');
             $table->timestamps();

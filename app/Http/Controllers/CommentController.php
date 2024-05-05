@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Constant\GlobalConstant;
 use App\Http\Controllers\Controller;
 use App\Models\Comment;
 use App\Models\Link;
 use App\Models\LinkComment;
+use App\Models\LinkHistory;
 use App\Models\Uid;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -135,6 +137,7 @@ class CommentController extends Controller
             ]);
             DB::beginTransaction();
             $count = 0;
+            $unique_link_ids = [];
             foreach ($data['comments'] as $key => $value) {
                 $link = Link::firstWhere('link_or_post_id', $value['link_or_post_id']);
                 if (!$link) {
@@ -145,6 +148,7 @@ class CommentController extends Controller
                 if ($comment) {
                     continue;
                 }
+                $unique_link_ids[$link->id] = $link->id;
                 unset($value['link_or_post_id']);
                 $comment = Comment::create($value);
                 LinkComment::create([
@@ -170,6 +174,41 @@ class CommentController extends Controller
                 }
                 $count++;
             }
+            if ($count) {
+                // update column data of link
+                $dataLinks = [];
+                foreach ($unique_link_ids as $link_id) {
+                    // $comments = Comment::where('')
+                    $count_data = LinkComment::where('link_id', $link_id)
+                        ->get()
+                        ->count();
+                    // get history
+                    $lastHistory = LinkHistory::with(['link'])
+                        ->where('type', GlobalConstant::TYPE_DATA)
+                        ->where('link_id', $link_id)
+                        ->orderByDesc('id')
+                        ->first();
+                    //
+                    $diff_data = $lastHistory?->data ? $count_data - (int)$lastHistory->data : $count_data;
+                    //
+                    Link::firstWhere('id', $link_id)
+                        ->update([
+                            'data' => $count_data,
+                            'diff_data' => $diff_data,
+                        ]);
+                    //
+                    $dataLinks[] = [
+                        'data' => $count_data,
+                        'diff_data' => $diff_data,
+                        'link_id' => $link_id,
+                        'type' => GlobalConstant::TYPE_DATA,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
+                LinkHistory::insert($dataLinks);
+            }
+            //
             DB::commit();
             $all = count($data['comments']);
 

@@ -19,6 +19,9 @@ class GlobalConstant
     public const STATUS_OK = 0;
     public const STATUS_ERROR = 1;
 
+    public const STATUS_STOP = 0;
+    public const STATUS_RUNNING = 1;
+
     public const UTC_HOUR = 7;
 
     public const LINK_STATUS = [
@@ -35,4 +38,8 @@ class GlobalConstant
     public const ROLE_COUNT = 1;
     public const ROLE_FOLLOW = 2;
     public const ROLE_REACTION = 3;
+
+    public const TYPE_COMMENT = 0;
+    public const TYPE_DATA = 1;
+    public const TYPE_REACTION = 2;
 }

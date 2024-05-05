@@ -53,20 +53,20 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return `<p class="show-title tool-tip" data-id="${d.link.id}" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.title}
+                    return `<p class="show-title tool-tip" data-id="${d.id}" data-link_or_post_id="${d.link.link_or_post_id}">${d.title}
                     <div style="display:none;width: max-content;
                                 background-color: black;
                                 color: #fff;
                                 border-radius: 6px;
                                 padding: 5px 10px;
                                 position: absolute;
-                                z-index: 1;" class="tooltip-title tooltip-title-${d.link.id}">
+                                z-index: 1;" class="tooltip-title tooltip-title-${d.id}">
                     </div></p>`;
                 },
             },
             {
                 data: function (d) {
-                    return `<p class="show-content tool-tip" data-link_or_post_id="${d.link.link_or_post_id}" data-content="${d.link.content}">
+                    return `<p class="show-content tool-tip" data-id="${d.id}" data-link_or_post_id="${d.link.link_or_post_id}" data-content="${d.link.content}">
                     <img style="width: 50px;height:50px" src="${d.link.content}" alt="image" />
                     <div style="display:none;width: max-content;
                                 background-color: black;
@@ -74,44 +74,41 @@ $(document).ready(function () {
                                 border-radius: 6px;
                                 padding: 5px 10px;
                                 position: absolute;
-                                z-index: 1;" class="tooltip-content tooltip-content-${d.link.link_or_post_id}">
+                                z-index: 1;" class="tooltip-content tooltip-content-${d.id}">
                     </div></p>`;
                 },
             },
             {
                 data: function (d) {
-                    return `<p class="show-history tool-tip" data-type="comment" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.comment_second}  ${getCountation(parseInt(d.link.comment_second)
-                        - parseInt(d.link.comment_first))}<div style="display:none;
+                    return `<p class="show-history tool-tip" data-id="${d.id}" data-type="comment" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.comment}  ${getCountation(d.link.diff_comment)}<div style="display:none;
                                                                         width: max-content;
                                                                         background-color: black;
                                                                         color: #fff;
                                                                         border-radius: 6px;
                                                                         position: absolute;
-                                                                        z-index: 1;" class="tooltiptext tooltiptext-comment tooltiptext-comment-${d.link.link_or_post_id}"></div></p>`;
+                                                                        z-index: 1;" class="tooltiptext tooltiptext-comment tooltiptext-comment-${d.id}"></div></p>`;
                 },
             },
             {
                 data: function (d) {
-                    return `<p class="show-history tool-tip" data-type="data" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.data_second}  ${getCountation(parseInt(d.link.data_second)
-                        - parseInt(d.link.data_first))}<div style="display:none;
+                    return `<p class="show-history tool-tip" data-type="data" data-id="${d.id}" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.data}  ${getCountation(parseInt(d.link.diff_data))}<div style="display:none;
                                                                         width: max-content;
                                                                         background-color: black;
                                                                         color: #fff;
                                                                         border-radius: 6px;
                                                                         position: absolute;
-                                                                        z-index: 1;" class="tooltiptext tooltiptext-data tooltiptext-data-${d.link.link_or_post_id}"></div></p>`;
+                                                                        z-index: 1;" class="tooltiptext tooltiptext-data tooltiptext-data-${d.id}"></div></p>`;
                 },
             },
             {
                 data: function (d) {
-                    return `<p class="show-history tool-tip" data-type="emotion" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.emotion_second}  ${getCountation(parseInt(d.link.emotion_second)
-                        - parseInt(d.link.emotion_first))}<div style="display:none;
+                    return `<p class="show-history tool-tip" data-type="emotion" data-id="${d.id}" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.reaction}  ${getCountation(parseInt(d.link.diff_reaction))}<div style="display:none;
                                                                         width: max-content;
                                                                         background-color: black;
                                                                         color: #fff;
                                                                         border-radius: 6px;
                                                                         position: absolute;
-                                                                        z-index: 1;" class="tooltiptext tooltiptext-emotion tooltiptext-emotion-${d.link.link_or_post_id}"></div></p>`;
+                                                                        z-index: 1;" class="tooltiptext tooltiptext-emotion tooltiptext-emotion-${d.id}"></div></p>`;
                 },
             },
             {
@@ -123,7 +120,7 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return d.link.note;
+                    return d.note;
                 },
             },
             {

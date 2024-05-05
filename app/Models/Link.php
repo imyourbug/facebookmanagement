@@ -20,18 +20,26 @@ class Link extends Model
         'time',
         'title',
         'content',
-        'comment_first',
-        'comment_second',
-        'data_first',
-        'data_second',
-        'emotion_first',
-        'emotion_second',
+        // 'comment_first',
+        // 'comment_second',
+        // 'data_first',
+        // 'data_second',
+        // 'emotion_first',
+        // 'emotion_second',
         'is_scan',
         'note',
         'link_or_post_id',
         'type',
         'end_cursor',
-        'delay'
+        'delay',
+        'status',
+        //
+        'comment',
+        'diff_comment',
+        'data',
+        'diff_data',
+        'reaction',
+        'diff_reaction',
     ];
 
     public function userLinks()

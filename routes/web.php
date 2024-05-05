@@ -63,14 +63,6 @@ Route::group(['prefix' => 'user', 'namespace' => 'App\Http\Controllers\Users', '
         Route::post('/update', 'CommentController@update')->name('update');
     });
 
-    #linkrunnings
-    Route::group(['prefix' => 'linkrunnings', 'as' => 'linkrunnings.'], function () {
-        Route::get('/', 'LinkRunningController@index')->name('index');
-        Route::post('/create', 'LinkRunningController@store')->name('store');
-        Route::get('/update/{id}', 'LinkRunningController@show')->name('show');
-        Route::post('/update', 'LinkRunningController@update')->name('update');
-    });
-
     #linkfollows
     Route::group(['prefix' => 'linkfollows', 'as' => 'linkfollows.'], function () {
         Route::get('/', 'LinkFollowController@index')->name('index');
