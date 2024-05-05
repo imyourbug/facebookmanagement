@@ -149,8 +149,8 @@
                             </a>
                         </li>
                         <li
-                            class="nav-item {{ in_array(request()->route()->getName(), ['admin.settings.index']) ? 'menu-is-opening menu-open' : '' }}">
-                            <a href="{{ route('admin.settings.index') }}" class="nav-link">
+                            class="nav-item {{ in_array(request()->route()->getName(), ['settings.index']) ? 'menu-is-opening menu-open' : '' }}">
+                            <a href="{{ route('settings.index') }}" class="nav-link">
                                 <i class="nav-icon fa-solid fa-gear"></i>
                                 <p>
                                     Cài đặt

@@ -39,7 +39,7 @@
                         </button>
                     </div>
                 </div>
-                <form action="{{ route('admin.settings.update') }}" method="POST">
+                <form action="{{ route('settings.update') }}" method="POST">
                     @csrf
                     <div class="card-body" style="display: block;padding: 10px !important;">
                         @foreach ($settings as $item)
