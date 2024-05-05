@@ -328,7 +328,7 @@ class LinkController extends Controller
     {
         $data = $request->validate([
             'links' => 'nullable|array',
-            'links.*.title' => 'required|string',
+            'links.*.title' => 'nullable|string',
             'links.*.time' => 'nullable|string',
             'links.*.content' => 'nullable|string',
             'links.*.comment_first' => 'nullable|string',
@@ -361,8 +361,8 @@ class LinkController extends Controller
     {
         try {
             $data = $request->validate([
-                'links' => 'nullable|array',
-                'links.*.title' => 'required|string',
+                'links' => 'required|array',
+                'links.*.title' => 'nullable|string',
                 'links.*.time' => 'nullable|string',
                 'links.*.content' => 'nullable|string',
                 'links.*.comment_first' => 'nullable|string',
