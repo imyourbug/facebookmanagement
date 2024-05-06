@@ -184,7 +184,11 @@ class CommentController extends Controller
                             'phone' => implode(',', $value_uid),
                         ]);
                     } else {
-                        $uid->update(['phone' => $uid->phone . ',' . implode(',', $value_uid)]);
+                        DB::table('uids')
+                            ->where('uid', (string)$key)
+                            ->update([
+                                'phone' => $uid->phone . ',' . implode(',', $value_uid),
+                            ]);
                     }
                 }
                 // update column data of link
