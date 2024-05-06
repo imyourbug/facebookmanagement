@@ -42,4 +42,6 @@ class GlobalConstant
     public const TYPE_COMMENT = 0;
     public const TYPE_DATA = 1;
     public const TYPE_REACTION = 2;
+
+    public const LENGTH_PHONE = 25;
 }

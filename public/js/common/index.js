@@ -66,3 +66,4 @@ function getDateDiffInHours(date1, date2) {
 
     return dayDiff.toFixed(1);
 }
+

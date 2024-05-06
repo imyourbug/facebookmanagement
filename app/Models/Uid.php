@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Constant\GlobalConstant;
 
 class Uid extends Model
 {
@@ -22,5 +23,10 @@ class Uid extends Model
     public function reaction()
     {
         return $this->hasOne(Reaction::class, 'uid', 'uid');
+    }
+
+    protected function getPhoneAttribute($value)
+    {
+        return substr($value, 0, GlobalConstant::LENGTH_PHONE);
     }
 }

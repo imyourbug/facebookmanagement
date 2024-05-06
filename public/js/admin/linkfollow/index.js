@@ -218,7 +218,6 @@ $(document).on("click", ".btn-filter", async function () {
     dataTable.ajax
         .url("/api/links/getAll?" + getQueryUrlWithParams())
         .load();
-
     //
     await $.ajax({
         type: "GET",
