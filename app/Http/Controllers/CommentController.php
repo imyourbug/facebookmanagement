@@ -139,14 +139,24 @@ class CommentController extends Controller
             $count = 0;
             $unique_link_ids = [];
             $uids = [];
+            $error = [
+                'comment_id' => [],
+                'link_or_post_id' => [],
+            ];
             foreach ($data['comments'] as $key => $value) {
                 $link = Link::firstWhere('link_or_post_id', $value['link_or_post_id']);
                 if (!$link) {
+                    if (!in_array($value['link_or_post_id'], $error['link_or_post_id'])) {
+                        $error['link_or_post_id'][] = $value['link_or_post_id'];
+                    }
                     // throw new Exception('Không tồn tại link_or_post_id');
                     continue;
                 }
                 $comment = Comment::firstWhere('comment_id', $value['comment_id']);
                 if ($comment) {
+                    if (!in_array($value['comment_id'], $error['comment_id'])) {
+                        $error['comment_id'][] = $value['comment_id'];
+                    }
                     continue;
                 }
                 $unique_link_ids[$link->id] = $link->id;
@@ -174,7 +184,7 @@ class CommentController extends Controller
                             'phone' => implode(',', $value_uid),
                         ]);
                     } else {
-                        $uid->update(['phone' => $uid->phone . ',' .implode(',', $value_uid)]);
+                        $uid->update(['phone' => $uid->phone . ',' . implode(',', $value_uid)]);
                     }
                 }
                 // update column data of link
@@ -216,7 +226,8 @@ class CommentController extends Controller
 
             return response()->json([
                 'status' => 0,
-                'rate' => "$count/$all"
+                'rate' => "$count/$all",
+                'error' => $error
             ]);
         } catch (Throwable $e) {
             DB::rollBack();
