@@ -138,6 +138,7 @@ class CommentController extends Controller
             DB::beginTransaction();
             $count = 0;
             $unique_link_ids = [];
+            $uids = [];
             foreach ($data['comments'] as $key => $value) {
                 $link = Link::firstWhere('link_or_post_id', $value['link_or_post_id']);
                 if (!$link) {
@@ -157,24 +158,25 @@ class CommentController extends Controller
                     'created_at' => $comment->created_at,
                 ]);
                 //
-                $uid = Uid::firstWhere('uid', $comment->uid);
                 // get data phone
                 $pattern = '/\d{10,11}/';
-                preg_match_all($pattern, $comment->content, $matches);
-                $dataPhone = $comment->phone . ',' . implode(',', $matches[0]);
-                if (!$uid) {
-                    Uid::create([
-                        'uid' => $comment->uid,
-                        'phone' => $dataPhone,
-                    ]);
-                } else {
-                    DB::table('uids')
-                        ->where('uid', $comment->uid)
-                        ->update(['phone' => $uid->phone . ',' . $dataPhone]);
-                }
+                preg_match_all($pattern, $comment->content . ' ' . $comment->phone, $matches);
+                $uids[$comment->uid][] = implode(',', $matches[0]);
                 $count++;
             }
             if ($count) {
+                // insert uids
+                foreach ($uids as $key => $value_uid) {
+                    $uid = Uid::firstWhere('uid', $key);
+                    if (!$uid) {
+                        Uid::create([
+                            'uid' => $key,
+                            'phone' => implode(',', $value_uid),
+                        ]);
+                    } else {
+                        $uid->update(['phone' => $uid->phone . ',' .implode(',', $value_uid)]);
+                    }
+                }
                 // update column data of link
                 $dataLinks = [];
                 foreach ($unique_link_ids as $link_id) {
