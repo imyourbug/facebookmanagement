@@ -137,18 +137,6 @@ class LinkScanController extends Controller
 
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            return response()->json([
-                'status' => 0,
-                'linkscans' => UserLink::with(['link', 'user'])
-                    ->whereHas('link', function ($q) {
-                        $q->where('type', GlobalConstant::TYPE_SCAN);
-                    })
-                    ->where('user_id', Auth::id())
-                    ->get()
-            ]);
-        }
-
         return view('user.linkscan.list', [
             'title' => 'Danh sách link quét',
         ]);

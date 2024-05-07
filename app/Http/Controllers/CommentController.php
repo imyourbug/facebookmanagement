@@ -31,6 +31,7 @@ class CommentController extends Controller
         $link_or_post_id = $request->link_or_post_id;
         $title = $request->title;
         $name_facebook = $request->name_facebook;
+        $today = $request->today;
 
         return response()->json([
             'status' => 0,
@@ -56,6 +57,12 @@ class CommentController extends Controller
                 })
                 ->when($comment_id, function ($q) use ($comment_id) {
                     return $q->where('comment_id', $comment_id);
+                })
+                // today
+                ->when($today, function ($q) use ($today) {
+                    return $q->whereHas('comment', function ($q) use ($today) {
+                        $q->where('created_at', 'like', "%$today%");
+                    });
                 })
                 // title
                 ->when($title, function ($q) use ($title) {

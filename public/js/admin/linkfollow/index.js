@@ -37,7 +37,7 @@ $(document).ready(function () {
             {
                 data: function (d) {
                     let commentLink = d.link.comment_links ? d.link.comment_links[0] : '';
-                    return commentLink ? getDateDiffInHours(new Date(commentLink.created_at), new Date()) + 'h' : 'Trống';
+                    return commentLink ? getDateDiffInHours(new Date(commentLink.created_at), new Date()) : 'Trống';
                 }
             },
             {
@@ -47,7 +47,7 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return `<p class="show-title tool-tip" data-id="${d.id}" data-link_or_post_id="${d.link.link_or_post_id}">${d.title}
+                    return `<p class="show-title tool-tip" data-id="${d.id}" data-link_or_post_id="${d.link.link_or_post_id}">${d.title || d.link.title}
                     <div style="display:none;width: max-content;
                                 background-color: black;
                                 color: #fff;

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('user_links', function (Blueprint $table) {
             //
-            $table->string('note')->nullable();
+            $table->string('note')->nullable()->default('');
         });
     }
 

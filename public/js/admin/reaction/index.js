@@ -26,7 +26,7 @@ $(document).ready(function () {
             top2Start: 'pageLength',
         },
         ajax: {
-            url: `/api/reactions/getAll`,
+            url: `/api/reactions/getAll?today=${new Date().toJSON().slice(0, 10)}`,
             dataSrc: "reactions",
         },
         columns: [
@@ -120,6 +120,7 @@ var searchParams = new Map([
     ["uid", ""],
     ["name_facebook", ""],
     ["title", ""],
+    ["user", ""],
     ["link_or_post_id", ""],
 ]);
 

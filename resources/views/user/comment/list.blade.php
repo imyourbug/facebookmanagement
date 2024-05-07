@@ -57,6 +57,7 @@
         </div>
     </div>
     <input type="hidden" value="{{ Auth::id() }}" id="user_id" />
+    <input type="hidden" value="{{ in_array(App\Constant\GlobalConstant::ROLE_PHONE, $userRoles) }}" id="is_display_phone" />
     <div class="modal fade" id="modalFilter" style="display: none;" aria-modal="true" role="dialog">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">

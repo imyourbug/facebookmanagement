@@ -33,7 +33,8 @@
                     </div>
                     <div class="form-group col-lg-6">
                         <button disabled class="btn-control btn btn-danger btn-delete-multiple">Xóa</button>
-                        <button data-target="#modalFilter" data-toggle="modal" class="btn btn-primary btn-choose-filter">Chọn</button>
+                        <button data-target="#modalFilter" data-toggle="modal"
+                            class="btn btn-primary btn-choose-filter">Chọn</button>
                     </div>
                     <table id="table" class="table display nowrap dataTable dtr-inline collapsed">
                         <thead>
@@ -57,6 +58,7 @@
         </div>
     </div>
     <input type="hidden" value="{{ Auth::id() }}" id="user_id" />
+    <input type="hidden" value="{{ in_array(App\Constant\GlobalConstant::ROLE_PHONE, $userRoles) }}" id="is_display_phone" />
     <div class="modal fade" id="modalFilter" style="display: none;" aria-modal="true" role="dialog">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
@@ -68,7 +70,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="row">
-                         <div class="col-lg-6 col-sm-12">
+                        <div class="col-lg-6 col-sm-12">
                             <div class="form-group">
                                 <label for="menu">UID</label>
                                 <input type="text" data-name="UID" class="form-control" id="uid" value=""
@@ -80,12 +82,12 @@
                                 <label for="menu">Ngày tạo </label>
                                 <div class="row">
                                     <div class="col-lg-6">
-                                        <input type="date" class="form-control" data-name="Ngày tạo" id="from" value=""
-                                            placeholder="Từ">
+                                        <input type="date" class="form-control" data-name="Ngày tạo" id="from"
+                                            value="" placeholder="Từ">
                                     </div>
                                     <div class="col-lg-6">
-                                        <input type="date" class="form-control" data-name="Ngày tạo" id="to" value=""
-                                            placeholder="Đến">
+                                        <input type="date" class="form-control" data-name="Ngày tạo" id="to"
+                                            value="" placeholder="Đến">
                                     </div>
                                 </div>
                             </div>
@@ -98,7 +100,8 @@
                                 <input type="text" data-name="SĐT" class="form-control" id="phone" value=""
                                     placeholder="SĐT">
                             </div>
-                        </div><div class="col-lg-6 col-sm-12">
+                        </div>
+                        <div class="col-lg-6 col-sm-12">
                             <div class="form-group">
                                 <label for="menu">Cảm xúc</label>
                                 <input type="text" data-name="Cảm xúc" class="form-control" id="reaction" value=""
@@ -133,8 +136,8 @@
                         <div class="col-lg-6 col-sm-12">
                             <div class="form-group">
                                 <label for="menu">Ghi chú</label>
-                                <input type="text" data-name="Ghi chú" class="form-control" id="note" value=""
-                                    placeholder="Ghi chú">
+                                <input type="text" data-name="Ghi chú" class="form-control" id="note"
+                                    value="" placeholder="Ghi chú">
                             </div>
                         </div>
                     </div>

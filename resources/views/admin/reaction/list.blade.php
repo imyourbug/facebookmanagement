@@ -140,6 +140,15 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-sm-12">
+                            <div class="form-group">
+                                <label for="menu">Tên tài khoản</label>
+                                <input type="text" data-name="Tên tài khoản" class="form-control" id="user"
+                                    value="" placeholder="Tên tài khoản">
+                            </div>
+                        </div>
+                    </div>
                     <button class="btn btn-rounded btn-warning btn-filter">Chọn</button>
                     <button class="btn btn-rounded btn-success btn-refresh">Làm mới</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>

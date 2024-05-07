@@ -179,6 +179,7 @@
 
         $(document).on('click', '.show-name_facebook', function() {
             let uid = $(this).data('uid');
+            navigator.clipboard.writeText(uid);
             window.open(`https://www.facebook.com/${uid}`, '_blank').focus();
         });
 
@@ -196,6 +197,7 @@
 
         $(document).on('click', '.show-uid', function() {
             let uid = $(this).data('uid');
+            navigator.clipboard.writeText(uid);
             window.open(`https://www.facebook.com/${uid}`, '_blank').focus();
         });
 
@@ -216,9 +218,16 @@
             $('.tooltip-content').html('');
             $('.tooltip-content').css('display', 'none');
         })
+
+        $(document).on('click', '.show-content', function() {
+            let content = $(this).data('content');
+            // let link_or_post_id = $(this).data('link_or_post_id');
+            navigator.clipboard.writeText(content);
+        });
         // show title
         $(document).on('click', '.show-title', function() {
             let link_or_post_id = $(this).data('link_or_post_id');
+            navigator.clipboard.writeText(link_or_post_id);
             let id = $(this).data('id');
             window.open(`https://www.facebook.com/${link_or_post_id}`, '_blank').focus();
         });

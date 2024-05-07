@@ -25,6 +25,8 @@ class ComposerServiceProvider extends ServiceProvider
                 'user.linkfollow.list',
                 'user.linkrunning.list',
                 'user.linkscan.list',
+                'user.comment.list',
+                'user.reaction.list',
             ],
             'App\Http\ViewComposers\RoleComposer'
         );

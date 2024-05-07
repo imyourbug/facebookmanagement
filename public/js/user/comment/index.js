@@ -1,6 +1,7 @@
 var dataTable = null;
 var allRecord = [];
 var tempAllRecord = [];
+var is_display_phone = $('#is_display_phone').val();
 
 $(document).ready(function () {
     reload();
@@ -68,7 +69,9 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return d.comment.get_uid ? d.comment.get_uid.phone : '';
+                    return !is_display_phone ?
+                        `<button class="btn-sm btn btn-primary"><i class="fa-solid fa-eye-low-vision"></i></button>`
+                        : (d.comment.get_uid ? d.comment.get_uid.phone : '');
                 },
             },
             {

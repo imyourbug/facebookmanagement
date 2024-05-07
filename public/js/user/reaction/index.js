@@ -1,5 +1,6 @@
 var dataTable = null;
 var searchParams = new Map();
+var is_display_phone = $('#is_display_phone').val();
 
 $(document).ready(function () {
     reload();
@@ -80,7 +81,9 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return d.reaction.get_uid ? d.reaction.get_uid.phone : '';
+                    return !is_display_phone ?
+                        `<button class="btn-sm btn btn-primary"><i class="fa-solid fa-eye-low-vision"></i></button>`
+                        : (d.reaction.get_uid ? d.reaction.get_uid.phone : '');
                 },
             },
             {

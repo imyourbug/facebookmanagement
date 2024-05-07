@@ -13,50 +13,6 @@ use Toastr;
 
 class CommentController extends Controller
 {
-    public function getAll(Request $request)
-    {
-        $user_id = $request->user_id;
-        $comment_id = $request->comment_id;
-        $to = $request->to;
-        $from = $request->from;
-
-        return response()->json([
-            'status' => 0,
-            'comments' => LinkComment::with(['comment', 'link.userLinks.user'])
-                ->when($user_id, function ($q) use ($user_id) {
-                    return $q->whereHas('link.userLinks', function ($q) use ($user_id) {
-                        $q->where('user_id', $user_id);
-                    });
-                })
-                ->when($to, function ($q) use ($to) {
-                    return $q->whereHas('comment', function ($q) use ($to) {
-                        $q->where('created_at', '<=', $to);
-                    });
-                })
-                ->when($from, function ($q) use ($from) {
-                    return $q->whereHas('comment', function ($q) use ($from) {
-                        $q->where(
-                            'created_at',
-                            '>=',
-                            $from
-                        );
-                    });
-                })
-                ->when($comment_id, function ($q) use ($comment_id) {
-                    return $q->where('comment_id', $comment_id);
-                })
-                ->orderByDesc('id')
-                ->get()
-        ]);
-    }
-
-    public function create()
-    {
-        return view('user.comment.add', [
-            'title' => 'Thêm bình luận'
-        ]);
-    }
-
     public function store(Request $request)
     {
         try {
@@ -117,25 +73,6 @@ class CommentController extends Controller
 
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $from = $request->from ?? '';
-            $to = $request->to ?? '';
-
-            $comments = Comment::orderByDesc('id')
-                ->when($from, function ($q) use ($from) {
-                    return $q->where('created_at', '>=', $from);
-                })
-                ->when($to, function ($q) use ($to) {
-                    return $q->where('created_at', '<=', $to);
-                })
-                ->get();
-
-            return response()->json([
-                'status' => 0,
-                'comments' => $comments
-            ]);
-        }
-
         return view('user.comment.list', [
             'title' => 'Danh sách bình luận',
         ]);

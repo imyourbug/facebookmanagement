@@ -60,10 +60,25 @@ $(document).on("change", "#file-restore-db", function () {
 function getDateDiffInHours(date1, date2) {
     // Convert dates to milliseconds since epoch
     const timeDiffInMs = date2.getTime() - date1.getTime();
-
     // Convert milliseconds to days (divide by 1000 milliseconds/second, 60 seconds/minute, 60 minutes/hour, 24 hours/day)
     const dayDiff = timeDiffInMs / (1000 * 60 * 60);
+    let rs = dayDiff.toFixed(0) + 'h';
+    let renderDateDiff = '';
 
-    return dayDiff.toFixed(1);
+    switch (true) {
+        case dayDiff < 0:
+            renderDateDiff = `<span class="btn btn-sm btn-primary"><i class="fa-solid fa-arrow-down"></i>&emsp;${rs}</span>`;
+            break;
+        case dayDiff > 0:
+            renderDateDiff = `<span class="btn btn-sm btn-success"><i class="fa-solid fa-arrow-up"></i>&emsp;${rs}</span>`;
+            break;
+        case dayDiff == 0:
+            renderDateDiff = `<span class="btn btn-sm btn-warning">${rs}</span>`;
+            break;
+        default:
+            break;
+    }
+
+    return renderDateDiff;
 }
 

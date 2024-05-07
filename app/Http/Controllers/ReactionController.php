@@ -29,6 +29,7 @@ class ReactionController extends Controller
         $link_or_post_id = $request->link_or_post_id;
         $title = $request->title;
         $name_facebook = $request->name_facebook;
+        $today = $request->today;
 
         return response()->json([
             'status' => 0,
@@ -54,6 +55,19 @@ class ReactionController extends Controller
                 })
                 ->when($reaction_id, function ($q) use ($reaction_id) {
                     return $q->where('reaction_id', $reaction_id);
+                })
+                // user
+                ->when($user, function ($q) use ($user) {
+                    return $q->whereHas('link.userLinks.user', function ($q) use ($user) {
+                        $q->where('name', 'like', "%$user%")
+                            ->orWhere('email', 'like', "%$user%");
+                    });
+                })
+                // today
+                ->when($today, function ($q) use ($today) {
+                    return $q->whereHas('reaction', function ($q) use ($today) {
+                        $q->where('created_at', 'like', "%$today%");
+                    });
                 })
                 // title
                 ->when($title, function ($q) use ($title) {
