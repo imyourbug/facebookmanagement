@@ -309,12 +309,6 @@
             $('.tooltiptext-' + type).css('display', 'none');
         })
 
-        function closeModal(id) {
-            $("#" + id).css("display", "none");
-            $("body").removeClass("modal-open");
-            $(".modal-backdrop").remove();
-        }
-
         function closeModalChangePassword() {
             $("#modalChangePassword").css("display", "none");
             $("body").removeClass("modal-open");
@@ -339,6 +333,13 @@
                 },
             });
         })
+    </script>
+    <script>
+        function closeModal(id) {
+            $("#" + id).css("display", "none");
+            $("body").removeClass("modal-open");
+            $(".modal-backdrop").remove();
+        }
     </script>
     @stack('scripts')
 </body>

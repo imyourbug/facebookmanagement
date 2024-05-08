@@ -35,6 +35,9 @@
                         <button disabled class="btn-control btn btn-danger btn-delete-multiple">Xóa</button>
                         <button data-target="#modalFilter" data-toggle="modal"
                             class="btn btn-primary btn-choose-filter">Chọn</button>
+                        <button class="btn btn-danger btn-auto-refresh">Auto Refresh: OFF</button>
+                        <button data-target="#modalCopyUid" data-toggle="modal" class="btn btn-success">Copy
+                            UID</button>
                     </div>
                     <table id="table" class="table display nowrap dataTable dtr-inline collapsed">
                         <thead>
@@ -71,8 +74,8 @@
                         <div class="col-lg-12 col-sm-12">
                             <div class="form-group">
                                 <label for="menu">Ghi chú</label>
-                                <input type="text" data-name="Ghi chú" class="form-control" id="note-edit"
-                                    value="" placeholder="Ghi chú">
+                                <input type="text" data-name="Ghi chú" class="form-control" id="note-edit" value=""
+                                    placeholder="Ghi chú">
                             </div>
                         </div>
                     </div>
@@ -127,8 +130,8 @@
                         <div class="col-lg-6 col-sm-12">
                             <div class="form-group">
                                 <label for="menu">SĐT</label>
-                                <input type="text" data-name="SĐT" class="form-control" id="phone" value=""
-                                    placeholder="SĐT">
+                                <input type="text" data-name="SĐT" class="form-control" id="phone"
+                                    value="" placeholder="SĐT">
                             </div>
                         </div>
                         <div class="col-lg-6 col-sm-12">
@@ -183,6 +186,34 @@
                     <button class="btn btn-rounded btn-warning btn-filter">Chọn</button>
                     <button class="btn btn-rounded btn-success btn-refresh">Làm mới</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modalCopyUid" style="display: none;" aria-modal="true" role="dialog">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Copy UID</h4>
+                    <button type="button" class="closeModalCopyUid close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-12 col-sm-12">
+                            <div class="form-group">
+                                <label for="menu">Số lượng</label>
+                                <input type="number" class="form-control" id="number" placeholder="Số lượng"
+                                    value="100" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" id="id-editting" />
+                <div class="modal-footer justify-content-between">
+                    <button class="btn btn-rounded btn-success btn-copy-uid">Xác nhận</button>
+                    <button class="btn btn-default" data-dismiss="modal">Đóng</button>
                 </div>
             </div>
         </div>

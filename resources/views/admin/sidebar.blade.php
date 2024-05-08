@@ -42,7 +42,7 @@
                         <a href="{{ route('admin.index') }}" class="d-block">{{ Auth::user()->name ?? Auth::user()->email }}</a>
                     @break
                 @endswitch
-                <p style="color: white">Số ngày hết hạn: {{ Auth::user()?->expire }}</p>
+                <p style="color: white">Số ngày hết hạn: {{ Auth::user()?->time_to_expire }}</p>
             </div>
         </div>
         <!-- Sidebar Menu -->

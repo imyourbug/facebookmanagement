@@ -26,7 +26,7 @@ $(document).ready(function () {
             top2Start: 'pageLength',
         },
         ajax: {
-            url: `/api/reactions/getAll?user_id=${$('#user_id').val()}`,
+            url: `/api/reactions/getAll?today=${new Date().toJSON().slice(0, 10)}&user_id=${$('#user_id').val()}`,
             dataSrc: "reactions",
         },
         columns: [
@@ -304,4 +304,48 @@ $(document).on("click", ".btn-delete-multiple", function () {
             toastr.error('Cảm xúc trống');
         }
     }
+});
+
+var idIntervalRefresh = null;
+
+$(document).on("click", ".btn-auto-refresh", function () {
+    if (confirm(`Bạn có muốn ${idIntervalRefresh ? 'tắt' : 'bật'} auto refresh?`)) {
+        if (idIntervalRefresh) {
+            clearInterval(idIntervalRefresh);
+            idIntervalRefresh = null;
+            $(this).text('Auto Refresh: OFF');
+            $(this).addClass('btn-danger');
+            $(this).removeClass('btn-success');
+        } else {
+            $(this).text('Auto Refresh: ON');
+            $(this).removeClass('btn-danger');
+            $(this).addClass('btn-success');
+            idIntervalRefresh = setInterval(() => {
+                reload();
+                dataTable.ajax.reload();
+            }, 20000);
+        }
+    }
+});
+
+$(document).on("click", ".btn-copy-uid", function () {
+    let number = $('#number').val();
+    let ids = tempAllRecord.length > number ? tempAllRecord.slice(0, number) : tempAllRecord
+    $.ajax({
+        type: "GET",
+        url: `/api/reactions/getAll?limit=${number}&ids=${ids.join(',')}`,
+        success: function (response) {
+            if (response.status == 0) {
+                let uids = [];
+                let reactions = ids.length ? response.reactions.slice(0, $('#number').val()) : response.reactions;
+                reactions.forEach((e) => {
+                    uids.push(e.reaction.uid);
+                });
+                navigator.clipboard.writeText(uids.join(','));
+                closeModal('modalCopyUid');
+            } else {
+                toastr.error(response.message);
+            }
+        },
+    });
 });

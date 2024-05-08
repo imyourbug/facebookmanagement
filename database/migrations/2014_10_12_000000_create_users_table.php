@@ -19,7 +19,7 @@ return new class extends Migration
             $table->integer('role')->default(0); // 0 - user, 1 - admin
             $table->integer('delay')->default(1000);
             $table->integer('limit')->default(0);
-            $table->integer('expire')->default(30);
+            $table->string('expire')->nullable()->default('');
             $table->rememberToken();
             $table->timestamps();
         });

@@ -39,7 +39,9 @@ $(document).ready(function () {
                 data: "limit_follow",
             },
             {
-                data: "expire",
+                data: function (d) {
+                    return getDateDiffInDays(new Date(), new Date(d.expire));
+                }
             },
             {
                 data: function (d) {

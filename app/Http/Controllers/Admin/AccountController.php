@@ -4,8 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Constant\GlobalConstant;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\Accounts\CreateAccountRequest;
-use App\Http\Requests\Admin\Accounts\UpdateAccountRequest;
 use App\Models\Setting;
 use App\Models\User;
 use App\Models\UserLink;
@@ -36,7 +34,7 @@ class AccountController extends Controller
                 'delay' => 'required|integer',
                 'limit' => 'required|integer',
                 'limit_follow' => 'required|integer',
-                'expire' => 'required|integer',
+                'expire' => 'required|string',
                 'role' => 'required|in:0,1',
                 'roles' => 'nullable|array',
                 'roles.*' => 'nullable|integer|in:0,1,2,3',
@@ -55,16 +53,18 @@ class AccountController extends Controller
                 'limit_follow' => $data['limit_follow'],
                 'expire' => $data['expire'],
             ]);
-            $data['roles'] = array_map(function ($item) use ($user) {
-                return [
-                    'user_id' => $user->id,
-                    'role' => $item,
-                    'name' => GlobalConstant::ROLE_ALL[$item],
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ];
-            }, $data['roles']);
-            UserRole::insert($data['roles']);
+            if (!empty($data['roles'])) {
+                $data['roles'] = array_map(function ($item) use ($user) {
+                    return [
+                        'user_id' => $user->id,
+                        'role' => $item,
+                        'name' => GlobalConstant::ROLE_ALL[$item],
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }, $data['roles']);
+                UserRole::insert($data['roles']);
+            }
             Toastr::success('Tạo tài khoản thành công', __('title.toastr.success'));
             DB::commit();
         } catch (Throwable $e) {
@@ -84,7 +84,7 @@ class AccountController extends Controller
                 'delay' => 'required|integer',
                 'limit' => 'required|integer',
                 'limit_follow' => 'required|integer',
-                'expire' => 'required|integer',
+                'expire' => 'required|string',
                 'roles' => 'nullable|array',
                 'roles.*' => 'nullable|in:0,1,2,3',
             ]);

@@ -82,3 +82,10 @@ function getDateDiffInHours(date1, date2) {
     return renderDateDiff;
 }
 
+function getDateDiffInDays(date1, date2) {
+    // Convert dates to milliseconds since epoch
+    const timeDiffInMs = date2.getTime() - date1.getTime();
+    // Convert milliseconds to days (divide by 1000 milliseconds/second, 60 seconds/minute, 60 minutes/hour, 24 hours/day)
+    const dayDiff = timeDiffInMs / (1000 * 60 * 60 * 24);
+    return dayDiff.toFixed(0);
+}

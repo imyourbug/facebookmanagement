@@ -61,11 +61,6 @@ class User extends Authenticatable
         return $this->hasMany(UserRole::class, 'user_id', 'id');
     }
 
-    public function userComments()
-    {
-        return $this->hasMany(UserComment::class, 'user_id', 'id');
-    }
-
     protected function getCreatedAtAttribute($value)
     {
         return Carbon::parse($value)->addHours(GlobalConstant::UTC_HOUR)->format('H:i:s Y/m/d');
@@ -74,5 +69,10 @@ class User extends Authenticatable
     protected function getUpdatedAtAttribute($value)
     {
         return Carbon::parse($value)->addHours(GlobalConstant::UTC_HOUR)->format('H:i:s Y/m/d');
+    }
+
+    protected function getTimeToExpireAttribute()
+    {
+        return round((strtotime($this->expire) - strtotime(now())) / (3600 * 24), 0);
     }
 }
