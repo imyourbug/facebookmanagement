@@ -90,11 +90,11 @@
                                 <label for="menu">Ngày tạo </label>
                                 <div class="row">
                                     <div class="col-lg-6">
-                                        <input type="date" class="form-control" data-name="Ngày tạo" id="from" value=""
+                                        <input type="date" class="form-control" data-name="Ngày tạo" id="from" value="{{date('Y-m-d')}}"
                                             placeholder="Từ">
                                     </div>
                                     <div class="col-lg-6">
-                                        <input type="date" class="form-control" data-name="Ngày tạo" id="to" value=""
+                                        <input type="date" class="form-control" data-name="Ngày tạo" id="to" value="{{date('Y-m-d')}}"
                                             placeholder="Đến">
                                     </div>
                                 </div>

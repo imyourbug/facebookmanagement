@@ -69,9 +69,7 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return !is_display_phone ?
-                        `<button class="btn-sm btn btn-primary"><i class="fa-solid fa-eye-low-vision"></i></button>`
-                        : (d.comment.get_uid ? d.comment.get_uid.phone : '');
+                    return displayPhoneByRole(d.comment.get_uid ? d.comment.get_uid.phone : '', is_display_phone);
                 },
             },
             {
@@ -286,7 +284,7 @@ $(document).on("click", ".btn-delete", function () {
 async function reload() {
     await $.ajax({
         type: "GET",
-        url: `/api/comments/getAll?user_id=${$('#user_id').val()}`,
+        url: `/api/comments/getAll?today=${new Date().toJSON().slice(0, 10)}&user_id=${$('#user_id').val()}`,
         success: function (response) {
             if (response.status == 0) {
                 $('.count-comment').text(`Tổng số bình luận: ${response.comments.length}`);

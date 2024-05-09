@@ -67,10 +67,10 @@ function getDateDiffInHours(date1, date2) {
 
     switch (true) {
         case dayDiff < 0:
-            renderDateDiff = `<span class="btn btn-sm btn-primary"><i class="fa-solid fa-arrow-down"></i>&emsp;${rs}</span>`;
+            renderDateDiff = `<span class="btn btn-sm btn-primary">${rs}</span>`;
             break;
         case dayDiff > 0:
-            renderDateDiff = `<span class="btn btn-sm btn-success"><i class="fa-solid fa-arrow-up"></i>&emsp;${rs}</span>`;
+            renderDateDiff = `<span class="btn btn-sm btn-success">${rs}</span>`;
             break;
         case dayDiff == 0:
             renderDateDiff = `<span class="btn btn-sm btn-warning">${rs}</span>`;
@@ -89,3 +89,16 @@ function getDateDiffInDays(date1, date2) {
     const dayDiff = timeDiffInMs / (1000 * 60 * 60 * 24);
     return dayDiff.toFixed(0);
 }
+
+function displayPhoneByRole(stringPhone = '', isDisplay = true) {
+
+    let arrPhone = [];
+    stringPhone.split(',').forEach((phone) => {
+        if (phone.length) {
+            arrPhone.push(isDisplay ? phone : `${phone.slice(0, phone.length - 3)}***`);
+        }
+    });
+
+    return arrPhone.join('<br/>');
+}
+

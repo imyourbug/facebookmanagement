@@ -87,7 +87,7 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return d.reaction.get_uid ? d.reaction.get_uid.phone : '';
+                    return displayPhoneByRole(d.comment.get_uid ? d.comment.get_uid.phone : '');
                 },
             },
             {
@@ -277,10 +277,10 @@ $(document).on("click", ".btn-delete", function () {
 async function reload() {
     await $.ajax({
         type: "GET",
-        url: `/api/reactions/getAll`,
+        url: `/api/reactions/getAll?today=${new Date().toJSON().slice(0, 10)}`,
         success: function (response) {
             if (response.status == 0) {
-                $('.count-comment').text(`Tổng số bình luận: ${response.reactions.length}`);
+                $('.count-reaction').text(`Tổng số bình luận: ${response.reactions.length}`);
             }
         }
     });
@@ -291,7 +291,7 @@ async function reload() {
 }
 
 $(document).on("click", ".btn-delete-multiple", function () {
-    if (confirm("Bạn có muốn xóa các comment đang hiển thị?")) {
+    if (confirm("Bạn có muốn xóa các reaction đang hiển thị?")) {
         if (tempAllRecord.length) {
             $.ajax({
                 type: "POST",

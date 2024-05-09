@@ -73,7 +73,7 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return d.comment.get_uid ? d.comment.get_uid.phone : '';
+                    return displayPhoneByRole(d.comment.get_uid ? d.comment.get_uid.phone : '');
                 },
             },
             {
@@ -298,7 +298,7 @@ $(document).on("click", ".btn-delete", function () {
 async function reload() {
     await $.ajax({
         type: "GET",
-        url: `/api/comments/getAll`,
+        url: `/api/comments/getAll?today=${new Date().toJSON().slice(0, 10)}`,
         success: function (response) {
             if (response.status == 0) {
                 $('.count-comment').text(`Tổng số bình luận: ${response.comments.length}`);
@@ -369,7 +369,7 @@ $(document).on("click", ".btn-copy-uid", function () {
                 comments.forEach((e) => {
                     uids.push(e.comment.uid);
                 });
-                navigator.clipboard.writeText(uids.join(','));
+                navigator.clipboard.writeText(uids.join('\n'));
                 closeModal('modalCopyUid');
             } else {
                 toastr.error(response.message);

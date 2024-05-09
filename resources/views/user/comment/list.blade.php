@@ -83,13 +83,13 @@
                             <div class="form-group">
                                 <label for="menu">Ngày tạo </label>
                                 <div class="row">
-                                    <div class="col-lg-6">
+                                     <div class="col-lg-6">
                                         <input type="date" class="form-control" data-name="Ngày tạo" id="from"
-                                            value="" placeholder="Từ">
+                                            value="{{ date('Y-m-d') }}" placeholder="Từ">
                                     </div>
                                     <div class="col-lg-6">
                                         <input type="date" class="form-control" data-name="Ngày tạo" id="to"
-                                            value="" placeholder="Đến">
+                                            value="{{ date('Y-m-d') }}" placeholder="Đến">
                                     </div>
                                 </div>
                             </div>
