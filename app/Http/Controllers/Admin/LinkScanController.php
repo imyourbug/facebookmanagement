@@ -32,6 +32,7 @@ class LinkScanController extends Controller
                 'is_scan' => 'nullable|in:0,1,2',
                 'note' => 'nullable|string',
                 'link_or_post_id' => 'required|string',
+                'user_id' => 'required|string',
             ]);
             $user = User::firstWhere('id', $data['user_id']);
 
@@ -140,18 +141,9 @@ class LinkScanController extends Controller
 
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            return response()->json([
-                'status' => 0,
-                'linkscans' => Link::where('type', GlobalConstant::TYPE_SCAN)->get()
-            ]);
-        }
-
-        $user = User::firstWhere('id', $request->user_id);
-
         return view('admin.linkscan.list', [
-            'title' => 'Danh sách link quét - ' . $user->name ?? $user->email,
-            'user' => $user
+            'title' => 'Danh sách link quét',
+            'users' => User::with(['userLinks'])->where('role', GlobalConstant::ROLE_USER)->get()
         ]);
     }
 

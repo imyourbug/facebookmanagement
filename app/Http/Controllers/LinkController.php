@@ -341,6 +341,14 @@ class LinkController extends Controller
                 $value['link_id'] = $link->id;
                 $value['created_at'] = now();
                 $value['updated_at'] = now();
+                //
+                $is_scan = $value['is_scan'] ?? '';
+                if (strlen($is_scan)) {
+                    UserLink::where('link_id', $link->id)
+                        ->update([
+                            'is_scan' => $is_scan,
+                        ]);
+                }
             }
             DB::commit();
         } catch (Throwable $e) {
@@ -355,6 +363,105 @@ class LinkController extends Controller
             'status' => 0,
         ]);
     }
+
+    // public function updateLinkByLinkId(Request $request)
+    // {
+    //     try {
+    //         $data = $request->validate([
+    //             'links' => 'required|array',
+    //             'links.*.id' => 'required|string',
+    //             'links.*.link_or_post_id' => 'nullable|string',
+    //             'links.*.title' => 'nullable|string',
+    //             'links.*.time' => 'nullable|string',
+    //             'links.*.content' => 'nullable|string',
+    //             'links.*.comment' => 'nullable|string',
+    //             // 'links.*.diff_comment' => 'nullable|string',
+    //             'links.*.data' => 'nullable|string',
+    //             // 'links.*.diff_data' => 'nullable|string',
+    //             'links.*.reaction' => 'nullable|string',
+    //             // 'links.*.diff_reaction' => 'nullable|string',
+    //             'links.*.is_scan' => 'nullable|in:0,1,2',
+    //             'links.*.status' => 'nullable|in:0,1',
+    //             'links.*.note' => 'nullable|string',
+    //             'links.*.end_cursor' => 'nullable|string',
+    //             'links.*.type' => 'nullable|in:0,1,2',
+    //         ]);
+
+    //         DB::beginTransaction();
+
+    //         foreach ($data['links'] as $key => &$value) {
+    //             $link = Link::firstWhere('link_or_post_id', $value['link_or_post_id']);
+    //             if (!$link) {
+    //                 throw new Exception('link_or_post_id không tồn tại');
+    //             }
+    //             // get and set diff
+    //             if (isset($value['comment']) && strlen($value['comment'])) {
+    //                 $lastHistory = LinkHistory::where('link_id', $link->id)
+    //                     ->where('type', GlobalConstant::TYPE_COMMENT)
+    //                     ->orderByDesc('id')
+    //                     ->first();
+    //                 $value['diff_comment'] = $lastHistory?->comment ? ((int)$value['comment'] - (int)$lastHistory->comment) : (int)$value['comment'];
+    //                 LinkHistory::create([
+    //                     'comment' => $value['comment'],
+    //                     'diff_comment' => $value['diff_comment'],
+    //                     'link_id' => $link->id,
+    //                     'type' => GlobalConstant::TYPE_COMMENT
+    //                 ]);
+    //             }
+    //             if (isset($value['data']) && strlen($value['data'])) {
+    //                 $lastHistory = LinkHistory::where('link_id', $link->id)
+    //                     ->where('type', GlobalConstant::TYPE_DATA)
+    //                     ->orderByDesc('id')
+    //                     ->first();
+    //                 $value['diff_data'] = $lastHistory?->data ? ((int)$value['data'] - (int)$lastHistory->data) : (int)$value['data'];
+    //                 LinkHistory::create([
+    //                     'data' => $value['data'],
+    //                     'diff_data' => $value['diff_data'],
+    //                     'link_id' => $link->id,
+    //                     'type' => GlobalConstant::TYPE_DATA
+    //                 ]);
+    //             }
+    //             if (isset($value['reaction']) && strlen($value['reaction'])) {
+    //                 $lastHistory = LinkHistory::where('link_id', $link->id)
+    //                     ->where('type', GlobalConstant::TYPE_REACTION)
+    //                     ->orderByDesc('id')
+    //                     ->first();
+    //                 $value['diff_reaction'] = $lastHistory?->reaction ? ((int)$value['reaction'] - (int)$lastHistory->reaction) : (int)$value['reaction'];
+    //                 LinkHistory::create([
+    //                     'reaction' => $value['reaction'],
+    //                     'diff_reaction' => $value['diff_reaction'],
+    //                     'link_id' => $link->id,
+    //                     'type' => GlobalConstant::TYPE_REACTION
+    //                 ]);
+    //             }
+    //             //
+    //             unset($value['link_or_post_id']);
+    //             $link->update($value);
+    //             $value['link_id'] = $link->id;
+    //             $value['created_at'] = now();
+    //             $value['updated_at'] = now();
+    //             //
+    //             $is_scan = $value['is_scan'] ?? '';
+    //             if (strlen($is_scan)) {
+    //                 UserLink::where('link_id', $link->id)
+    //                     ->update([
+    //                         'is_scan' => $is_scan,
+    //                     ]);
+    //             }
+    //         }
+    //         DB::commit();
+    //     } catch (Throwable $e) {
+    //         DB::rollBack();
+
+    //         return response()->json([
+    //             'status' => 1,
+    //             'message' => $e->getMessage()
+    //         ]);
+    //     }
+    //     return response()->json([
+    //         'status' => 0,
+    //     ]);
+    // }
 
     public function getByType(Request $request)
     {
@@ -551,9 +658,10 @@ class LinkController extends Controller
         $links = Link::whereIn('id', $data['ids']);
 
         $type = $data['type'] ?? '';
+        $user_id = $data['user_id'] ?? '';
         // check limit follow
-        if (strlen($type) && (int)$type === GlobalConstant::TYPE_FOLLOW && $data['user_id']) {
-            $user = User::firstWhere('id', $data['user_id']);
+        if (strlen($type) && (int)$type === GlobalConstant::TYPE_FOLLOW && $user_id) {
+            $user = User::firstWhere('id', $user_id);
 
             $userLinks = UserLink::with(['link', 'user'])
                 ->where('user_id', $user->id)
@@ -568,8 +676,8 @@ class LinkController extends Controller
         }
 
         // check limit scan
-        if (strlen($type) && (int)$type === GlobalConstant::TYPE_SCAN && $data['user_id']) {
-            $user = User::firstWhere('id', $data['user_id']);
+        if (strlen($type) && (int)$type === GlobalConstant::TYPE_SCAN && $user_id) {
+            $user = User::firstWhere('id', $user_id);
 
             $userLinks = UserLink::with(['link', 'user'])
                 ->where('user_id', $user->id)
@@ -590,7 +698,9 @@ class LinkController extends Controller
         $is_scan = $data['is_scan'] ?? '';
         if (strlen($is_scan)) {
             $userLinks = UserLink::whereIn('link_id', $data['ids'])
-                ->where('user_id', $data['user_id'])
+                ->when(strlen($user_id), function($q) use ($user_id) {
+                    return $q->where('user_id', $user_id);
+                })
                 ->update([
                     'is_scan' => $is_scan,
                 ]);

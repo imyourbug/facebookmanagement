@@ -43,18 +43,6 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-lg-6 col-sm-12">
-                                <div class="form-group">
-                                    <label for="menu">Người dùng <span class="required">(*)</span></label>
-                                    <select name="user_id" class="form-control">
-                                        @foreach ($users as $user)
-                                            <option value="{{ $user->id }}"> {{ $user->name ?? $email->email }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                     <div class="card-footer">
                         <button type="submit" class="btn btn-primary">Lưu</button>
@@ -62,6 +50,7 @@
                 </div>
             </div>
         </div>
+        <input type="hidden" value="{{ Request::get('user_id') }}" name="user_id" id="user_id" />
         @csrf
     </form>
     <div class="row">
@@ -130,12 +119,12 @@
                                 <label for="menu">Data cuối</label>
                                 <div class="row">
                                     <div class="col-lg-6">
-                                        <input type="text" class="form-control" data-name="Data cuối"
-                                            id="last_data_from" value="" placeholder="Từ">
+                                        <input type="text" class="form-control" data-name="Data cuối" id="last_data_from"
+                                            value="" placeholder="Từ">
                                     </div>
                                     <div class="col-lg-6">
-                                        <input type="text" class="form-control" data-name="Data cuối"
-                                            id="last_data_to" value="" placeholder="Đến">
+                                        <input type="text" class="form-control" data-name="Data cuối" id="last_data_to"
+                                            value="" placeholder="Đến">
                                     </div>
                                 </div>
                             </div>
@@ -144,7 +133,7 @@
                             <div class="form-group">
                                 <label for="menu">Ngày tạo </label>
                                 <div class="row">
-                                    <div class="col-lg-6">
+                                     <div class="col-lg-6">
                                         <input type="date" class="form-control" data-name="Ngày tạo" id="from"
                                             value="{{ date('Y-m-d') }}" placeholder="Từ">
                                     </div>
@@ -237,8 +226,8 @@
                         <div class="col-lg-6 col-sm-12">
                             <div class="form-group">
                                 <label for="menu">Tài khoản</label>
-                                <input type="text" data-name="Tài khoản" class="form-control" id="user"
-                                    value="" placeholder="Tên tài khoản">
+                                <input type="text" data-name="Tài khoản" class="form-control" id="user" value=""
+                                    placeholder="Tên tài khoản">
                             </div>
                         </div>
                         <div class="col-lg-6 col-sm-12">
@@ -255,12 +244,12 @@
                                 <label for="menu">Data update count</label>
                                 <div class="row">
                                     <div class="col-lg-6">
-                                        <input type="text" class="form-control" data-name="Data update count"
-                                            id="time_from" value="" placeholder="Từ">
+                                        <input type="text" class="form-control" data-name="Data update count" id="time_from"
+                                            value="" placeholder="Từ">
                                     </div>
                                     <div class="col-lg-6">
-                                        <input type="text" class="form-control" data-name="Data update count"
-                                            id="time_to" value="" placeholder="Đến">
+                                        <input type="text" class="form-control" data-name="Data update count" id="time_to"
+                                            value="" placeholder="Đến">
                                     </div>
                                 </div>
                             </div>

@@ -116,6 +116,28 @@
                             </a>
                         </li>
                         <li
+                            class="nav-item {{ in_array(request()->route()->getName(), ['admin.linkscans.index', 'admin.linkscans.create'])
+                                ? 'menu-is-opening menu-open'
+                                : '' }}">
+                            <a href="{{ route('admin.linkscans.index') }}" class="nav-link">
+                                <i class="nav-icon fa-solid fa-barcode"></i>
+                                <p>
+                                    Link quét
+                                </p>
+                            </a>
+                        </li>
+                        <li
+                            class="nav-item {{ in_array(request()->route()->getName(), ['admin.linkfollows.index', 'admin.linkfollows.create'])
+                                ? 'menu-is-opening menu-open'
+                                : '' }}">
+                            <a href="{{ route('admin.linkfollows.index') }}" class="nav-link">
+                                <i class="nav-icon fa-solid fa-user-plus"></i>
+                                <p>
+                                    Link theo dõi
+                                </p>
+                            </a>
+                        </li>
+                        <li
                             class="nav-item {{ in_array(request()->route()->getName(), ['admin.linkrunnings.index', 'admin.linkrunnings.create'])
                                 ? 'menu-is-opening menu-open'
                                 : '' }}">

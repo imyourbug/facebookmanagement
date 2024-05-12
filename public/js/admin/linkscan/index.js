@@ -25,7 +25,7 @@ $(document).ready(function () {
             top2Start: 'pageLength',
         },
         ajax: {
-            url: `/api/links/getAll?user_id=${$('#user_id').val()}&type=0`,
+            url: `/api/links/getAll?type=0`,
             dataSrc: "links",
         },
         columns: [
@@ -129,7 +129,7 @@ $(document).ready(function () {
                         `<button data-id="${d.link.id}" class="btn btn-danger btn-sm btn-delete">
                                 <i class="fas fa-trash"></i>
                             </button>`;
-                    return `<a class="btn btn-primary btn-sm" href='/admin/linkscans/update/${d.link.id}?user_id=${$('#user_id').val()}'>
+                    return `<a class="btn btn-primary btn-sm" href='/admin/linkscans/update/${d.link.id}?user_id=${d.user_id}'>
                                 <i class="fas fa-edit"></i>
                             </a>
                             <button data-id="${d.link.id}" class="btn btn-success btn-sm btn-follow">
@@ -165,7 +165,7 @@ var searchParams = new Map([
 var isFiltering = [];
 
 function getQueryUrlWithParams() {
-    let query = `user_id=${$('#user_id').val()}`;
+    let query = `user_id=`;
     Array.from(searchParams).forEach(([key, values], index) => {
         query += `&${key}=${typeof values == "array" ? values.join(",") : values}`;
     })
@@ -263,7 +263,7 @@ $(document).on("click", ".btn-refresh", function () {
 
     // reload table
     dataTable.ajax
-        .url(`/api/links/getAll?user_id=${$('#user_id').val()}&type=0`)
+        .url(`/api/links/getAll?type=0`)
         .load();
 
     // reload count and record
@@ -286,11 +286,10 @@ function displayFiltering() {
 
 async function reload() {
     let count = 0;
-    let user_id = $('#user_id').val();
 
     await $.ajax({
         type: "GET",
-        url: `/api/links/getAll?user_id=${user_id}`,
+        url: `/api/links/getAll`,
         success: function (response) {
             if (response.status == 0) {
                 allRecord = response.links;
@@ -299,7 +298,7 @@ async function reload() {
                         count++;
                     }
                 });
-                $('.count-link').text(`Số link: ${count}/${response.user ? response.user.limit : 0}`);
+                $('.count-link').text(`Số link: ${count}`);
             }
         }
     });
@@ -313,15 +312,13 @@ $(document).on("click", ".btn-scan", function () {
     let text = is_scan == 0 ? 'tắt' : 'mở';
     if (confirm(`Bạn có muốn ${text} quét link`)) {
         let id = $(this).data("id");
-        let user_id = $('#user_id').val();
         $.ajax({
             type: "POST",
-            url: `/api/links/update`,
+            url: `/api/links/updateLinkByListLinkId`,
             data: {
-                id,
+                ids: [id],
                 is_scan,
                 status: 1,
-                user_id
             },
             success: function (response) {
                 if (response.status == 0) {
@@ -340,15 +337,13 @@ $(document).on("click", ".btn-scan", function () {
 $(document).on("click", ".btn-follow", function () {
     if (confirm("Bạn có muốn theo dõi link này?")) {
         let id = $(this).data("id");
-        let user_id = $('#user_id').val();
         $.ajax({
             type: "POST",
-            url: `/api/links/update`,
+            url: `/api/links/updateLinkByListLinkId`,
             data: {
-                id,
+                ids: [id],
                 type: 1,
                 is_scan: 0,
-                user_id
             },
             success: function (response) {
                 if (response.status == 0) {

@@ -58,8 +58,6 @@ $(document).ready(function () {
                     return `<a class="btn btn-primary btn-sm" href='/admin/accounts/update/${d.id}'>
                             <i class="fas fa-edit"></i>
                             </a>
-                            ${d.role == 0 ? btnLinkScan : ""}
-                            ${d.role == 0 ? btnLinkFollow : ""}
                             ${$("#logging_user_id").val() != d.id &&
                             $("#editing_user_id").val() != d.id
                             ? btnDelete
