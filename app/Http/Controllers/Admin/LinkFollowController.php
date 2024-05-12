@@ -13,13 +13,6 @@ use Toastr;
 
 class LinkFollowController extends Controller
 {
-    public function create()
-    {
-        return view('admin.linkfollow.add', [
-            'title' => 'Thêm link theo dõi'
-        ]);
-    }
-
     public function update(Request $request)
     {
         try {
@@ -62,13 +55,6 @@ class LinkFollowController extends Controller
 
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            return response()->json([
-                'status' => 0,
-                'linkfollows' => Link::where('type', GlobalConstant::TYPE_FOLLOW)->get()
-            ]);
-        }
-
         return view('admin.linkfollow.list', [
             'title' => 'Danh sách link theo dõi',
         ]);

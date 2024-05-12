@@ -1,6 +1,7 @@
 var dataTable = null;
 var allRecord = [];
 var tempAllRecord = [];
+
 $(document).ready(function () {
     reload();
 
@@ -25,7 +26,7 @@ $(document).ready(function () {
             top2Start: 'pageLength',
         },
         ajax: {
-            url: `/api/links/getAll?user_id=${$('#user_id').val()}&type=1`,
+            url: `/api/links/getAll?type=1`,
             dataSrc: "links",
         },
         columns: [
@@ -43,6 +44,11 @@ $(document).ready(function () {
             {
                 data: function (d) {
                     return d.created_at;
+                },
+            },
+            {
+                data: function (d) {
+                    return getListAccountNameByUserLink(d.accounts);
                 },
             },
             {
@@ -74,7 +80,7 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return `<p class="show-history tool-tip" data-type="comment" data-id="${d.id}" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.comment}  ${getCountation(d.link.diff_comment)}<div style="display:none;
+                    return `<p class="show-history tool-tip" data-type="comment" data-id="${d.id}" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.comment}  ${getCountation(parseInt(d.link.diff_comment))}<div style="display:none;
                                                                         width: max-content;
                                                                         background-color: black;
                                                                         color: #fff;
@@ -85,7 +91,7 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return `<p class="show-history tool-tip" data-type="data" data-id="${d.id}" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.data}  ${getCountation(parseInt(d.link.diff_data))}<div style="display:none;
+                    return `<p class="show-history tool-tip" data-id="${d.id}" data-type="data" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.data}  ${getCountation(parseInt(d.link.diff_data))}<div style="display:none;
                                                                         width: max-content;
                                                                         background-color: black;
                                                                         color: #fff;
@@ -116,7 +122,7 @@ $(document).ready(function () {
                         `<button data-id="${d.link.id}" class="btn btn-danger btn-sm btn-delete">
                                 <i class="fas fa-trash"></i>
                             </button>`;
-                    return `<a class="btn btn-primary btn-sm" href='/admin/linkfollows/update/${d.link.id}?user_id=${$('#user_id').val()}'>
+                    return `<a class="btn btn-primary btn-sm" href='/admin/linkfollows/update/${d.link.id}?user_id=${d.user_id}'>
                                 <i class="fas fa-edit"></i>
                             </a>
                             <button data-id="${d.link.id}" class="btn btn-success btn-sm btn-scan">
@@ -146,13 +152,14 @@ var searchParams = new Map([
     ["title", ""],
     ["link_or_post_id", ""],
     ["type", ""],
+    ["user", ""],
     ["is_scan", ""],
 ]);
 
 var isFiltering = [];
 
 function getQueryUrlWithParams() {
-    let query = `user_id=${$('#user_id').val()}`;
+    let query = `user_id=`;
     Array.from(searchParams).forEach(([key, values], index) => {
         query += `&${key}=${typeof values == "array" ? values.join(",") : values}`;
     })
@@ -218,6 +225,7 @@ $(document).on("click", ".btn-filter", async function () {
     dataTable.ajax
         .url("/api/links/getAll?" + getQueryUrlWithParams())
         .load();
+
     //
     await $.ajax({
         type: "GET",
@@ -250,7 +258,7 @@ $(document).on("click", ".btn-refresh", function () {
 
     // reload table
     dataTable.ajax
-        .url(`/api/links/getAll?user_id=${$('#user_id').val()}&type=1`)
+        .url(`/api/links/getAll?type=1`)
         .load();
 
     // reload count and record
@@ -276,9 +284,10 @@ async function reload() {
 
     await $.ajax({
         type: "GET",
-        url: `/api/links/getAll?user_id=${user_id}`,
+        url: `/api/links/getAll`,
         success: function (response) {
             console.log(response.links);
+            all = response.links.length;
             if (response.status == 0) {
                 allRecord = response.links;
                 response.links.forEach((e) => {
@@ -286,7 +295,7 @@ async function reload() {
                         count++;
                     }
                 });
-                $('.count-link').text(`Số link: ${count}/${response.user ? response.user.limit_follow : 0}`);
+                $('.count-link').text(`Số link: ${count}`);
             }
         }
     });
@@ -305,6 +314,7 @@ $(document).on("click", ".btn-scan", function () {
             data: {
                 id,
                 type: 0,
+                is_scan: 1,
                 user_id
             },
             success: function (response) {
@@ -320,37 +330,18 @@ $(document).on("click", ".btn-scan", function () {
     }
 });
 
-$(document).on("click", ".btn-delete", function () {
-    if (confirm("Bạn có muốn xóa?")) {
-        let id = $(this).data("id");
-        $.ajax({
-            type: "DELETE",
-            url: `/api/linkfollows/${id}/destroy`,
 
-            success: function (response) {
-                if (response.status == 0) {
-                    toastr.success("Xóa thành công");
-                    dataTable.ajax.reload();
-                    reload();
-                } else {
-                    toastr.error(response.message);
-                }
-            },
-        });
-    }
-});
 
 $(document).on("click", ".btn-scan-multiple", function () {
     if (confirm("Bạn có muốn quét các link đang hiển thị?")) {
         if (tempAllRecord.length) {
-            let user_id = $('#user_id').val();
             $.ajax({
                 type: "POST",
                 url: `/api/links/updateLinkByListLinkId`,
                 data: {
                     ids: tempAllRecord,
                     type: 0,
-                    user_id
+                    is_scan: 1,
                 },
                 success: function (response) {
                     if (response.status == 0) {
@@ -365,6 +356,26 @@ $(document).on("click", ".btn-scan-multiple", function () {
         } else {
             toastr.error('Link trống');
         }
+    }
+});
+
+$(document).on("click", ".btn-delete", function () {
+    if (confirm("Bạn có muốn xóa?")) {
+        let id = $(this).data("id");
+        $.ajax({
+            type: "POST",
+            url: `/api/links/deleteAll`,
+            data: { ids: [id] },
+            success: function (response) {
+                if (response.status == 0) {
+                    toastr.success("Xóa thành công");
+                    dataTable.ajax.reload();
+                    reload();
+                } else {
+                    toastr.error(response.message);
+                }
+            },
+        });
     }
 });
 
@@ -390,3 +401,12 @@ $(document).on("click", ".btn-delete-multiple", function () {
         }
     }
 });
+
+function getListAccountNameByUserLink(userLinks = []) {
+    let rs = [];
+    userLinks.forEach((e) => {
+        rs.push(e.user.email || e.user.name);
+    });
+
+    return rs.join('|');
+}

@@ -45,7 +45,7 @@
         </div>
         <div class="card-footer">
             <button type="submit" class="btn btn-primary">Lưu</button>
-            <a href="{{ route('admin.linkfollows.index', ['user_id' => request()->user_id]) }}" class="btn btn-success">Xem danh sách</a>
+            <a href="{{ route('admin.linkfollows.index') }}" class="btn btn-success">Xem danh sách</a>
         </div>
         <input type="hidden" name="user_id" value="{{ request()->user_id }}">
         @csrf

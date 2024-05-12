@@ -369,7 +369,6 @@ $(document).on("click", ".btn-follow-multiple", function () {
                     ids: tempAllRecord,
                     type: 1,
                     is_scan: 0,
-                    user_id,
                 },
                 success: function (response) {
                     if (response.status == 0) {
@@ -401,7 +400,6 @@ $(document).on("click", ".btn-scan-multiple", function () {
                     ids: tempAllRecord,
                     is_scan,
                     status: 1,
-                    user_id
                 },
                 success: function (response) {
                     if (response.status == 0) {

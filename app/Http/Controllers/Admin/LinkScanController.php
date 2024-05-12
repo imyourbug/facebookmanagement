@@ -85,7 +85,7 @@ class LinkScanController extends Controller
             UserLink::create([
                 'user_id' => $data['user_id'],
                 'link_id' => $link->id,
-                'is_scan' => $link->is_scan,
+                'is_scan' => $data['is_scan'],
                 'title' => $data['title'],
                 'note' => $link->note,
             ]);
