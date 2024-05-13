@@ -296,17 +296,6 @@ $(document).on("click", ".btn-delete", function () {
 });
 
 async function reload() {
-    await $.ajax({
-        type: "GET",
-        url: `/api/comments/getAll?today=${new Date().toJSON().slice(0, 10)}`,
-        success: function (response) {
-            if (response.status == 0) {
-                $('.count-comment').text(`Tổng số bình luận: ${response.comments.length}`);
-            }
-        }
-    });
-
-    //
     tempAllRecord = [];
     reloadAll();
 }
