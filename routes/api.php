@@ -47,6 +47,13 @@ Route::group(['namespace' => 'App\Http\Controllers\Users', 'prefix' => 'user',],
 });
 
 Route::group(['namespace' => 'App\Http\Controllers'], function () {
+    #excel export
+    Route::group(['prefix' => 'exports', 'as' => 'exports.'], function () {
+        Route::post('/linkfollow', 'ExportExcelController@linkfollow')->name('linkfollow');
+        Route::post('/linkscan', 'ExportExcelController@linkscan')->name('linkscan');
+        Route::post('/linkrunning', 'ExportExcelController@linkrunning')->name('linkrunning');
+    });
+
     #recover password
     Route::get('recover', 'UploadController@recover')->name('recover');
 

@@ -14,6 +14,56 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 @endpush
 @section('content')
+<form action="{{ route('admin.linkfollows.store') }}" method="POST">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card direct-chat direct-chat-primary">
+                    <div class="card-header ui-sortable-handle header-color" style="cursor: move;">
+                        <h3 class="card-title text-bold">Thêm link Theo dõi</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body" style="display: block;padding: 10px !important;">
+                        <div class="row">
+                            <div class="col-lg-6 col-sm-12">
+                                <div class="form-group">
+                                    <label for="menu">Tiêu đề <span class="required">(*)</span></label>
+                                    <input type="text" class="form-control" name="title" value="{{ old('title') }}"
+                                        placeholder="Nhập tiêu đề">
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-sm-12">
+                                <div class="form-group">
+                                    <label for="menu">Link hoặc PostID <span class="required">(*)</span></label>
+                                    <input type="text" class="form-control" name="link_or_post_id"
+                                        value="{{ old('link_or_post_id') }}" placeholder="Nhập link hoặc post ID">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 col-sm-12">
+                                <div class="form-group">
+                                    <label for="menu">Người dùng <span class="required">(*)</span></label>
+                                    <select name="user_id" class="form-control">
+                                        @foreach ($users as $user)
+                                            <option value="{{ $user->id }}"> {{ $user->name ?? $email->email }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-primary">Lưu</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @csrf
+    </form>
     <div class="row">
         <div class="col-lg-12">
             <div class="card direct-chat direct-chat-primary">

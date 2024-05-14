@@ -43,4 +43,6 @@ class GlobalConstant
     public const TYPE_REACTION = 2;
 
     public const LENGTH_PHONE = 25;
+
+    public const LIMIT_LINK_HISTORY = 5;
 }

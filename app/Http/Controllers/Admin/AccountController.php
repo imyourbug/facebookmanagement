@@ -111,8 +111,8 @@ class AccountController extends Controller
                     $q->where('type', GlobalConstant::TYPE_SCAN);
                 })
                 ->orderBy('created_at');
-            if ($userLinks->get()->count() >= $user->limit) {
-                $userLinks->take($userLinks->get()->count() - $user->limit)
+            if ($userLinks->get()->count() >= $data['limit']) {
+                $userLinks->take($userLinks->get()->count() - $data['limit'])
                     ->delete();
             }
 
@@ -123,8 +123,8 @@ class AccountController extends Controller
                     $q->where('type', GlobalConstant::TYPE_FOLLOW);
                 })
                 ->orderBy('created_at');
-            if ($userLinks->get()->count() >= $user->limit_follow) {
-                $userLinks->take($userLinks->get()->count() - $user->limit_follow)
+            if ($userLinks->get()->count() >= $data['limit_follow']) {
+                $userLinks->take($userLinks->get()->count() - $data['limit_follow'])
                     ->delete();
             }
 

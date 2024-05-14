@@ -347,6 +347,7 @@ class LinkController extends Controller
                     UserLink::where('link_id', $link->id)
                         ->update([
                             'is_scan' => $is_scan,
+                            'created_at' => now(),
                         ]);
                 }
             }
@@ -612,7 +613,8 @@ class LinkController extends Controller
                 UserLink::where('user_id', $user_id)
                     ->where('link_id', $data['id'])
                     ->update([
-                        'is_scan' => $is_scan
+                        'is_scan' => $is_scan,
+                        'created_at' => now()
                     ]);
                 unset($data['user_id']);
             }
@@ -698,11 +700,12 @@ class LinkController extends Controller
         $is_scan = $data['is_scan'] ?? '';
         if (strlen($is_scan)) {
             $userLinks = UserLink::whereIn('link_id', $data['ids'])
-                ->when(strlen($user_id), function($q) use ($user_id) {
+                ->when(strlen($user_id), function ($q) use ($user_id) {
                     return $q->where('user_id', $user_id);
                 })
                 ->update([
                     'is_scan' => $is_scan,
+                    'created_at' => now(),
                 ]);
         }
 

@@ -96,7 +96,7 @@ class CommentController extends Controller
             })
             // phone
             ->when($phone, function ($q) use ($phone) {
-                return $q->whereHas('comment', function ($q) use ($phone) {
+                return $q->whereHas('comment.getUid', function ($q) use ($phone) {
                     $q->where('phone', 'like', "%$phone%");
                 });
             })

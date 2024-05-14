@@ -102,3 +102,6 @@ function displayPhoneByRole(stringPhone = '', isDisplay = true) {
     return arrPhone.join('<br/>');
 }
 
+function isNumeric(value) {
+    return /^-?\d+$/.test(value);
+}

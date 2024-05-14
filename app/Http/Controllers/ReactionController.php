@@ -101,7 +101,7 @@ class ReactionController extends Controller
             })
             // phone
             ->when($phone, function ($q) use ($phone) {
-                return $q->whereHas('reaction', function ($q) use ($phone) {
+                return $q->whereHas('reaction.getUid', function ($q) use ($phone) {
                     $q->where('phone', 'like', "%$phone%");
                 });
             })

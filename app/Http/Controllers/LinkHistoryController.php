@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Constant\GlobalConstant;
 use App\Models\LinkHistory;
 use Illuminate\Http\Request;
 
@@ -34,7 +35,7 @@ class LinkHistoryController extends Controller
                     return  $q->where('created_at', '>=',  $from);
                 })
                 ->orderByDesc('id')
-                ->limit(10)
+                ->limit(GlobalConstant::LIMIT_LINK_HISTORY)
                 ->get()
         ]);
     }

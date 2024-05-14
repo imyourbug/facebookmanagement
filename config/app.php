@@ -161,10 +161,11 @@ return [
         /*
          * Package Service Providers...
          */
-        Maatwebsite\Excel\ExcelServiceProvider::class,
         Brian2694\Toastr\ToastrServiceProvider::class,
-        \Yajra\DataTables\DataTablesServiceProvider::class,Barryvdh\DomPDF\ServiceProvider::class,
+        \Yajra\DataTables\DataTablesServiceProvider::class,
+        Barryvdh\DomPDF\ServiceProvider::class,
         Mccarlosen\LaravelMpdf\LaravelMpdfServiceProvider::class,
+        Maatwebsite\Excel\ExcelServiceProvider::class,
         /*
          * Application Service Providers...
          */
