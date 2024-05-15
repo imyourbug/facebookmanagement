@@ -17,6 +17,33 @@ use Toastr;
 
 class CommentController extends Controller
 {
+
+    public function getCommentUser(Request $request)
+    {
+        $user_id = $request->user_id;
+
+        $list_ids = Link::with(['userLinks'])
+        ->get()
+            ->pluck('id');
+
+        $links = Link::with(['userLinks'])
+        ->when($user_id, function ($q) use ($user_id) {
+            return $q->whereHas('userLinks', function ($q) use ($user_id) {
+                $q->where('user_id', $user_id);
+            });
+        })
+            ->whereIn('parent_id', $list_ids)
+            ->get();
+
+        $link_of_users = Link::with(['userLinks'])
+        ->when($user_id, function ($q) use ($user_id) {
+            return $q->whereHas('userLinks', function ($q) use ($user_id) {
+                $q->where('user_id', $user_id);
+            });
+        })
+            ->get();
+    }
+
     public function getAll(Request $request)
     {
         $user_id = $request->user_id;

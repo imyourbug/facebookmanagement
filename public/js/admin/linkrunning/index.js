@@ -5,6 +5,10 @@ $(document).ready(function () {
     reload();
 
     dataTable = $("#table").DataTable({
+        columnDefs: [
+            // { visible: false, targets: 0 },
+            { visible: false, targets: 1 },
+        ],
         lengthMenu: [
             [100, 250, 500],
             [100, 250, 500]
@@ -33,6 +37,11 @@ $(document).ready(function () {
                 data: function (d) {
                     return `<input class="btn-select" type="checkbox" data-id="${d.link.id}" data-link_or_post_id="${d.link.link_or_post_id}" />`;
                 }
+            },
+            {
+                data: function (d) {
+                    return d.link.link_or_post_id;
+                },
             },
             {
                 data: function (d) {

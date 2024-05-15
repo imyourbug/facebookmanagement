@@ -84,6 +84,7 @@
                         <thead>
                             <tr>
                                 <th><input class="btn-select-all" type="checkbox" /></th>
+                                <th>Link|PostID</th>
                                 <th>Data cuối</th>
                                 <th>Ngày tạo</th>
                                 <th>Tiêu đề</th>

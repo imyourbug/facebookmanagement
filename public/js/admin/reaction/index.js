@@ -6,6 +6,10 @@ $(document).ready(function () {
     reload();
 
     dataTable = $("#table").DataTable({
+        columnDefs: [
+            // { visible: false, targets: 0 },
+            { visible: false, targets: 1 },
+        ],
         lengthMenu: [
             [100, 250, 500],
             [100, 250, 500]
@@ -34,6 +38,11 @@ $(document).ready(function () {
                 data: function (d) {
                     return `<input class="btn-select" type="checkbox" data-id="${d.reaction.id}" />`;
                 }
+            },
+            {
+                data: function (d) {
+                    return d.reaction.uid;
+                },
             },
             {
                 data: function (d) {
@@ -72,27 +81,27 @@ $(document).ready(function () {
                     </div></p>`;
                 },
             },
-            {
-                data: function (d) {
-                    return `<p class="show-uid tool-tip" data-id="${d.reaction.id}" data-value="${d.reaction.uid}" data-uid="${d.reaction.uid}">${d.reaction.uid}
-                    <div style="display:none;width: max-content;
-                                background-color: black;
-                                color: #fff;
-                                border-radius: 6px;
-                                padding: 5px 10px;
-                                position: absolute;
-                                z-index: 1;" class="tooltip-uid tooltip-uid-${d.reaction.id}">
-                    </div></p>`;
-                },
-            },
-            {
-                data: function (d) {
-                    return displayPhoneByRole(d.comment.get_uid ? d.comment.get_uid.phone : '');
-                },
-            },
+            // {
+            //     data: function (d) {
+            //         return `<p class="show-uid tool-tip" data-id="${d.reaction.id}" data-value="${d.reaction.uid}" data-uid="${d.reaction.uid}">${d.reaction.uid}
+            //         <div style="display:none;width: max-content;
+            //                     background-color: black;
+            //                     color: #fff;
+            //                     border-radius: 6px;
+            //                     padding: 5px 10px;
+            //                     position: absolute;
+            //                     z-index: 1;" class="tooltip-uid tooltip-uid-${d.reaction.id}">
+            //         </div></p>`;
+            //     },
+            // },
             {
                 data: function (d) {
                     return d.reaction.reaction;
+                },
+            },
+            {
+                data: function (d) {
+                    return displayPhoneByRole(d.reaction.get_uid ? d.reaction.get_uid.phone : '');
                 },
             },
             {

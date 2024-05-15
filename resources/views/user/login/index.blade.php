@@ -65,9 +65,9 @@
                     <p class="mb-1">
                         <a href="{{ route('user.forgot') }}">Quên mật khẩu</a>
                     </p>
-                    <p class="mb-0">
+                    {{-- <p class="mb-0">
                         <a href="{{ route('user.register') }}" class="text-center">Đăng ký</a>
-                    </p>
+                    </p> --}}
                 </div>
             </div>
         </div>

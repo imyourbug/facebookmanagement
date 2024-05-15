@@ -5,6 +5,10 @@ $(document).ready(function () {
     reload();
 
     dataTable = $("#table").DataTable({
+        columnDefs: [
+            // { visible: false, targets: 0 },
+            { visible: false, targets: 1 },
+        ],
         lengthMenu: [
             [100, 250, 500],
             [100, 250, 500]
@@ -36,6 +40,11 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
+                    return d.link.link_or_post_id;
+                },
+            },
+            {
+                data: function (d) {
                     let commentLink = d.link.comment_links ? d.link.comment_links[0] : '';
                     return commentLink ? getDateDiffInHours(new Date(commentLink.created_at), new Date()) : 'Trống';
                 }
@@ -48,6 +57,7 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
+                    return d.user.name;
                     return getListAccountNameByUserLink(d.accounts);
                 },
             },

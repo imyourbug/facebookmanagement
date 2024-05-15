@@ -88,14 +88,12 @@
                         <button disabled class="btn-control btn btn-danger btn-delete-multiple">Xóa</button>
                         <button data-target="#modalFilter" data-toggle="modal"
                             class="btn btn-primary btn-choose-filter">Chọn</button>
-                        <form id="form-export-linkfollow" action="{{ route('exports.linkfollow') }}" method="POST">
-                            <button class="btn btn-success" type="submit">Xuất Excel</button>
-                        </form>
                     </div>
                     <table id="table" class="table display nowrap dataTable dtr-inline collapsed">
                         <thead>
                             <tr>
                                 <th><input class="btn-select-all" type="checkbox" /></th>
+                                <th>Link|PostID</th>
                                 <th>Data cuối</th>
                                 <th>Ngày tạo</th>
                                 <th>Tài khoản</th>

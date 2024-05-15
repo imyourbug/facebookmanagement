@@ -155,6 +155,19 @@ class ReactionController extends Controller
                 if (!$link) {
                     throw new Exception('link_or_post_id không tồn tại');
                 }
+                $count_uid = LinkReaction::with(['reaction'])
+                    ->where('link_id', $link->id)
+                    ->when(strlen($value['uid'] ?? ''), function ($q) use ($value) {
+                        return $q->whereHas('reaction', function ($q) use ($value) {
+                            $q->where('uid', $value['uid']);
+                        });
+                    })
+                    ->get()
+                    ->count();
+                if ($count_uid) {
+                    throw new Exception('Trùng uid');
+                }
+
                 unset($value['link_or_post_id']);
                 $reaction = Reaction::create($value);
                 LinkReaction::create([

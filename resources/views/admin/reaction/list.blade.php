@@ -43,13 +43,13 @@
                         <thead>
                             <tr>
                                 <th><input class="btn-select-all" type="checkbox" /></th>
+                                <th>UID</th>
                                 <th>Thời gian</th>
                                 <th>Tài khoản</th>
                                 <th>Tên bài</th>
                                 <th>Tên Facebook</th>
-                                <th>UID</th>
-                                <th>Số điện thoại</th>
                                 <th>Cảm xúc</th>
+                                <th>Số điện thoại</th>
                                 <th>Note</th>
                                 <th>Thao tác</th>
                             </tr>
