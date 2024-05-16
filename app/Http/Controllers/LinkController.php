@@ -311,6 +311,9 @@ class LinkController extends Controller
         }
     }
 
+    /*
+        Just for external calling
+    **/
     public function updateLinkByLinkOrPostId(Request $request)
     {
         try {

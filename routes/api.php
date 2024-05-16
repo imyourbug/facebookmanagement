@@ -67,6 +67,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::post('/create', 'ReactionController@store')->name('store');
         Route::get('/getAll', 'ReactionController@getAll')->name('getAll');
         Route::post('/deleteAll', 'ReactionController@deleteAll')->name('deleteAll');
+        Route::get('/getAllReactionUser', 'ReactionController@getAllReactionUser')->name('getAllReactionUser');
     });
 
     #upload
@@ -86,6 +87,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::get('/getAll', 'CommentController@getAll')->name('getAll');
         Route::post('/deleteAll', 'CommentController@deleteAll')->name('deleteAll');
         Route::post('/updateById', 'CommentController@updateById')->name('updateById');
+        Route::get('/getAllCommentUser', 'CommentController@getAllCommentUser')->name('getAllCommentUser');
     });
 
     #links
@@ -116,6 +118,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::post('/uploadmap', 'SettingController@uploadmap')->name('uploadmap');
         Route::post('/create', 'SettingController@store')->name('store');
         Route::get('/getAll', 'SettingController@getAll')->name('getAll');
+        Route::post('/delete', 'SettingController@delete')->name('delete');
     });
 });
 

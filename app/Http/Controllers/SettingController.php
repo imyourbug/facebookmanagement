@@ -120,4 +120,24 @@ class SettingController extends Controller
             'settings' => Setting::all(),
         ]);
     }
+
+    public function delete(Request $request)
+    {
+        $data = $request->validate([
+            'key' => 'required|array',
+            'key.*' => 'nullable|string',
+        ]);
+
+        try {
+            Setting::whereIn('key', $data['key'] ?? [])->delete();
+        } catch (Throwable $e) {
+            return response()->json([
+                'status' => 1,
+                'message' => $e->getMessage()
+            ]);
+        }
+        return response()->json([
+            'status' => 0,
+        ]);
+    }
 }
