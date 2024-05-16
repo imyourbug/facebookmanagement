@@ -21,6 +21,7 @@ class Link extends Model
         'is_scan',
         'note',
         'link_or_post_id',
+        'parent_link_or_post_id',
         'type',
         'end_cursor',
         'delay',

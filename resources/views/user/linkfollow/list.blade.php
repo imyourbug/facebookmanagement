@@ -14,6 +14,44 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 @endpush
 @section('content')
+    <form action="{{ route('user.linkfollows.store') }}" method="POST">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card direct-chat direct-chat-primary">
+                    <div class="card-header ui-sortable-handle header-color" style="cursor: move;">
+                        <h3 class="card-title text-bold">Thêm link Theo dõi</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body" style="display: block;padding: 10px !important;">
+                        <div class="row">
+                            <div class="col-lg-6 col-sm-12">
+                                <div class="form-group">
+                                    <label for="menu">Tiêu đề <span class="required">(*)</span></label>
+                                    <input type="text" class="form-control" name="title" value="{{ old('title') }}"
+                                        placeholder="Nhập tiêu đề">
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-sm-12">
+                                <div class="form-group">
+                                    <label for="menu">Link hoặc PostID <span class="required">(*)</span></label>
+                                    <input type="text" class="form-control" name="link_or_post_id"
+                                        value="{{ old('link_or_post_id') }}" placeholder="Nhập link hoặc post ID">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-primary">Lưu</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @csrf
+    </form>
     <div class="row">
         <div class="col-lg-12">
             <div class="card direct-chat direct-chat-primary">
@@ -81,12 +119,12 @@
                                 <label for="menu">Data cuối</label>
                                 <div class="row">
                                     <div class="col-lg-6">
-                                        <input type="text" class="form-control" data-name="Data cuối" id="last_data_from"
-                                            value="" placeholder="Từ">
+                                        <input type="text" class="form-control" data-name="Data cuối"
+                                            id="last_data_from" value="" placeholder="Từ">
                                     </div>
                                     <div class="col-lg-6">
-                                        <input type="text" class="form-control" data-name="Data cuối" id="last_data_to"
-                                            value="" placeholder="Đến">
+                                        <input type="text" class="form-control" data-name="Data cuối"
+                                            id="last_data_to" value="" placeholder="Đến">
                                     </div>
                                 </div>
                             </div>
@@ -95,7 +133,7 @@
                             <div class="form-group">
                                 <label for="menu">Ngày tạo </label>
                                 <div class="row">
-                                     <div class="col-lg-6">
+                                    <div class="col-lg-6">
                                         <input type="date" class="form-control" data-name="Ngày tạo" id="from"
                                             value="{{ date('Y-m-d') }}" placeholder="Từ">
                                     </div>
@@ -120,8 +158,8 @@
                                 <label for="menu">Bình luận</label>
                                 <div class="row">
                                     <div class="col-lg-6">
-                                        <input type="text" class="form-control" data-name="Bình luận" id="comment_from"
-                                            value="" placeholder="Từ">
+                                        <input type="text" class="form-control" data-name="Bình luận"
+                                            id="comment_from" value="" placeholder="Từ">
                                     </div>
                                     <div class="col-lg-6">
                                         <input type="text" class="form-control" data-name="Bình luận" id="comment_to"

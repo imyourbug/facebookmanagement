@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Constant\GlobalConstant;
 use App\Http\Controllers\Controller;
 use App\Models\Link;
+use App\Models\LinkHistory;
 use App\Models\LinkReaction;
 use App\Models\Reaction;
+use App\Models\Uid;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -150,10 +153,21 @@ class ReactionController extends Controller
                 'reactions.*.note' => 'nullable|string',
             ]);
             DB::beginTransaction();
+            $count = 0;
+            $unique_link_ids = [];
+            $uids = [];
+            $error = [
+                'uid' => [],
+                'link_or_post_id' => [],
+            ];
             foreach ($data['reactions'] as $key => $value) {
                 $link = Link::firstWhere('link_or_post_id', $value['link_or_post_id']);
                 if (!$link) {
-                    throw new Exception('link_or_post_id không tồn tại');
+                    if (!in_array($value['link_or_post_id'], $error['link_or_post_id'])) {
+                        $error['link_or_post_id'][] = $value['link_or_post_id'];
+                    }
+                    // throw new Exception('Không tồn tại link_or_post_id');
+                    continue;
                 }
                 $count_uid = LinkReaction::with(['reaction'])
                     ->where('link_id', $link->id)
@@ -165,27 +179,90 @@ class ReactionController extends Controller
                     ->get()
                     ->count();
                 if ($count_uid) {
-                    throw new Exception('Trùng uid');
+                    if (!in_array($value['uid'], $error['uid'])) {
+                        $error['uid'][] = $value['uid'];
+                    }
+                    continue;
                 }
 
+                $unique_link_ids[$link->id] = $link->id;
                 unset($value['link_or_post_id']);
                 $reaction = Reaction::create($value);
                 LinkReaction::create([
                     'link_id' => $link->id,
                     'reaction_id' => $reaction->id,
                 ]);
+                // get data phone
+                $pattern = '/\d{10,11}/';
+                preg_match_all($pattern, $reaction->phone, $matches);
+                $uids[$reaction->uid][] = implode(',', $matches[0]);
+                $count++;
+            }
+
+            if ($count) {
+                // insert uids
+                foreach ($uids as $key => $value_uid) {
+                    $value_uid = array_filter($value_uid);
+                    $uid = Uid::firstWhere('uid', $key);
+                    if (!$uid) {
+                        Uid::create([
+                            'uid' => $key,
+                            'phone' => implode(',', $value_uid),
+                        ]);
+                    } else {
+                        DB::table('uids')
+                            ->where('uid', (string)$key)
+                            ->update([
+                                'phone' => count($value_uid) ? $uid->phone . ',' . implode(',', $value_uid) : $uid->phone,
+                            ]);
+                    }
+                }
+                // update column reaction of link
+                $dataLinks = [];
+                foreach ($unique_link_ids as $link_id) {
+                    $count_reaction = LinkReaction::where('link_id', $link_id)
+                        ->get()
+                        ->count();
+                    // get history
+                    $lastHistory = LinkHistory::with(['link'])
+                        ->where('type', GlobalConstant::TYPE_REACTION)
+                        ->where('link_id', $link_id)
+                        ->orderByDesc('id')
+                        ->first();
+                    //
+                    $diff_reaction = $lastHistory?->reaction ? $count_reaction - (int)$lastHistory->reaction : $count_reaction;
+                    //
+                    Link::firstWhere('id', $link_id)
+                        ->update([
+                            'reaction' => $count_reaction,
+                            'diff_reaction' => $diff_reaction,
+                        ]);
+                    //
+                    $dataLinks[] = [
+                        'reaction' => $count_reaction,
+                        'diff_reaction' => $diff_reaction,
+                        'link_id' => $link_id,
+                        'type' => GlobalConstant::TYPE_REACTION,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
+                LinkHistory::insert($dataLinks);
             }
             DB::commit();
+            $all = count($data['reactions']);
 
             return response()->json([
                 'status' => 0,
+                'rate' => "$count/$all",
+                'error' => $error
             ]);
         } catch (Throwable $e) {
             DB::rollBack();
 
             return response()->json([
                 'status' => 1,
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ]);
         }
     }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Users;
 use App\Constant\GlobalConstant;
 use App\Http\Controllers\Controller;
 use App\Models\Link;
+use App\Models\User;
 use App\Models\UserLink;
 use Exception;
 use Illuminate\Http\Request;
@@ -27,6 +28,7 @@ class LinkFollowController extends Controller
         try {
             $data = $request->validate([
                 'title' => 'nullable|string',
+                'time' => 'nullable|string',
                 'content' => 'nullable|string',
                 'comment' => 'nullable|string',
                 'diff_comment' => 'nullable|string',
@@ -34,11 +36,22 @@ class LinkFollowController extends Controller
                 'diff_data' => 'nullable|string',
                 'reaction' => 'nullable|string',
                 'diff_reaction' => 'nullable|string',
+                'is_scan' => 'nullable|in:0,1,2',
                 'note' => 'nullable|string',
-                'link_or_post_id' => 'required|string'
+                'link_or_post_id' => 'required|string',
             ]);
+            $user = Auth::user();
+
             $userLinks = UserLink::with(['link', 'user'])
-                ->where('user_id', Auth::id())
+                ->where('user_id', $user->id)
+                ->where('type', GlobalConstant::TYPE_FOLLOW)
+                ->get();
+            if ($userLinks->count() >= $user->limit) {
+                throw new Exception('Đã quá giới hạn link được thêm');
+            }
+
+            $userLinks = UserLink::with(['link', 'user'])
+                ->where('user_id', $user->id)
                 ->whereHas('link', function ($q) use ($data) {
                     $q->where('link_or_post_id', $data['link_or_post_id']);
                 })
@@ -47,20 +60,63 @@ class LinkFollowController extends Controller
             if ($userLinks->count()) {
                 throw new Exception('Đã tồn tại link hoặc post ID');
             }
+
+            $data['is_scan'] = GlobalConstant::IS_ON;
             $data['type'] = GlobalConstant::TYPE_FOLLOW;
+            $data['status'] = GlobalConstant::STATUS_RUNNING;
+            $data['delay'] = $user->delay;
+
+            // check link_or_post_id
+            if (!is_numeric($data['link_or_post_id'])) {
+                if (!(str_contains($data['link_or_post_id'], 'videos') || str_contains($data['link_or_post_id'], 'reel'))) {
+                    throw new Exception('Link không đúng định dạng');
+                }
+                $link_or_post_id = explode('/', $data['link_or_post_id']);
+                $data['link_or_post_id'] = $link_or_post_id[count($link_or_post_id) - 1];
+            }
 
             DB::beginTransaction();
-            $link = Link::create($data);
-            UserLink::create([
-                'user_id' => Auth::id(),
-                'link_id' => $link->id,
-                'is_scan' => $link->is_scan,
-            ]);
-            Toastr::success('Tạo link theo dõi thành công', __('title.toastr.success'));
+            $link = Link::firstOrCreate(
+                ['link_or_post_id' => $data['link_or_post_id']],
+                [
+                    'title' =>  $data['title'],
+                    'is_scan' => $data['is_scan'],
+                    'type' => $data['type'],
+                    'delay' => $data['delay'],
+                    'status' => $data['status'],
+                ]
+            );
+            $userLink =  UserLink::withTrashed()
+                ->where('link_id', $link->id)
+                ->where('user_id', $user->id)
+                ->first();
+
+            if ($userLink && $userLink->trashed()) {
+                $userLink->update([
+                    'type' => $data['type'],
+                    'is_scan' => $data['is_scan'],
+                ]);
+                $userLink->restore();
+            } else {
+                DB::table('user_links')->insert(
+                    [
+                        'user_id' => $user->id,
+                        'link_id' => $link->id,
+                        'is_scan' => $data['is_scan'],
+                        'title' => $data['title'],
+                        'type' => $data['type'],
+                        'note' => $link->note,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]
+                );
+            }
+
+            Toastr::success('Thêm thành công', 'Thông báo');
             DB::commit();
         } catch (Throwable $e) {
             DB::rollBack();
-            Toastr::error($e->getMessage(), __('title.toastr.fail'));
+            Toastr::error($e->getMessage(), 'Thông báo');
         }
 
         return redirect()->back();

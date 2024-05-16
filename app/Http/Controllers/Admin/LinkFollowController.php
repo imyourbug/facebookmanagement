@@ -37,17 +37,15 @@ class LinkFollowController extends Controller
             $user = User::firstWhere('id', $data['user_id']);
 
             $userLinks = UserLink::with(['link', 'user'])
-            ->where('user_id', $user->id)
-                ->whereHas('link', function ($q) use ($data) {
-                    $q->where('type', GlobalConstant::TYPE_FOLLOW);
-                })
+                ->where('user_id', $user->id)
+                ->where('type', GlobalConstant::TYPE_FOLLOW)
                 ->get();
             if ($userLinks->count() >= $user->limit) {
                 throw new Exception('Đã quá giới hạn link được thêm');
             }
 
             $userLinks = UserLink::with(['link', 'user'])
-            ->where('user_id', $user->id)
+                ->where('user_id', $user->id)
                 ->whereHas('link', function ($q) use ($data) {
                     $q->where('link_or_post_id', $data['link_or_post_id']);
                 })
@@ -82,13 +80,32 @@ class LinkFollowController extends Controller
                     'status' => $data['status'],
                 ]
             );
-            UserLink::create([
-                'user_id' => $data['user_id'],
-                'link_id' => $link->id,
-                'is_scan' => $data['is_scan'],
-                'title' => $data['title'],
-                'note' => $link->note,
-            ]);
+            $userLink =  UserLink::withTrashed()
+                ->where('link_id', $link->id,)
+                ->where('user_id', $data['user_id'])
+                ->first();
+
+            if ($userLink && $userLink->trashed()) {
+                $userLink->restore();
+                $userLink->update([
+                    'type' => $data['type'],
+                    'is_scan' => $data['is_scan'],
+                ]);
+            } else {
+                DB::table('user_links')->insert(
+                    [
+                        'user_id' => $data['user_id'],
+                        'link_id' => $link->id,
+                        'is_scan' => $data['is_scan'],
+                        'title' => $data['title'],
+                        'type' => $data['type'],
+                        'note' => $link->note,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]
+                );
+            }
+
             Toastr::success('Thêm thành công', 'Thông báo');
             DB::commit();
         } catch (Throwable $e) {

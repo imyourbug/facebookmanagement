@@ -29,13 +29,13 @@ $(document).ready(function () {
             top2Start: 'pageLength',
         },
         ajax: {
-            url: `/api/links/getAll?type=0`,
+            url: `/api/userlinks/getAll?type=0`,
             dataSrc: "links",
         },
         columns: [
             {
                 data: function (d) {
-                    return `<input class="btn-select" type="checkbox" data-id="${d.link.id}" data-link_or_post_id="${d.link.link_or_post_id}" />`;
+                    return `<input class="btn-select" type="checkbox" data-id="${d.id}" data-link_or_post_id="${d.link.link_or_post_id}" />`;
                 }
             },
             {
@@ -123,8 +123,8 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return d.is_scan == 0 ? `<button class="btn btn-danger btn-scan btn-sm" data-is_scan="1" data-id=${d.link.id}>OFF</button>`
-                        : (d.is_scan == 1 ? `<button data-is_scan="0" data-id=${d.link.id} class="btn btn-success btn-scan btn-sm">ON</button>`
+                    return d.is_scan == 0 ? `<button class="btn btn-danger btn-scan btn-sm" data-is_scan="1" data-user_id="${d.user_id}" data-id=${d.id}>OFF</button>`
+                        : (d.is_scan == 1 ? `<button data-is_scan="0" data-id=${d.id} data-user_id="${d.user_id}" class="btn btn-success btn-scan btn-sm">ON</button>`
                             : `<button class="btn btn-warning btn-sm">ERROR</button>`);
                 }
             },
@@ -135,17 +135,15 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    let btnDelete = d.link.id == $('#editing_link_id').val() ? `` :
-                        `<button data-id="${d.link.id}" class="btn btn-danger btn-sm btn-delete">
-                                <i class="fas fa-trash"></i>
-                            </button>`;
-                    return `<a class="btn btn-primary btn-sm" href='/admin/linkscans/update/${d.link.id}?user_id=${d.user_id}'>
+                    return `<a class="btn btn-primary btn-sm" href='/admin/linkscans/update/${d.id}?user_id=${d.user_id}'>
                                 <i class="fas fa-edit"></i>
                             </a>
-                            <button data-id="${d.link.id}" class="btn btn-success btn-sm btn-follow">
+                            <button data-id="${d.id}" data-user_id="${d.user_id}" class="btn btn-success btn-sm btn-follow">
                                 <i class="fa-solid fa-user-plus"></i>
                             </button>
-                            ${btnDelete}`;
+                            <button data-id="${d.id}" data-user_id="${d.user_id}" class="btn btn-danger btn-sm btn-delete">
+                                <i class="fas fa-trash"></i>
+                            </button>`;
                 },
             },
         ],
@@ -175,7 +173,7 @@ var searchParams = new Map([
 var isFiltering = [];
 
 function getQueryUrlWithParams() {
-    let query = `user_id=`;
+    let query = `type=0`;
     Array.from(searchParams).forEach(([key, values], index) => {
         query += `&${key}=${typeof values == "array" ? values.join(",") : values}`;
     })
@@ -207,10 +205,10 @@ $(document).on("click", ".btn-select-all", function () {
         });
     }
     reloadAll();
-    console.log(tempAllRecord);
 });
 
 $(document).on("click", ".btn-select", async function () {
+    // id userLink
     let id = $(this).data("id");
     let link_or_post_id = $(this).data("link_or_post_id");
     if ($(this).is(':checked')) {
@@ -220,7 +218,6 @@ $(document).on("click", ".btn-select", async function () {
     } else {
         tempAllRecord = tempAllRecord.filter((e) => e != id);
     }
-    console.log(tempAllRecord);
     reloadAll();
 });
 
@@ -239,22 +236,23 @@ $(document).on("click", ".btn-filter", async function () {
     // reload
     // dataTable.clear().rows.add(tempAllRecord).draw();
     dataTable.ajax
-        .url("/api/links/getAll?" + getQueryUrlWithParams())
+        .url("/api/userlinks/getAll?" + getQueryUrlWithParams())
         .load();
     //
     await $.ajax({
         type: "GET",
-        url: `/api/links/getAll?${getQueryUrlWithParams()}`,
+        url: `/api/userlinks/getAll?${getQueryUrlWithParams()}`,
         success: function (response) {
             if (response.status == 0) {
                 response.links.forEach((e) => {
-                    tempAllRecord.push(e.link.id);
+                    tempAllRecord.push(e.id);
                 });
             }
         }
     });
     // auto selected
     tempAllRecord.forEach((e) => {
+        console.log(e);
         $(`.btn-select[data-id="${e}"]`).prop('checked', true);
     });
     $('.btn-select-all').prop('checked', true);
@@ -273,7 +271,7 @@ $(document).on("click", ".btn-refresh", function () {
 
     // reload table
     dataTable.ajax
-        .url(`/api/links/getAll?type=0`)
+        .url(`/api/userlinks/getAll?type=0`)
         .load();
 
     // reload count and record
@@ -299,7 +297,7 @@ async function reload() {
 
     await $.ajax({
         type: "GET",
-        url: `/api/links/getAll`,
+        url: `/api/userlinks/getAll`,
         success: function (response) {
             if (response.status == 0) {
                 allRecord = response.links;
@@ -324,7 +322,7 @@ $(document).on("click", ".btn-scan", function () {
         let id = $(this).data("id");
         $.ajax({
             type: "POST",
-            url: `/api/links/updateLinkByListLinkId`,
+            url: `/api/userlinks/updateLinkByListLinkId`,
             data: {
                 ids: [id],
                 is_scan,
@@ -347,13 +345,15 @@ $(document).on("click", ".btn-scan", function () {
 $(document).on("click", ".btn-follow", function () {
     if (confirm("Bạn có muốn theo dõi link này?")) {
         let id = $(this).data("id");
+        let user_id = $(this).data("user_id");
         $.ajax({
             type: "POST",
-            url: `/api/links/updateLinkByListLinkId`,
+            url: `/api/userlinks/updateLinkByListLinkId`,
             data: {
                 ids: [id],
                 type: 1,
                 is_scan: 0,
+                user_id,
             },
             success: function (response) {
                 if (response.status == 0) {
@@ -374,7 +374,7 @@ $(document).on("click", ".btn-follow-multiple", function () {
             let user_id = $('#user_id').val();
             $.ajax({
                 type: "POST",
-                url: `/api/links/updateLinkByListLinkId`,
+                url: `/api/userlinks/updateLinkByListLinkId`,
                 data: {
                     ids: tempAllRecord,
                     type: 1,
@@ -405,7 +405,7 @@ $(document).on("click", ".btn-scan-multiple", function () {
             let user_id = $('#user_id').val();
             $.ajax({
                 type: "POST",
-                url: `/api/links/updateLinkByListLinkId`,
+                url: `/api/userlinks/updateLinkByListLinkId`,
                 data: {
                     ids: tempAllRecord,
                     is_scan,
@@ -433,7 +433,7 @@ $(document).on("click", ".btn-delete-multiple", function () {
         if (tempAllRecord.length) {
             $.ajax({
                 type: "POST",
-                url: `/api/links/deleteAll`,
+                url: `/api/userlinks/deleteAll`,
                 data: { ids: tempAllRecord },
                 success: function (response) {
                     if (response.status == 0) {
@@ -455,9 +455,9 @@ $(document).on("click", ".btn-delete", function () {
     if (confirm("Bạn có muốn xóa?")) {
         let id = $(this).data("id");
         $.ajax({
-            type: "DELETE",
-            url: `/api/linkscans/${id}/destroy`,
-
+            type: "POST",
+            url: `/api/userlinks/deleteAll`,
+            data: { ids: [id] },
             success: function (response) {
                 if (response.status == 0) {
                     toastr.success("Xóa thành công");

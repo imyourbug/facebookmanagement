@@ -107,9 +107,7 @@ class AccountController extends Controller
             // check limit scan
             $userLinks = UserLink::with(['link', 'user'])
                 ->where('user_id', $user->id)
-                ->whereHas('link', function ($q) {
-                    $q->where('type', GlobalConstant::TYPE_SCAN);
-                })
+                ->where('type', GlobalConstant::TYPE_SCAN)
                 ->orderBy('created_at');
             if ($userLinks->get()->count() >= $data['limit']) {
                 $userLinks->take($userLinks->get()->count() - $data['limit'])
@@ -119,9 +117,7 @@ class AccountController extends Controller
             // check limit follow
             $userLinks = UserLink::with(['link', 'user'])
                 ->where('user_id', $user->id)
-                ->whereHas('link', function ($q) {
-                    $q->where('type', GlobalConstant::TYPE_FOLLOW);
-                })
+                ->where('type', GlobalConstant::TYPE_FOLLOW)
                 ->orderBy('created_at');
             if ($userLinks->get()->count() >= $data['limit_follow']) {
                 $userLinks->take($userLinks->get()->count() - $data['limit_follow'])

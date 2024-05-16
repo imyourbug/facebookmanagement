@@ -78,14 +78,35 @@ class LinkScanController extends Controller
                     'type' => $data['type'],
                     'delay' => $data['delay'],
                     'status' => $data['status'],
+                    'note' => $data['note'] ?? '',
                 ]
             );
-            UserLink::create([
-                'user_id' => Auth::id(),
-                'link_id' => $link->id,
-                'is_scan' => $link->is_scan,
-                'title' => $data['title'],
-            ]);
+            $userLink =  UserLink::withTrashed()
+                ->where('link_id', $link->id,)
+                ->where('user_id', Auth::id())
+                ->first();
+
+            if ($userLink && $userLink->trashed()) {
+                $userLink->update([
+                    'type' => $data['type'],
+                    'is_scan' => $data['is_scan'],
+                ]);
+                $userLink->restore();
+            } else {
+                DB::table('user_links')->insert(
+                    [
+                        'user_id' => Auth::id(),
+                        'link_id' => $link->id,
+                        'is_scan' => $data['is_scan'],
+                        'title' => $data['title'] ?? '',
+                        'note' => $link->note ?? '',
+                        'type' => $data['type'],
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]
+                );
+            }
+            
             Toastr::success('Tạo link quét thành công', __('title.toastr.success'));
             DB::commit();
         } catch (Throwable $e) {

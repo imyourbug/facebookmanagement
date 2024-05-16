@@ -23,6 +23,10 @@ class GlobalConstant
 
     public const UTC_HOUR = 7;
 
+    public const LINK_TYPE = [
+        '0', '1', '2'
+    ];
+
     public const LINK_STATUS = [
         '0', '1', '2'
     ];

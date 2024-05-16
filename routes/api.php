@@ -99,6 +99,16 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::post('/updateLinkByListLinkId', 'LinkController@updateLinkByListLinkId')->name('updateLinkByListLinkId');
         Route::delete('/{id}/destroy', 'LinkController@destroy')->name('destroy');
         Route::post('/deleteAll', 'LinkController@deleteAll')->name('deleteAll');
+        Route::post('/deleteAllUserLink', 'LinkController@deleteAllUserLink')->name('deleteAllUserLink');
+    });
+
+    #userlinks
+    Route::group(['prefix' => 'userlinks', 'as' => 'userlinks.'], function () {
+        Route::get('/getAll', 'UserLinkController@getAll')->name('getAll');
+        Route::post('/deleteAll', 'UserLinkController@deleteAll')->name('deleteAll');
+        Route::post('/update', 'UserLinkController@update')->name('update');
+        Route::post('/updateLinkByLinkOrPostId', 'UserLinkController@updateLinkByLinkOrPostId')->name('updateLinkByLinkOrPostId');
+        Route::post('/updateLinkByListLinkId', 'UserLinkController@updateLinkByListLinkId')->name('updateLinkByListLinkId');
     });
 
     #settings

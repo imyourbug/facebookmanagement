@@ -216,7 +216,6 @@ class CommentController extends Controller
                 // get data phone
                 $pattern = '/\d{10,11}/';
                 preg_match_all($pattern, $comment->content . ' ' . $comment->phone, $matches);
-                // $matches[0] = array_filter($matches[0]);
                 $uids[$comment->uid][] = implode(',', $matches[0]);
                 $count++;
             }

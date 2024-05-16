@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class UserLink extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $casts = [
         'created_at' => 'datetime:H:i:s Y/m/d',
@@ -20,6 +21,7 @@ class UserLink extends Model
         'is_scan',
         'title',
         'note',
+        'type',
     ];
 
     public function user()

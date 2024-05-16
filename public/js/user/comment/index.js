@@ -333,8 +333,7 @@ $(document).on("click", ".btn-auto-refresh", function () {
             $(this).removeClass('btn-danger');
             $(this).addClass('btn-success');
             idIntervalRefresh = setInterval(() => {
-                reload();
-                dataTable.ajax.reload();
+                $('.btn-filter').click();
             }, 20000);
         }
     }

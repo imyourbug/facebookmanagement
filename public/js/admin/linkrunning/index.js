@@ -35,17 +35,17 @@ $(document).ready(function () {
         columns: [
             {
                 data: function (d) {
-                    return `<input class="btn-select" type="checkbox" data-id="${d.link.id}" data-link_or_post_id="${d.link.link_or_post_id}" />`;
+                    return `<input class="btn-select" type="checkbox" data-id="${d.id}" data-link_or_post_id="${d.link_or_post_id}" />`;
                 }
             },
             {
                 data: function (d) {
-                    return d.link.link_or_post_id;
+                    return d.link_or_post_id;
                 },
             },
             {
                 data: function (d) {
-                    let commentLink = d.link.comment_links ? d.link.comment_links[0] : '';
+                    let commentLink = d.comment_links ? d.comment_links[0] : '';
                     return commentLink ? getDateDiffInHours(new Date(commentLink.created_at), new Date()) : 'Trống';
                 }
             },
@@ -62,7 +62,7 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return `<p class="show-title tool-tip" data-id="${d.id}" data-link_or_post_id="${d.link.link_or_post_id}">${d.title || d.link.title}
+                    return `<p class="show-title tool-tip" data-id="${d.id}" data-link_or_post_id="${d.link_or_post_id}">${d.title || d.title}
                     <div style="display:none;width: max-content;
                                 background-color: black;
                                 color: #fff;
@@ -75,8 +75,8 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return `<p class="show-content tool-tip" data-id="${d.id}" data-link_or_post_id="${d.link.link_or_post_id}" data-content="${d.link.content}">
-                    <img style="width: 50px;height:50px" src="${d.link.content}" alt="image" />
+                    return `<p class="show-content tool-tip" data-id="${d.id}" data-link_or_post_id="${d.link_or_post_id}" data-content="${d.content}">
+                    <img style="width: 50px;height:50px" src="${d.content}" alt="image" />
                     <div style="display:none;width: max-content;
                                 background-color: black;
                                 color: #fff;
@@ -89,7 +89,7 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return `<p class="show-history tool-tip" data-type="comment" data-id="${d.id}" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.comment}  ${getCountation(d.link.diff_comment)}<div style="display:none;
+                    return `<p class="show-history tool-tip" data-type="comment" data-id="${d.id}" data-link_or_post_id="${d.link_or_post_id}">${d.comment}  ${getCountation(d.diff_comment)}<div style="display:none;
                                                                         width: max-content;
                                                                         background-color: black;
                                                                         color: #fff;
@@ -100,7 +100,7 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return `<p class="show-history tool-tip" data-type="data" data-id="${d.id}" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.data}  ${getCountation(parseInt(d.link.diff_data))}<div style="display:none;
+                    return `<p class="show-history tool-tip" data-type="data" data-id="${d.id}" data-link_or_post_id="${d.link_or_post_id}">${d.data}  ${getCountation(parseInt(d.diff_data))}<div style="display:none;
                                                                         width: max-content;
                                                                         background-color: black;
                                                                         color: #fff;
@@ -111,7 +111,7 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return `<p class="show-history tool-tip" data-type="emotion" data-id="${d.id}" data-link_or_post_id="${d.link.link_or_post_id}">${d.link.reaction}  ${getCountation(parseInt(d.link.diff_reaction))}<div style="display:none;
+                    return `<p class="show-history tool-tip" data-type="emotion" data-id="${d.id}" data-link_or_post_id="${d.link_or_post_id}">${d.reaction}  ${getCountation(parseInt(d.diff_reaction))}<div style="display:none;
                                                                         width: max-content;
                                                                         background-color: black;
                                                                         color: #fff;
@@ -122,37 +122,37 @@ $(document).ready(function () {
             },
             // {
             //     data: function (d) {
-            //         return d.is_scan == 0 ? `<button class="btn btn-danger btn-scan btn-sm" data-is_scan="1" data-id=${d.link.id}>OFF</button>`
-            //             : (d.is_scan == 1 ? `<button data-is_scan="0" data-id=${d.link.id} class="btn btn-success btn-scan btn-sm">ON</button>`
+            //         return d.is_scan == 0 ? `<button class="btn btn-danger btn-scan btn-sm" data-is_scan="1" data-id=${d.id}>OFF</button>`
+            //             : (d.is_scan == 1 ? `<button data-is_scan="0" data-id=${d.id} class="btn btn-success btn-scan btn-sm">ON</button>`
             //                 : `<button class="btn btn-warning btn-sm">ERROR</button>`);
             //     }
             // },
             {
                 data: function (d) {
-                    return d.link.delay;
+                    return d.delay;
 
                 }
             },
             {
                 data: function (d) {
-                    return d.link.status == 1 ? `<button class="btn btn-primary btn-sm btn-status" data-link_id="${d.link.id}" data-status="0">
+                    return d.status == 1 ? `<button class="btn btn-primary btn-sm btn-status" data-link_id="${d.id}" data-status="0">
                                                 Running
                                             </button>`
-                        : `<button class="btn btn-danger btn-sm  btn-status" data-link_id="${d.link.id}" data-status="1">
+                        : `<button class="btn btn-danger btn-sm  btn-status" data-link_id="${d.id}" data-status="1">
                                                 Stop
                                             </button>`;
                 },
             },
             {
                 data: function (d) {
-                    let btnDelete = d.link.id == $('#editing_link_id').val() ? `` :
-                        `<button data-id="${d.link.id}" class="btn btn-danger btn-sm btn-delete">
+                    let btnDelete = d.id == $('#editing_link_id').val() ? `` :
+                        `<button data-id="${d.id}" class="btn btn-danger btn-sm btn-delete">
                                 <i class="fas fa-trash"></i>
                             </button>`;
-                    return `<a class="btn btn-primary btn-sm" href='/admin/linkrunnings/update/${d.link.id}'>
+                    return `<a class="btn btn-primary btn-sm" href='/admin/linkrunnings/update/${d.id}'>
                                 <i class="fas fa-edit"></i>
                             </a>
-                            <button data-id="${d.link.id}" class="btn btn-success btn-sm btn-reset">
+                            <button data-id="${d.id}" class="btn btn-success btn-sm btn-reset">
                                 <i class="fa-solid fa-rotate-right"></i>
                             </button>`;
                 },
@@ -223,6 +223,7 @@ $(document).on("click", ".btn-select-all", function () {
 });
 
 $(document).on("click", ".btn-select", async function () {
+    // id table links
     let id = $(this).data("id");
     let link_or_post_id = $(this).data("link_or_post_id");
     if ($(this).is(':checked')) {

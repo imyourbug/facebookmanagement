@@ -51,7 +51,7 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return `<p class="show-title tool-tip" data-type='content' data-content="${d.reaction.content}" data-link_or_post_id="${d.link.link_or_post_id}" data-id="${d.reaction.id}">${d.reaction.title}
+                    return `<p class="show-title tool-tip" data-type='content' data-content="${d.reaction.content}" data-link_or_post_id="${d.link.link_or_post_id}" data-id="${d.reaction.id}">${d.reaction ? (d.reaction.title || '') : ''}
                     <div style="display:none;width: max-content;
                                 background-color: black;
                                 color: #fff;
@@ -64,7 +64,7 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return `<p class="show-name_facebook tool-tip" data-id="${d.reaction.id}" data-value="${d.reaction.uid}" data-uid="${d.reaction.uid}">${d.reaction.name_facebook || ''}
+                    return `<p class="show-name_facebook tool-tip" data-id="${d.reaction.id}" data-value="${d.reaction.uid}" data-uid="${d.reaction.uid}">${d.reaction ? (d.reaction.name_facebook || '') : ''}
                     <div style="display:none;width: max-content;
                                 background-color: black;
                                 color: #fff;
@@ -328,8 +328,7 @@ $(document).on("click", ".btn-auto-refresh", function () {
             $(this).removeClass('btn-danger');
             $(this).addClass('btn-success');
             idIntervalRefresh = setInterval(() => {
-                reload();
-                dataTable.ajax.reload();
+                $('.btn-filter').click();
             }, 20000);
         }
     }
