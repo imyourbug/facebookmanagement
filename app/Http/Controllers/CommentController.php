@@ -17,6 +17,12 @@ use Toastr;
 
 class CommentController extends Controller
 {
+    public function getLinkOrPostIdFromUrl(string $url = '')
+    {
+        $url = explode('/', $url);
+
+        return  $url[count($url) - 1];
+    }
 
     public function getAllCommentUser(Request $request)
     {
@@ -29,12 +35,12 @@ class CommentController extends Controller
         $uid = $request->uid;
         $note = $request->note;
         $phone = $request->phone;
-        $link_or_post_id = $request->link_or_post_id;
         $title = $request->title;
         $name_facebook = $request->name_facebook;
         $today = $request->today;
         $limit = $request->limit;
         $ids = $request->ids ? explode(',', $request->ids) : [];
+        $link_or_post_id = is_numeric($request->link_or_post_id) ? $request->link_or_post_id : $this->getLinkOrPostIdFromUrl($request->link_or_post_id ?? '');
 
         $list_link_ids = Link::all();
 
@@ -116,9 +122,10 @@ class CommentController extends Controller
             })
             // phone
             ->when($phone, function ($q) use ($phone) {
-                return $q->whereHas('comment.getUid', function ($q) use ($phone) {
-                    $q->where('phone', 'like', "%$phone%");
-                });
+                // return $q->whereHas('comment.getUid', function ($q) use ($phone) {
+                //     $q->where('phone', 'like', "%$phone%");
+                // });
+                return $q->where('phone', 'like', "%$phone%");
             })
             // uid
             ->when($uid, function ($q) use ($uid) {
@@ -155,17 +162,22 @@ class CommentController extends Controller
         $uid = $request->uid;
         $note = $request->note;
         $phone = $request->phone;
-        $link_or_post_id = $request->link_or_post_id;
         $title = $request->title;
         $name_facebook = $request->name_facebook;
         $today = $request->today;
         $limit = $request->limit;
         $ids = $request->ids ? explode(',', $request->ids) : [];
+        $link_or_post_id = is_numeric($request->link_or_post_id) ? $request->link_or_post_id : $this->getLinkOrPostIdFromUrl($request->link_or_post_id ?? '');
 
         $comments = LinkComment::with(['comment.getUid', 'link.userLinks.user'])
             ->when($user_id, function ($q) use ($user_id) {
                 return $q->whereHas('link.userLinks', function ($q) use ($user_id) {
                     $q->where('user_id', $user_id);
+                });
+            })
+            ->when($user, function ($q) use ($user) {
+                return $q->whereHas('link.userLinks', function ($q) use ($user) {
+                    $q->where('user_id', $user);
                 });
             })
             ->when($to, function ($q) use ($to) {
@@ -223,21 +235,15 @@ class CommentController extends Controller
             })
             // phone
             ->when($phone, function ($q) use ($phone) {
-                return $q->whereHas('comment.getUid', function ($q) use ($phone) {
-                    $q->where('phone', 'like', "%$phone%");
-                });
+                // return $q->whereHas('comment.getUid', function ($q) use ($phone) {
+                //     $q->where('phone', 'like', "%$phone%");
+                // });
+                return $q->where('phone', 'like', "%$phone%");
             })
             // uid
             ->when($uid, function ($q) use ($uid) {
                 return $q->whereHas('comment', function ($q) use ($uid) {
                     $q->where('uid', 'like', "%$uid%");
-                });
-            })
-            // user
-            ->when($user, function ($q) use ($user) {
-                return $q->whereHas('link.userLinks.user', function ($q) use ($user) {
-                    $q->where('name', 'like', "%$user%")
-                        ->orWhere('email', 'like', "%$user%");
                 });
             })
             // ids

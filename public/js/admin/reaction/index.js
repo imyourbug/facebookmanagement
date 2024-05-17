@@ -7,8 +7,9 @@ $(document).ready(function () {
 
     dataTable = $("#table").DataTable({
         columnDefs: [
-            // { visible: false, targets: 0 },
             { visible: false, targets: 1 },
+            { visible: false, targets: 2 },
+            { visible: false, targets: 3 },
         ],
         lengthMenu: [
             [100, 250, 500],
@@ -38,6 +39,16 @@ $(document).ready(function () {
                 data: function (d) {
                     return `<input class="btn-select" type="checkbox" data-id="${d.reaction.id}" />`;
                 }
+            },
+            {
+                data: function (d) {
+                    return d.link.link_or_post_id;
+                },
+            },
+            {
+                data: function (d) {
+                    return d.link.content;
+                },
             },
             {
                 data: function (d) {

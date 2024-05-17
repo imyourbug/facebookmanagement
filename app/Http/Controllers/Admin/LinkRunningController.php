@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Constant\GlobalConstant;
 use App\Http\Controllers\Controller;
 use App\Models\Link;
+use App\Models\User;
 use App\Models\UserLink;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -70,6 +71,7 @@ class LinkRunningController extends Controller
 
         return view('admin.linkrunning.list', [
             'title' => 'Danh sách link đang chạy',
+            'users' => User::where('role', GlobalConstant::ROLE_USER)->get(),
         ]);
     }
 

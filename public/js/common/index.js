@@ -18,10 +18,10 @@ function getCountation(count = 0) {
     let renderCountation = '';
     switch (true) {
         case count < 0:
-            renderCountation = `<span class="btn btn-sm btn-primary"><i class="fa-solid fa-arrow-down"></i>&emsp;${count}</span>`;
+            renderCountation = `<span class="btn btn-sm btn-primary">${count}</span>`;
             break;
         case count > 0:
-            renderCountation = `<span class="btn btn-sm btn-success"><i class="fa-solid fa-arrow-up"></i>&emsp;${count}</span>`;
+            renderCountation = `<span class="btn btn-sm btn-success">${count}</span>`;
             break;
         case count == 0:
             renderCountation = `<span class="btn btn-sm btn-warning">${count}</span>`;

@@ -87,7 +87,7 @@ class SettingController extends Controller
     {
         return view('admin.setting', [
             'title' => 'Cài đặt',
-            'settings' => Setting::all()
+            'settings' => Setting::orderBy('key')->get()
         ]);
     }
 
@@ -117,7 +117,7 @@ class SettingController extends Controller
     {
         return response()->json([
             'status' => 0,
-            'settings' => Setting::all(),
+            'settings' => Setting::orderBy('key')->get()
         ]);
     }
 

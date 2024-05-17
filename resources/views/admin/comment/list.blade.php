@@ -28,7 +28,8 @@
                 <div class="card-body" style="display: block;padding: 10px !important;">
                     <div class="form-group col-lg-6">
                         <label class="filtering">Lọc theo: Không</label><br>
-                        <label class="count-select">Đã chọn: 0</label>
+                        <label class="count-select">Đã chọn: 0</label><br>
+                        <label class="count-comment">Bình luận: 0</label>
                     </div>
                     <div class="form-group col-lg-6">
                         <button disabled class="btn-control btn btn-danger btn-delete-multiple">Xóa</button>
@@ -42,6 +43,8 @@
                         <thead>
                             <tr>
                                 <th><input class="btn-select-all" type="checkbox" /></th>
+                                <th>Link|PostID</th>
+                                <th>Nội dung bài viết</th>
                                 <th>UID</th>
                                 <th>Thời gian</th>
                                 <th>Tài khoản</th>
@@ -177,9 +180,13 @@
                     <div class="row">
                         <div class="col-lg-6 col-sm-12">
                             <div class="form-group">
-                                <label for="menu">Tên tài khoản</label>
-                                <input type="text" data-name="Tên tài khoản" class="form-control" id="user"
-                                    value="" placeholder="Tên tài khoản">
+                                <label for="menu">Tài khoản</label>
+                                <select data-name="Tài khoản" class="form-control" id="user">
+                                    <option value="">ALL</option>
+                                    @foreach ($users as $user)
+                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
                     </div>

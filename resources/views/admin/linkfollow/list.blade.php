@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.0.1/css/buttons.dataTables.css">
 @endpush
 @push('scripts')
-    <script src="/js/admin/linkfollow/index.js"></script>
+    <script src="/js/admin/linkfollow/index.js?v=3"></script>
     <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
     <script src="https://cdn.datatables.net/2.0.2/js/dataTables.js"></script>
@@ -235,8 +235,12 @@
                         <div class="col-lg-6 col-sm-12">
                             <div class="form-group">
                                 <label for="menu">Tài khoản</label>
-                                <input type="text" data-name="Tài khoản" class="form-control" id="user"
-                                    value="" placeholder="Tên tài khoản">
+                                <select data-name="Tài khoản" class="form-control" id="user">
+                                    <option value="">ALL</option>
+                                    @foreach ($users as $user)
+                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
                         <div class="col-lg-6 col-sm-12">

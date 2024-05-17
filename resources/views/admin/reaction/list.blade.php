@@ -43,6 +43,8 @@
                         <thead>
                             <tr>
                                 <th><input class="btn-select-all" type="checkbox" /></th>
+                                <th>Link|PostID</th>
+                                <th>Nội dung bài viết</th>
                                 <th>UID</th>
                                 <th>Thời gian</th>
                                 <th>Tài khoản</th>
@@ -147,8 +149,12 @@
                         <div class="col-lg-6 col-sm-12">
                             <div class="form-group">
                                 <label for="menu">Tên tài khoản</label>
-                                <input type="text" data-name="Tên tài khoản" class="form-control" id="user"
-                                    value="" placeholder="Tên tài khoản">
+                                <select data-name="Tài khoản" class="form-control" id="user">
+                                    <option value="">ALL</option>
+                                    @foreach ($users as $user)
+                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
                     </div>

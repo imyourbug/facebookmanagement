@@ -8,8 +8,9 @@ $(document).ready(function () {
 
     dataTable = $("#table").DataTable({
         columnDefs: [
-            // { visible: false, targets: 0 },
             { visible: false, targets: 1 },
+            { visible: false, targets: 2 },
+            { visible: false, targets: 3 },
         ],
         lengthMenu: [
             [100, 250, 500],
@@ -39,6 +40,16 @@ $(document).ready(function () {
                 data: function (d) {
                     return `<input class="btn-select" type="checkbox" data-id="${d.comment.id}" />`;
                 }
+            },
+            {
+                data: function (d) {
+                    return d.link.link_or_post_id;
+                },
+            },
+            {
+                data: function (d) {
+                    return d.link.content;
+                },
             },
             {
                 data: function (d) {
@@ -291,6 +302,20 @@ $(document).on("click", ".btn-delete", function () {
 });
 
 async function reload() {
+    $.ajax({
+        type: "GET",
+        // url: `/api/comments/getAllCommentUser?today=${new Date().toJSON().slice(0, 10)}&user_id=${$('#user_id').val()}`,
+        url: `/api/comments/getAllCommentUser?user_id=${$('#user_id').val()}`,
+        data: { ids: tempAllRecord },
+        success: function (response) {
+            if (response.status == 0) {
+                $('.count-comment').text(`Bình luận: ${response.comments.length}`);
+            } else {
+                toastr.error(response.message);
+            }
+        },
+    });
+
     tempAllRecord = [];
     reloadAll();
 }

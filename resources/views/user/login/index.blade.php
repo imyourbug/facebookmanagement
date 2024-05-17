@@ -63,7 +63,7 @@
                         @csrf
                     </form>
                     <p class="mb-1">
-                        <a href="#" data-target="#modalLoginNotification" data-toggle="modal">Quên mật khẩu</a>
+                        <a href="#" data-target="#modalLoginNotification" data-toggle="modal">Đăng ký</a>
                     </p>
                     {{-- <p class="mb-0">
                         <a href="{{ route('user.register') }}" class="text-center">Đăng ký</a>
@@ -82,7 +82,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    {{ \App\Models\Setting::firstWhere('key', 'login-notification')?->value ?? 0 }}
+                    {{ \App\Models\Setting::firstWhere('key', 'login-notification')?->value ?? '' }}
                 </div>
                 <div class="modal-footer justify-content-between">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>

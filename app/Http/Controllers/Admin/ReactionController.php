@@ -145,6 +145,7 @@ class ReactionController extends Controller
 
         return view('admin.reaction.list', [
             'title' => 'Danh sách cảm xúc',
+            'users' => User::where('role', GlobalConstant::ROLE_USER)->get(),
         ]);
     }
 

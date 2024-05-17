@@ -18,6 +18,12 @@ use Toastr;
 
 class ReactionController extends Controller
 {
+    public function getLinkOrPostIdFromUrl(string $url = '')
+    {
+        $url = explode('/', $url);
+
+        return  $url[count($url) - 1];
+    }
 
     public function getAllReactionUser(Request $request)
     {
@@ -30,12 +36,12 @@ class ReactionController extends Controller
         $uid = $request->uid;
         $note = $request->note;
         $phone = $request->phone;
-        $link_or_post_id = $request->link_or_post_id;
         $title = $request->title;
         $name_facebook = $request->name_facebook;
         $today = $request->today;
         $limit = $request->limit;
         $ids = $request->ids ? explode(',', $request->ids) : [];
+        $link_or_post_id = is_numeric($request->link_or_post_id) ? $request->link_or_post_id : $this->getLinkOrPostIdFromUrl($request->link_or_post_id ?? '');
 
         $list_link_ids = Link::all();
 
@@ -81,9 +87,8 @@ class ReactionController extends Controller
             })
             // user
             ->when($user, function ($q) use ($user) {
-                return $q->whereHas('link.userLinks.user', function ($q) use ($user) {
-                    $q->where('name', 'like', "%$user%")
-                        ->orWhere('email', 'like', "%$user%");
+                return $q->whereHas('link.userLinks', function ($q) use ($user) {
+                    $q->where('user_id', $user);
                 });
             })
             // today
@@ -195,9 +200,8 @@ class ReactionController extends Controller
             })
             // user
             ->when($user, function ($q) use ($user) {
-                return $q->whereHas('link.userLinks.user', function ($q) use ($user) {
-                    $q->where('name', 'like', "%$user%")
-                        ->orWhere('email', 'like', "%$user%");
+                return $q->whereHas('link.userLinks', function ($q) use ($user) {
+                    $q->where('user_id', $user);
                 });
             })
             // today

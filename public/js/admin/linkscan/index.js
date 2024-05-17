@@ -302,7 +302,7 @@ async function reload() {
             if (response.status == 0) {
                 allRecord = response.links;
                 response.links.forEach((e) => {
-                    if (e.link.type == 0) {
+                    if (e.type == 0) {
                         count++;
                     }
                 });

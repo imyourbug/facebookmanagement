@@ -42,17 +42,17 @@
                 <form action="{{ route('settings.update') }}" method="POST">
                     @csrf
                     <div class="card-body" style="display: block;padding: 10px !important;">
-                        @foreach ($settings as $item)
-                            <div class="row">
-                                <div class="col-lg-12 col-sm-12">
+                        <div class="row">
+                            @foreach ($settings as $item)
+                                <div class="col-lg-3 col-md-6 col-sm-12">
                                     <div class="form-group">
                                         <label for="menu">{{ $item->name }}</label>
                                         <input type="number" min="0" class="form-control" name="{{ $item->key }}"
                                             value="{{ $item->value ?? '' }}" placeholder="Nhập giá trị">
                                     </div>
                                 </div>
-                            </div>
-                        @endforeach
+                            @endforeach
+                        </div>
                         <button class="btn btn-success">Lưu</button>
                     </div>
                 </form>

@@ -16,6 +16,13 @@ use Toastr;
 
 class UserLinkController extends Controller
 {
+    public function getLinkOrPostIdFromUrl(string $url = '')
+    {
+        $url = explode('/', $url);
+
+        return  $url[count($url) - 1];
+    }
+
     public function getAll(Request $request)
     {
         $comment_from = $request->comment_from;
@@ -38,10 +45,10 @@ class UserLinkController extends Controller
         $link_id = $request->link_id;
         $is_scan = $request->is_scan;
         $type = (string)$request->type;
-        $link_or_post_id = $request->link_or_post_id;
         $title = $request->title;
         $content = $request->content;
         $status = $request->status;
+        $link_or_post_id = is_numeric($request->link_or_post_id) ? $request->link_or_post_id : $this->getLinkOrPostIdFromUrl($request->link_or_post_id ?? '');
 
         $query = '(HOUR(CURRENT_TIMESTAMP()) * 60 + MINUTE(CURRENT_TIMESTAMP()) - HOUR(updated_at) * 60 - MINUTE(updated_at))/60 + DATEDIFF(CURRENT_TIMESTAMP(), updated_at) * 24';
         $queryLastData = '(HOUR(CURRENT_TIMESTAMP()) * 60 + MINUTE(CURRENT_TIMESTAMP()) - HOUR(created_at) * 60 - MINUTE(created_at))/60 + DATEDIFF(CURRENT_TIMESTAMP(), created_at) * 24';
@@ -221,10 +228,7 @@ class UserLinkController extends Controller
             })
             // user
             ->when($user, function ($q) use ($user) {
-                return $q->whereHas('user', function ($q) use ($user) {
-                    $q->where('name', 'like', "%$user%")
-                        ->orWhere('email', 'like', "%$user%");
-                });
+                $q->where('user_id', $user);
             })
             // note
             ->when($note, function ($q) use ($note) {
@@ -519,7 +523,7 @@ class UserLinkController extends Controller
             'type',
         ];
         $dataUpdate = [];
-        foreach($keys as $key) {
+        foreach ($keys as $key) {
             if (isset($data[$key]) && strlen($data[$key])) {
                 $dataUpdate[$key] =  $data[$key];
             }

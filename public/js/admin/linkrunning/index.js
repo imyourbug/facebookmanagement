@@ -29,7 +29,7 @@ $(document).ready(function () {
             top2Start: 'pageLength',
         },
         ajax: {
-            url: "/api/links/getAll?is_scan[]=1",
+            url: "/api/links/getAll",
             dataSrc: "links",
         },
         columns: [
@@ -51,8 +51,8 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return d.created_at;
                     return d.updated_at;
+                    return d.created_at;
                 },
             },
             {
@@ -62,7 +62,7 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return `<p class="show-title tool-tip" data-id="${d.id}" data-link_or_post_id="${d.link_or_post_id}">${d.title || d.title}
+                    return `<p class="show-title tool-tip" data-id="${d.id}" data-link_or_post_id="${d.link_or_post_id}">${getListTitleByUserLink(d.accounts)}
                     <div style="display:none;width: max-content;
                                 background-color: black;
                                 color: #fff;
@@ -261,7 +261,7 @@ $(document).on("click", ".btn-filter", async function () {
         success: function (response) {
             if (response.status == 0) {
                 response.links.forEach((e) => {
-                    tempAllRecord.push(e.link.id);
+                    tempAllRecord.push(e.id);
                 });
             }
         }
@@ -314,13 +314,15 @@ async function reload() {
 
     await $.ajax({
         type: "GET",
-        url: "/api/links/getAll?is_scan[]=1",
+        url: "/api/links/getAll",
         success: function (response) {
-            all = response.links.length;
+            if (response.status == 0) {
+                all = response.links.length;
+                $('.count-link').text(`Số luồng: ${count}/${all}`);
+            }
         }
     });
 
-    $('.count-link').text(`Số luồng: ${count}/${all}`);
     //
     tempAllRecord = [];
     reloadAll();
@@ -483,6 +485,15 @@ function getListAccountNameByUserLink(userLinks = []) {
     let rs = [];
     userLinks.forEach((e) => {
         rs.push(e.user.email || e.user.name);
+    });
+
+    return rs.join('|');
+}
+
+function getListTitleByUserLink(userLinks = []) {
+    let rs = [];
+    userLinks.forEach((e) => {
+        rs.push(e.link.title || '');
     });
 
     return rs.join('|');

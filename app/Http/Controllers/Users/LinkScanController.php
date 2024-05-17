@@ -44,15 +44,16 @@ class LinkScanController extends Controller
                 throw new Exception('Đã quá giới hạn link được thêm');
             }
 
-            $userLinks = UserLink::with(['link', 'user'])
+            $userLink = UserLink::with(['link', 'user'])
                 ->where('user_id', Auth::id())
                 ->whereHas('link', function ($q) use ($data) {
                     $q->where('link_or_post_id', $data['link_or_post_id']);
                 })
-                ->get();
+                ->first();
 
-            if ($userLinks->count()) {
-                throw new Exception('Đã tồn tại link hoặc post ID');
+            if ($userLink) {
+                throw new Exception('Đã tồn tại link hoặc post ID bên bảng '
+                    . ($userLink->type == GlobalConstant::TYPE_SCAN ? 'link quét' : 'link theo dõi'));
             }
 
             $data['is_scan'] = GlobalConstant::IS_ON;
@@ -106,7 +107,7 @@ class LinkScanController extends Controller
                     ]
                 );
             }
-            
+
             Toastr::success('Tạo link quét thành công', __('title.toastr.success'));
             DB::commit();
         } catch (Throwable $e) {
