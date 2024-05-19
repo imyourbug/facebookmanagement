@@ -493,7 +493,7 @@ function getListAccountNameByUserLink(userLinks = []) {
 function getListTitleByUserLink(userLinks = []) {
     let rs = [];
     userLinks.forEach((e) => {
-        rs.push(e.link.title || '');
+        rs.push(e.title || '');
     });
 
     return rs.join('|');
