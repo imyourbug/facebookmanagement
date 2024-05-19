@@ -56,7 +56,7 @@ class LinkFollowController extends Controller
                     . ($userLink->type == GlobalConstant::TYPE_SCAN ? 'link quét' : 'link theo dõi'));
             }
 
-            $data['is_scan'] = GlobalConstant::IS_ON;
+            $data['is_scan'] = GlobalConstant::IS_OFF;
             $data['type'] = GlobalConstant::TYPE_FOLLOW;
             $data['status'] = GlobalConstant::STATUS_RUNNING;
             $data['delay'] = $user->delay;
@@ -91,6 +91,8 @@ class LinkFollowController extends Controller
                 $userLink->update([
                     'type' => $data['type'],
                     'is_scan' => $data['is_scan'],
+                    'created_at' => now(),
+                    'is_on_at' => now(),
                 ]);
             } else {
                 DB::table('user_links')->insert(
@@ -101,6 +103,7 @@ class LinkFollowController extends Controller
                         'title' => $data['title'],
                         'type' => $data['type'],
                         'note' => $link->note,
+                        'is_on_at' => now(),
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]

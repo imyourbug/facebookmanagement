@@ -51,9 +51,9 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return d.updated_at;
-                    return d.created_at;
-                },
+                    let userLink = d.is_on_user_links ? d.is_on_user_links[0] : '';
+                    return userLink ? userLink.is_on_at : 'Trống';
+                }
             },
             {
                 data: function (d) {

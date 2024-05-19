@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Constant\GlobalConstant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -37,7 +38,14 @@ class Link extends Model
 
     public function userLinks()
     {
-        return $this->hasMany(UserLink::class, 'link_id', 'id');
+        return $this->hasMany(UserLink::class, 'link_id', 'id')->orderBy('is_on_at');
+    }
+
+    public function isOnUserLinks()
+    {
+        return $this->hasMany(UserLink::class, 'link_id', 'id')
+            ->where('is_scan', GlobalConstant::IS_ON)
+            ->orderBy('is_on_at');
     }
 
     public function commentLinks()

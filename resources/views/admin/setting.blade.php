@@ -47,7 +47,7 @@
                                 <div class="col-lg-3 col-md-6 col-sm-12">
                                     <div class="form-group">
                                         <label for="menu">{{ $item->name }}</label>
-                                        <input type="number" min="0" class="form-control" name="{{ $item->key }}"
+                                        <input type="text" class="form-control" name="{{ $item->key }}"
                                             value="{{ $item->value ?? '' }}" placeholder="Nhập giá trị">
                                     </div>
                                 </div>

@@ -94,6 +94,8 @@ class LinkScanController extends Controller
                 $userLink->update([
                     'type' => $data['type'],
                     'is_scan' => $data['is_scan'],
+                    'is_on_at' => now(),
+                    'created_at' => now(),
                 ]);
             } else {
                 DB::table('user_links')->insert(
@@ -104,11 +106,15 @@ class LinkScanController extends Controller
                         'title' => $data['title'] ?? '',
                         'type' => $data['type'],
                         'note' => $link->note ?? '',
+                        'is_on_at' => now(),
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]
                 );
             }
+            $link->update([
+                'is_scan' => $data['is_scan']
+            ]);
 
             Toastr::success('Thêm thành công', 'Thông báo');
             DB::commit();

@@ -95,7 +95,7 @@
                                 <th><input class="btn-select-all" type="checkbox" /></th>
                                 <th>Link|PostID</th>
                                 <th>Data cuối</th>
-                                <th>Ngày tạo</th>
+                                <th>Ngày cập nhật</th>
                                 <th>Tài khoản</th>
                                 <th>Tiêu đề</th>
                                 <th>Nội dung</th>

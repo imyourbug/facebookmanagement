@@ -115,7 +115,7 @@
                     </div>
                 </div>
                 <div class="card-body" style="display: block;padding: 10px !important;">
-                    {{ \App\Models\Setting::firstWhere('key', 'user-home-notification')?->value ?? '' }}
+                    {{ \App\Models\Setting::firstWhere('key', 'notification-user-home')?->value ?? '' }}
                 </div>
             </div>
         </div>

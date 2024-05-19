@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -11,6 +12,7 @@ class UserLink extends Model
     use HasFactory, SoftDeletes;
 
     protected $casts = [
+        'is_on_at' => 'datetime:H:i:s Y/m/d',
         'created_at' => 'datetime:H:i:s Y/m/d',
         'updated_at' => 'datetime:H:i:s Y/m/d',
     ];
@@ -22,6 +24,8 @@ class UserLink extends Model
         'title',
         'note',
         'type',
+        'is_on_at',
+        'created_at',
     ];
 
     public function user()
@@ -34,5 +38,8 @@ class UserLink extends Model
         return $this->belongsTo(Link::class, 'link_id', 'id');
     }
 
-    
+    public function getCreatedAtAttribute($date)
+    {
+        return Carbon::parse($date)->setTimezone('Asia/Ho_Chi_Minh')->format('H:i:s Y/m/d');
+    }
 }

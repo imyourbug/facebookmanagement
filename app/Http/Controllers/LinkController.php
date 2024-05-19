@@ -55,7 +55,7 @@ class LinkController extends Controller
 
         // DB::enableQueryLog();
 
-        $links = Link::with(['commentLinks.comment', 'userLinks.user'])
+        $links = Link::with(['commentLinks.comment', 'userLinks.user', 'isOnUserLinks'])
             // title
             ->when($title, function ($q) use ($title) {
                 return $q->where('title', 'like', "%$title%");
@@ -553,6 +553,19 @@ class LinkController extends Controller
     {
         try {
             DB::beginTransaction();
+            $userLinks = UserLink::with(['link'])->whereIn('id', $request->ids)->get();
+            foreach ($userLinks as $userLink) {
+                $link = $userLink->link;
+                $countOnRecords = UserLink::where('link_id', $link->id)
+                    ->where('is_scan', GlobalConstant::IS_ON)
+                    ->where('id', '!=', $userLink->id)
+                    ->get()
+                    ->count();
+                if (!$countOnRecords)
+                    $link->update([
+                        'is_scan' => GlobalConstant::IS_OFF
+                    ]);
+            }
             UserLink::whereIn('id', $request->ids)->delete();
 
             DB::commit();

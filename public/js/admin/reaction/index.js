@@ -297,7 +297,8 @@ $(document).on("click", ".btn-delete", function () {
 async function reload() {
     await $.ajax({
         type: "GET",
-        url: `/api/reactions/getAll?today=${new Date().toJSON().slice(0, 10)}`,
+        // url: `/api/reactions/getAll?today=${new Date().toJSON().slice(0, 10)}`,
+        url: `/api/reactions/getAll`,
         success: function (response) {
             if (response.status == 0) {
                 $('.count-reaction').text(`Tổng số bình luận: ${response.reactions.length}`);

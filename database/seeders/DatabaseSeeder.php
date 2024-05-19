@@ -59,7 +59,7 @@ class DatabaseSeeder extends Seeder
                 'value' => '5',
             ],
             [
-                'key' => 'delay-time',
+                'key' => 'time-delay',
                 'name' => 'Delay time mỗi luồng crawl count (ms)',
                 'value' => '2000',
             ]

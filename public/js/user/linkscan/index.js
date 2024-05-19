@@ -219,7 +219,6 @@ $(document).on("click", ".btn-select", async function () {
     } else {
         tempAllRecord = tempAllRecord.filter((e) => e != id);
     }
-    console.log(tempAllRecord);
     reloadAll();
 });
 
@@ -325,9 +324,9 @@ $(document).on("click", ".btn-scan", function () {
         let id = $(this).data("id");
         $.ajax({
             type: "POST",
-            url: `/api/userlinks/update`,
+            url: `/api/userlinks/updateLinkByListLinkId`,
             data: {
-                id,
+                ids: [id],
                 is_scan,
                 user_id,
                 status: 1,

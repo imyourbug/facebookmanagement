@@ -461,85 +461,140 @@ class UserLinkController extends Controller
     **/
     public function updateLinkByListLinkId(Request $request)
     {
-        $data = $request->validate([
-            'ids' => 'required|array',
-            'title' => 'nullable|string',
-            'time' => 'nullable|string',
-            'content' => 'nullable|string',
-            'comment' => 'nullable|string',
-            'diff_comment' => 'nullable|string',
-            'data' => 'nullable|string',
-            'diff_data' => 'nullable|string',
-            'reaction' => 'nullable|string',
-            'diff_reaction' => 'nullable|string',
-            'is_scan' => 'nullable|in:0,1,2',
-            'status' => 'nullable|in:0,1',
-            'note' => 'nullable|string',
-            'delay' => 'nullable|string',
-            'end_cursor' => 'nullable|string',
-            'parent_link_or_post_id' => 'nullable|string',
-            'link_or_post_id' => 'nullable|string',
-            'type' => 'nullable|in:0,1,2',
-            'user_id' => 'nullable|integer',
-        ]);
+        try {
+            $data = $request->validate([
+                'ids' => 'required|array',
+                'title' => 'nullable|string',
+                'time' => 'nullable|string',
+                'content' => 'nullable|string',
+                'comment' => 'nullable|string',
+                'diff_comment' => 'nullable|string',
+                'data' => 'nullable|string',
+                'diff_data' => 'nullable|string',
+                'reaction' => 'nullable|string',
+                'diff_reaction' => 'nullable|string',
+                'is_scan' => 'nullable|in:0,1,2',
+                'status' => 'nullable|in:0,1',
+                'note' => 'nullable|string',
+                'delay' => 'nullable|string',
+                'end_cursor' => 'nullable|string',
+                'parent_link_or_post_id' => 'nullable|string',
+                'link_or_post_id' => 'nullable|string',
+                'type' => 'nullable|in:0,1,2',
+                'user_id' => 'nullable|integer',
+            ]);
 
-        $user_id = $data['user_id'] ?? '';
-        $type = $data['type'] ?? '';
-        // check limit follow
-        if (strlen($type) && (int)$type === GlobalConstant::TYPE_FOLLOW && $user_id) {
-            $user = User::firstWhere('id', $user_id);
+            $user_id = $data['user_id'] ?? '';
+            $type = $data['type'] ?? '';
+            // check limit follow
+            if (strlen($type) && (int)$type === GlobalConstant::TYPE_FOLLOW && $user_id) {
+                $user = User::firstWhere('id', $user_id);
 
-            $userLinks = UserLink::with(['link', 'user'])
-                ->where('user_id', $user->id)
-                ->where('type', GlobalConstant::TYPE_FOLLOW)
-                ->get();
-            if ($userLinks->count() >= $user->limit_follow) {
-                throw new Exception('Quá giới hạn link theo dõi');
+                $userLinks = UserLink::with(['link', 'user'])
+                    ->where('user_id', $user->id)
+                    ->where('type', GlobalConstant::TYPE_FOLLOW)
+                    ->get();
+                if ($userLinks->count() >= $user->limit_follow) {
+                    throw new Exception('Quá giới hạn link theo dõi');
+                }
             }
-        }
 
-        // check limit scan
-        if (strlen($type) && (int)$type === GlobalConstant::TYPE_SCAN && $user_id) {
-            $user = User::firstWhere('id', $user_id);
+            // check limit scan
+            if (strlen($type) && (int)$type === GlobalConstant::TYPE_SCAN && $user_id) {
+                $user = User::firstWhere('id', $user_id);
 
-            $userLinks = UserLink::with(['link', 'user'])
-                ->where('user_id', $user->id)
-                ->where('type', GlobalConstant::TYPE_SCAN)
-                ->get();
-            if ($userLinks->count() >= $user->limit) {
-                throw new Exception('Quá giới hạn link quét');
+                $userLinks = UserLink::with(['link', 'user'])
+                    ->where('user_id', $user->id)
+                    ->where('type', GlobalConstant::TYPE_SCAN)
+                    ->get();
+                if ($userLinks->count() >= $user->limit) {
+                    throw new Exception('Quá giới hạn link quét');
+                }
             }
-        }
 
-        //
-        unset($data['ids']);
-        $data['created_at'] = now();
-        $keys = [
-            'user_id',
-            'link_id',
-            'is_scan',
-            'title',
-            'note',
-            'type',
-        ];
-        $dataUpdate = [];
-        foreach ($keys as $key) {
-            if (isset($data[$key]) && strlen($data[$key])) {
-                $dataUpdate[$key] =  $data[$key];
+            //
+            unset($data['ids']);
+            $data['created_at'] = now();
+            $keys = [
+                'user_id',
+                'link_id',
+                'is_scan',
+                'title',
+                'note',
+                'type',
+            ];
+            $dataUpdate = [];
+            foreach ($keys as $key) {
+                if (isset($data[$key]) && strlen($data[$key])) {
+                    $dataUpdate[$key] =  $data[$key];
+                }
             }
-        }
-        UserLink::whereIn('id', $request->ids)
-            ->update($dataUpdate);
+            DB::beginTransaction();
+            // update created_at
+            if (strlen($data['type'] ?? '')) {
+                $dataUpdate['created_at'] = now();
+            }
+            if (!empty($data['is_scan'])) {
+                $dataUpdate['is_on_at'] = now();
+            }
+            UserLink::with(['link'])->whereIn('id', $request->ids)->update($dataUpdate);
+            if (strlen($data['is_scan'] ?? '')) {
+                $userLinks = UserLink::with(['link'])->whereIn('id', $request->ids)->get();
+                foreach ($userLinks as $userLink) {
+                    $link = $userLink->link;
+                    switch ((int)$data['is_scan']) {
+                            // turn off
+                        case 0:
+                            $countOnRecords = UserLink::where('link_id', $link->id)
+                                ->where('is_scan', GlobalConstant::IS_ON)
+                                ->get()
+                                ->count();
+                            if (!$countOnRecords)
+                                $link->update([
+                                    'is_scan' => GlobalConstant::IS_OFF
+                                ]);
+                            break;
+                            // turn on
+                        case 1:
+                            $link->update([
+                                'is_scan' => GlobalConstant::IS_ON
+                            ]);
+                            break;
+                    }
+                }
+            }
+            DB::commit();
 
-        return response()->json([
-            'status' => 0,
-        ]);
+            return response()->json([
+                'status' => 0,
+            ]);
+        } catch (Throwable $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => 1,
+                'message' => $e->getMessage()
+            ]);
+        }
     }
 
     public function deleteAll(Request $request)
     {
         try {
             DB::beginTransaction();
+            $userLinks = UserLink::with(['link'])->whereIn('id', $request->ids)->get();
+            foreach ($userLinks as $userLink) {
+                $link = $userLink->link;
+                $countOnRecords = UserLink::where('link_id', $link->id)
+                    ->where('is_scan', GlobalConstant::IS_ON)
+                    ->where('id', '!=', $userLink->id)
+                    ->get()
+                    ->count();
+                if (!$countOnRecords)
+                    $link->update([
+                        'is_scan' => GlobalConstant::IS_OFF
+                    ]);
+            }
             UserLink::whereIn('id', $request->ids)->delete();
 
             DB::commit();

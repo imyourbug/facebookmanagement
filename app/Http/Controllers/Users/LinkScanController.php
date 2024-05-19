@@ -88,11 +88,13 @@ class LinkScanController extends Controller
                 ->first();
 
             if ($userLink && $userLink->trashed()) {
+                $userLink->restore();
                 $userLink->update([
                     'type' => $data['type'],
                     'is_scan' => $data['is_scan'],
+                    'created_at' => now(),
+                    'is_on_at' => now(),
                 ]);
-                $userLink->restore();
             } else {
                 DB::table('user_links')->insert(
                     [
@@ -102,11 +104,15 @@ class LinkScanController extends Controller
                         'title' => $data['title'] ?? '',
                         'note' => $link->note ?? '',
                         'type' => $data['type'],
+                        'is_on_at' => now(),
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]
                 );
             }
+            $link->update([
+                'is_scan' => $data['is_scan']
+            ]);
 
             Toastr::success('Tạo link quét thành công', __('title.toastr.success'));
             DB::commit();

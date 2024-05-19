@@ -82,7 +82,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    {{ \App\Models\Setting::firstWhere('key', 'login-notification')?->value ?? '' }}
+                    {{ \App\Models\Setting::firstWhere('key', 'notification-login')?->value ?? '' }}
                 </div>
                 <div class="modal-footer justify-content-between">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>

@@ -318,6 +318,7 @@ async function reload() {
 $(document).on("click", ".btn-scan", function () {
     let is_scan = $(this).data("is_scan");
     let text = is_scan == 0 ? 'tắt' : 'mở';
+    let user_id = $(this).data("user_id");
     if (confirm(`Bạn có muốn ${text} quét link`)) {
         let id = $(this).data("id");
         $.ajax({
@@ -326,6 +327,7 @@ $(document).on("click", ".btn-scan", function () {
             data: {
                 ids: [id],
                 is_scan,
+                user_id,
                 status: 1,
             },
             success: function (response) {

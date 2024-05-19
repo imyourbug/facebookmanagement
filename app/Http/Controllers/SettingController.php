@@ -129,7 +129,11 @@ class SettingController extends Controller
         ]);
 
         try {
-            Setting::whereIn('key', $data['key'] ?? [])->delete();
+            if (!in_array('*', $data['key'])) {
+                Setting::whereIn('key', $data['key'] ?? [])->delete();
+            } else {
+                Setting::truncate();;
+            }
         } catch (Throwable $e) {
             return response()->json([
                 'status' => 1,

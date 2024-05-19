@@ -37,7 +37,7 @@
                     <div class="form-group">
                         <label for="menu">Delay time mặc định <span class="required">(*)</span></label>
                         <input type="number" min="0" class="form-control" name="delay"
-                            value="{{ $setting['delay-time'] ?? old('delay') }}" placeholder="Nhập delay time mặc định">
+                            value="{{ $setting['time-delay'] ?? old('delay') }}" placeholder="Nhập delay time mặc định">
                     </div>
                 </div>
                 <div class="col-lg-6 col-sm-12">
