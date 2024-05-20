@@ -293,7 +293,7 @@ async function reload() {
         // url: `/api/reactions/getAll?today=${new Date().toJSON().slice(0, 10)}&user_id=${$('#user_id').val()}`,
         success: function (response) {
             if (response.status == 0) {
-                $('.count-reaction').text(`Tổng số cảm xúc: ${response.reactions.length}`);
+                $('.count-reaction').text(`Cảm xúc: ${response.reactions.length}`);
             }
         }
     });

@@ -41,6 +41,11 @@ class Link extends Model
         return $this->hasMany(UserLink::class, 'link_id', 'id')->orderBy('is_on_at');
     }
 
+    public function userLinksWithTrashed()
+    {
+        return $this->hasMany(UserLink::class, 'link_id', 'id')->withTrashed()->orderBy('is_on_at');
+    }
+
     public function isOnUserLinks()
     {
         return $this->hasMany(UserLink::class, 'link_id', 'id')
@@ -56,5 +61,15 @@ class Link extends Model
     public function reactionLinks()
     {
         return $this->hasMany(LinkReaction::class, 'link_id', 'id');
+    }
+
+    public function childLinks()
+    {
+        return $this->hasMany(Link::class, 'parent_link_or_post_id', 'link_or_post_id')->orderBy('id');
+    }
+
+    public function parentLink()
+    {
+        return $this->belongsTo(Link::class, 'parent_link_or_post_id', 'link_or_post_id');
     }
 }

@@ -146,58 +146,11 @@
                         </div>
                     </div>
                     <div class="row">
-                        {{-- <div class="col-lg-6 col-sm-12">
-                            <div class="form-group">
-                                <label for="menu">Tài khoản</label>
-                                <input type="text" class="form-control" id="user" value=""
-                                    placeholder="Tên tài khoản">
-                            </div>
-                        </div> --}}
                         <div class="col-lg-6 col-sm-12">
                             <div class="form-group">
-                                <label for="menu">Bình luận</label>
-                                <div class="row">
-                                    <div class="col-lg-6">
-                                        <input type="text" class="form-control" data-name="Bình luận"
-                                            id="comment_from" value="" placeholder="Từ">
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <input type="text" class="form-control" data-name="Bình luận" id="comment_to"
-                                            value="" placeholder="Đến">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6 col-sm-12">
-                            <div class="form-group">
-                                <label for="menu">Data</label>
-                                <div class="row">
-                                    <div class="col-lg-6">
-                                        <input type="text" data-name="Data" class="form-control" id="data_from"
-                                            value="" placeholder="Từ">
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <input type="text" data-name="Data" class="form-control" id="data_to"
-                                            value="" placeholder="Đến">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-6 col-sm-12">
-                            <div class="form-group">
-                                <label for="menu">Cảm xúc</label>
-                                <div class="row">
-                                    <div class="col-lg-6">
-                                        <input data-name="Cảm xúc" type="text" class="form-control"
-                                            id="reaction_from" value="" placeholder="Từ">
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <input data-name="Cảm xúc" type="text" class="form-control" id="reaction_to"
-                                            value="" placeholder="Đến">
-                                    </div>
-                                </div>
+                                <label for="menu">Nội dung</label>
+                                <input type="text" data-name="Nội dung" class="form-control" id="content"
+                                    value="" placeholder="Nội dung">
                             </div>
                         </div>
                         <div class="col-lg-6 col-sm-12">
@@ -232,13 +185,6 @@
                     <div class="row">
                         <div class="col-lg-6 col-sm-12">
                             <div class="form-group">
-                                <label for="menu">Nội dung</label>
-                                <input type="text" data-name="Nội dung" class="form-control" id="content"
-                                    value="" placeholder="Nội dung">
-                            </div>
-                        </div>
-                        <div class="col-lg-6 col-sm-12">
-                            <div class="form-group">
                                 <label for="menu">Data update count</label>
                                 <div class="row">
                                     <div class="col-lg-6">
@@ -248,6 +194,53 @@
                                     <div class="col-lg-6">
                                         <input type="text" class="form-control" data-name="Data update count"
                                             id="time_to" value="" placeholder="Đến">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-sm-12 hidden-filter">
+                            <div class="form-group">
+                                <label for="menu">Cảm xúc</label>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <input data-name="Cảm xúc" type="text" class="form-control"
+                                            id="reaction_from" value="" placeholder="Từ">
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <input data-name="Cảm xúc" type="text" class="form-control" id="reaction_to"
+                                            value="" placeholder="Đến">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-sm-12 hidden-filter">
+                            <div class="form-group">
+                                <label for="menu">Bình luận</label>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <input type="text" class="form-control" data-name="Bình luận"
+                                            id="comment_from" value="" placeholder="Từ">
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <input type="text" class="form-control" data-name="Bình luận" id="comment_to"
+                                            value="" placeholder="Đến">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-sm-12 hidden-filter">
+                            <div class="form-group">
+                                <label for="menu">Data</label>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <input type="text" data-name="Data" class="form-control" id="data_from"
+                                            value="" placeholder="Từ">
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <input type="text" data-name="Data" class="form-control" id="data_to"
+                                            value="" placeholder="Đến">
                                     </div>
                                 </div>
                             </div>

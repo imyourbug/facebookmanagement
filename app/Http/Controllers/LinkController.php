@@ -191,7 +191,8 @@ class LinkController extends Controller
             // user
             ->when($user, function ($q) use ($user) {
                 return $q->whereHas('userLinks', function ($q) use ($user) {
-                    $q->where('user_id', $user);
+                    $q->where('user_id', $user)
+                        ->where('is_scan',  GlobalConstant::IS_ON);
                 });
             })
             // note
@@ -406,6 +407,11 @@ class LinkController extends Controller
                             'created_at' => now(),
                         ]);
                 }
+
+                // sync point to link before update link
+                if (!empty($value['parent_link_or_post_id'])) {
+                    $this->syncPointToLinkBeforeUpdateLink($link->id, $value['parent_link_or_post_id']);
+                }
             }
             DB::commit();
         } catch (Throwable $e) {
@@ -454,6 +460,12 @@ class LinkController extends Controller
             //     'type' => $data['type'],
             //     'note' => $data['note'],
             // ]);
+
+            // sync point to link before update link
+            if (!empty($data['parent_link_or_post_id'])) {
+                $this->syncPointToLinkBeforeUpdateLink($link->id, $data['parent_link_or_post_id']);
+            }
+
             DB::commit();
 
             return response()->json([
@@ -497,14 +509,18 @@ class LinkController extends Controller
         ]);
 
         $links = Link::whereIn('id', $data['ids']);
-
         if ($links->get()->count() === 0) {
             throw new Exception('Link không tồn tại');
         }
-        //
-
         unset($data['ids'], $data['user_id']);
         $links->update($data);
+
+        // sync point to link before update link
+        if (!empty($data['parent_link_or_post_id'])) {
+            foreach ($links as $link) {
+                $this->syncPointToLinkBeforeUpdateLink($link->id, $data['parent_link_or_post_id']);
+            }
+        }
 
         return response()->json([
             'status' => 0,
@@ -514,7 +530,18 @@ class LinkController extends Controller
     public function destroy($id)
     {
         try {
-            $link = Link::firstWhere('id', $id);
+            $link = Link::with(['childLinks'])->firstWhere('id', $id);
+            if ($link->childLinks()->count()) {
+                $newParentLink = $link->childLinks()->first();
+                foreach ($link->childLinks() as $childLink) {
+                    $childLink->update([
+                        'parent_link_or_post_id' => $newParentLink->link_or_post_id ?? '',
+                    ]);
+                }
+                $newParentLink->update([
+                    'parent_link_or_post_id' => '',
+                ]);
+            }
             $link->delete();
 
             return response()->json([
@@ -533,6 +560,20 @@ class LinkController extends Controller
     {
         try {
             DB::beginTransaction();
+            $links =  Link::with(['childLinks'])->whereIn('id', $request->ids)->orderBy('id');
+            foreach ($links->get() as $link) {
+                if ($link->childLinks()->count()) {
+                    $newParentLink = $link->childLinks()->first();
+                    foreach ($link->childLinks() as $childLink) {
+                        $childLink->update([
+                            'parent_link_or_post_id' => $newParentLink->link_or_post_id ?? '',
+                        ]);
+                    }
+                    $newParentLink->update([
+                        'parent_link_or_post_id' => '',
+                    ]);
+                }
+            }
             Link::whereIn('id', $request->ids)->delete();
 
             DB::commit();

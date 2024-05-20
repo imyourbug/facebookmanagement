@@ -10,7 +10,6 @@ use App\Models\UserLink;
 use App\Models\UserRole;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Throwable;
@@ -34,7 +33,7 @@ class AccountController extends Controller
                 'delay' => 'required|integer',
                 'limit' => 'required|integer',
                 'limit_follow' => 'required|integer',
-                'expire' => 'required|string',
+                'expire' => 'required|integer',
                 'role' => 'required|in:0,1',
                 'roles' => 'nullable|array',
                 'roles.*' => 'nullable|integer|in:0,1,2,3',
@@ -44,6 +43,7 @@ class AccountController extends Controller
                 throw new Exception('Tài khoản đã có người đăng ký!');
             }
             DB::beginTransaction();
+            $data['expire'] = now()->addDays($data['expire'])->format('Y-m-d');
             $user = User::create([
                 'name' => $data['name'],
                 'password' => Hash::make($data['password']),
@@ -84,11 +84,12 @@ class AccountController extends Controller
                 'delay' => 'required|integer',
                 'limit' => 'required|integer',
                 'limit_follow' => 'required|integer',
-                'expire' => 'required|string',
+                'expire' => 'required|integer',
                 'roles' => 'nullable|array',
                 'roles.*' => 'nullable|in:0,1,2,3',
             ]);
             $user_id = $data['user_id'];
+            $data['expire'] = now()->addDays($data['expire'])->format('Y-m-d');
             $dataUpdate = [
                 'delay' => $data['delay'],
                 'limit' => $data['limit'],

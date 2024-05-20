@@ -50,17 +50,17 @@ class LinkFollowController extends Controller
                 throw new Exception('Đã quá giới hạn link được thêm');
             }
 
-            $userLink = UserLink::with(['link', 'user'])
-                ->where('user_id', Auth::id())
-                ->whereHas('link', function ($q) use ($data) {
-                    $q->where('link_or_post_id', $data['link_or_post_id']);
-                })
-                ->first();
+            // $userLink = UserLink::with(['link', 'user'])
+            //     ->where('user_id', Auth::id())
+            //     ->whereHas('link', function ($q) use ($data) {
+            //         $q->where('link_or_post_id', $data['link_or_post_id']);
+            //     })
+            //     ->first();
 
-            if ($userLink) {
-                throw new Exception('Đã tồn tại link hoặc post ID bên bảng '
-                    . ($userLink->type == GlobalConstant::TYPE_SCAN ? 'link quét' : 'link theo dõi'));
-            }
+            // if ($userLink) {
+            //     throw new Exception('Đã tồn tại link hoặc post ID bên bảng '
+            //         . ($userLink->type == GlobalConstant::TYPE_SCAN ? 'link quét' : 'link theo dõi'));
+            // }
 
             $data['is_scan'] = GlobalConstant::IS_ON;
             $data['type'] = GlobalConstant::TYPE_FOLLOW;
@@ -77,24 +77,19 @@ class LinkFollowController extends Controller
             }
 
             DB::beginTransaction();
-            $link = Link::firstOrCreate(
-                ['link_or_post_id' => $data['link_or_post_id']],
-                [
-                    'title' =>  $data['title'],
-                    'is_scan' => $data['is_scan'],
-                    'type' => $data['type'],
-                    'delay' => $data['delay'],
-                    'status' => $data['status'],
-                ]
-            );
+
+            $link = $this->syncPointToLinkBeforeCreateLink($data);
             $userLink =  UserLink::withTrashed()
                 ->where('link_id', $link->id)
                 ->where('user_id', $user->id)
                 ->first();
 
-            if ($userLink && $userLink->trashed()) {
-                $userLink->restore();
+            if ($userLink) {
+                if ($userLink->trashed()) {
+                    $userLink->restore();
+                }
                 $userLink->update([
+                    'title' => $data['title'],
                     'type' => $data['type'],
                     'is_scan' => $data['is_scan'],
                     'created_at' => now(),

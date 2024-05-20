@@ -58,9 +58,9 @@
                 </div>
                 <div class="col-lg-6 col-sm-12">
                     <div class="form-group">
-                        <label for="menu">Ngày hết hạn <span class="required">(*)</span></label>
-                        <input type="date" min="0" class="form-control" name="expire"
-                            value="{{ old('expire') ?? $user->expire }}" />
+                        <label for="menu">Số ngày hết hạn <span class="required">(*)</span></label>
+                        <input type="number" min="0" class="form-control" name="expire"
+                            value="{{ old('expire') ?? 30}}" />
                     </div>
                 </div>
             </div>

@@ -2,12 +2,20 @@ var dataTable = null;
 var allRecord = [];
 var tempAllRecord = [];
 var is_display_count = $('#is_display_count').val();
+var hiddenCountColumn = [
+    { visible: false, targets: 1 },
+    { visible: false, targets: 6 },
+    { visible: false, targets: 7 },
+    { visible: false, targets: 8 },
+];
 
 $(document).ready(function () {
+    //
+    $('.hidden-filter').css('display', is_display_count ? '' : 'none');
     reload();
 
     dataTable = $("#table").DataTable({
-        columnDefs: [
+        columnDefs: !is_display_count ? hiddenCountColumn : [
             // { visible: false, targets: 0 },
             { visible: false, targets: 1 },
         ],

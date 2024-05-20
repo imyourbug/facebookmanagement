@@ -160,7 +160,6 @@ var searchParams = new Map([
     ["content", ""],
     ["title", ""],
     ["link_or_post_id", ""],
-    ["type", ""],
     ["user", ""],
     ["is_scan", ""],
 ]);
@@ -232,7 +231,7 @@ $(document).on("click", ".btn-filter", async function () {
     // reload
     // dataTable.clear().rows.add(tempAllRecord).draw();
     dataTable.ajax
-        .url("/api/userlinks/getAll?" + getQueryUrlWithParams())
+        .url(`/api/userlinks/getAll?${getQueryUrlWithParams()}`)
         .load();
 
     //

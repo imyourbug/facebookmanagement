@@ -32,7 +32,7 @@ $(document).ready(function () {
             top2Start: 'pageLength',
         },
         ajax: {
-            url: `/api/comments/getAllCommentUser?today=${new Date().toJSON().slice(0, 10)}&user_id=${$('#user_id').val()}`,
+            url: `/api/comments/getAll?today=${new Date().toJSON().slice(0, 10)}&user_id=${$('#user_id').val()}`,
             dataSrc: "comments",
         },
         columns: [
@@ -225,13 +225,13 @@ $(document).on("click", ".btn-filter", async function () {
     // reload
     // dataTable.clear().rows.add(tempAllRecord).draw();
     dataTable.ajax
-        .url("/api/comments/getAllCommentUser?" + getQueryUrlWithParams())
+        .url("/api/comments/getAll?" + getQueryUrlWithParams())
         .load();
 
     //
     await $.ajax({
         type: "GET",
-        url: `/api/comments/getAllCommentUser?${getQueryUrlWithParams()}`,
+        url: `/api/comments/getAll?${getQueryUrlWithParams()}`,
         success: function (response) {
             if (response.status == 0) {
                 response.comments.forEach((e) => {
@@ -261,7 +261,7 @@ $(document).on("click", ".btn-refresh", function () {
 
     // reload table
     dataTable.ajax
-        .url(`/api/comments/getAllCommentUser?user_id=${$('#user_id').val()}&type=1`)
+        .url(`/api/comments/getAll?user_id=${$('#user_id').val()}&type=1`)
         .load();
 
     // reload count and record
@@ -304,8 +304,8 @@ $(document).on("click", ".btn-delete", function () {
 async function reload() {
     $.ajax({
         type: "GET",
-        // url: `/api/comments/getAllCommentUser?today=${new Date().toJSON().slice(0, 10)}&user_id=${$('#user_id').val()}`,
-        url: `/api/comments/getAllCommentUser?user_id=${$('#user_id').val()}`,
+        // url: `/api/comments/getAll?today=${new Date().toJSON().slice(0, 10)}&user_id=${$('#user_id').val()}`,
+        url: `/api/comments/getAll?user_id=${$('#user_id').val()}`,
         data: { ids: tempAllRecord },
         success: function (response) {
             if (response.status == 0) {
@@ -369,7 +369,7 @@ $(document).on("click", ".btn-copy-uid", function () {
     let ids = tempAllRecord.length > number ? tempAllRecord.slice(0, number) : tempAllRecord
     $.ajax({
         type: "GET",
-        url: `/api/comments/getAllCommentUser?limit=${number}&ids=${ids.join(',')}`,
+        url: `/api/comments/getAll?limit=${number}&ids=${ids.join(',')}`,
         success: function (response) {
             if (response.status == 0) {
                 let uids = [];

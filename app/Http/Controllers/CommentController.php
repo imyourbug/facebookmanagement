@@ -42,31 +42,31 @@ class CommentController extends Controller
         $ids = $request->ids ? explode(',', $request->ids) : [];
         $link_or_post_id = is_numeric($request->link_or_post_id) ? $request->link_or_post_id : $this->getLinkOrPostIdFromUrl($request->link_or_post_id ?? '');
 
-        $list_link_ids = Link::all();
+        // $list_link_ids = Link::all();
 
-        $list_link_of_user = Link::with(['userLinks'])
-            ->when($user_id, function ($q) use ($user_id) {
-                return $q->whereHas('userLinks', function ($q) use ($user_id) {
-                    $q->where('user_id', $user_id);
-                });
-            })
-            ->get()
-            ->pluck('link_or_post_id')
-            ->toArray();
+        // $list_link_of_user = Link::with(['userLinks'])
+        //     ->when($user_id, function ($q) use ($user_id) {
+        //         return $q->whereHas('userLinks', function ($q) use ($user_id) {
+        //             $q->where('user_id', $user_id);
+        //         });
+        //     })
+        //     ->get()
+        //     ->pluck('link_or_post_id')
+        //     ->toArray();
 
-        foreach ($list_link_ids as $link) {
-            if (in_array($link->parent_link_or_post_id, $list_link_of_user)) {
-                $list_link_of_user = array_diff($list_link_of_user, [$link->parent_link_or_post_id]);
-                $list_link_of_user[] =  $link->link_or_post_id;
-            }
-        }
+        // foreach ($list_link_ids as $link) {
+        //     if (in_array($link->parent_link_or_post_id, $list_link_of_user)) {
+        //         $list_link_of_user = array_diff($list_link_of_user, [$link->parent_link_or_post_id]);
+        //         $list_link_of_user[] =  $link->link_or_post_id;
+        //     }
+        // }
 
-        $list_link_of_user = array_unique($list_link_of_user);
+        // $list_link_of_user = array_unique($list_link_of_user);
 
         $comments = LinkComment::with(['comment.getUid', 'link.userLinks.user'])
-            ->whereHas('link', function ($q) use ($list_link_of_user) {
-                $q->whereIn('link_or_post_id', $list_link_of_user);
-            })
+            // ->whereHas('link', function ($q) use ($list_link_of_user) {
+            //     $q->whereIn('link_or_post_id', $list_link_of_user);
+            // })
             ->when($to, function ($q) use ($to) {
                 return $q->whereHas('comment', function ($q) use ($to) {
                     $q->where('created_at', '<=', $to);
@@ -83,6 +83,12 @@ class CommentController extends Controller
             })
             ->when($comment_id, function ($q) use ($comment_id) {
                 return $q->where('comment_id', $comment_id);
+            })
+            // user_id
+            ->when($user_id, function ($q) use ($user_id) {
+                return $q->whereHas('userLinks', function ($q) use ($user_id) {
+                    $q->where('user_id', $user_id);
+                });
             })
             // today
             ->when($today, function ($q) use ($today) {

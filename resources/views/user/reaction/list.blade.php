@@ -27,9 +27,9 @@
                 </div>
                 <div class="card-body" style="display: block;padding: 10px !important;">
                     <div class="form-group col-lg-6">
-                        <label class="count-reaction">Tổng số cảm xúc: 0</label><br>
                         <label class="filtering">Lọc theo: Không</label><br>
-                        <label class="count-select">Đã chọn: 0</label>
+                        <label class="count-select">Đã chọn: 0</label><br>
+                        <label class="count-reaction">Cảm xúc: 0</label>
                     </div>
                     <div class="form-group col-lg-6">
                         <button disabled class="btn-control btn btn-danger btn-delete-multiple">Xóa</button>

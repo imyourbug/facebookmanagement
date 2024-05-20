@@ -301,7 +301,7 @@ async function reload() {
         url: `/api/reactions/getAll`,
         success: function (response) {
             if (response.status == 0) {
-                $('.count-reaction').text(`Tổng số bình luận: ${response.reactions.length}`);
+                $('.count-reaction').text(`Cảm xúc: ${response.reactions.length}`);
             }
         }
     });
