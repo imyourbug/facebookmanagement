@@ -287,14 +287,12 @@ class UserLinkController extends Controller
             DB::beginTransaction();
 
             foreach ($data['links'] as $key => &$value) {
-                $link = Link::with(['parentLink'])
+                $link = Link::with(['parentLink', 'childLinks'])
                     ->firstWhere('link_or_post_id', $value['link_or_post_id']);
                 if (!$link) {
                     throw new Exception('link_or_post_id không tồn tại');
                 }
-                if ($link?->parentLink) {
-                    $link = $link->parentLink;
-                }
+                $childLinks = $link?->childLinks;
                 // get and set diff
                 if (isset($value['comment']) && strlen($value['comment'])) {
                     $lastHistory = LinkHistory::where('link_id', $link->id)
@@ -302,12 +300,21 @@ class UserLinkController extends Controller
                         ->orderByDesc('id')
                         ->first();
                     $value['diff_comment'] = $lastHistory?->comment ? ((int)$value['comment'] - (int)$lastHistory->comment) : (int)$value['comment'];
-                    LinkHistory::create([
+                    $linkHistory = LinkHistory::create([
                         'comment' => $value['comment'],
                         'diff_comment' => $value['diff_comment'],
                         'link_id' => $link->id,
                         'type' => GlobalConstant::TYPE_COMMENT
                     ]);
+                    // sync data of count of comment
+                    if ($childLinks) {
+                        foreach ($childLinks as $childLink) {
+                            $newLinkHistory = $linkHistory->replicate()->fill([
+                                'link_id' => $childLink->id,
+                            ]);
+                            $newLinkHistory->save();
+                        }
+                    }
                 }
                 if (isset($value['data']) && strlen($value['data'])) {
                     $lastHistory = LinkHistory::where('link_id', $link->id)
@@ -315,12 +322,21 @@ class UserLinkController extends Controller
                         ->orderByDesc('id')
                         ->first();
                     $value['diff_data'] = $lastHistory?->data ? ((int)$value['data'] - (int)$lastHistory->data) : (int)$value['data'];
-                    LinkHistory::create([
+                    $linkHistory = LinkHistory::create([
                         'data' => $value['data'],
                         'diff_data' => $value['diff_data'],
                         'link_id' => $link->id,
                         'type' => GlobalConstant::TYPE_DATA
                     ]);
+                    // sync data of count of data
+                    if ($childLinks) {
+                        foreach ($childLinks as $childLink) {
+                            $newLinkHistory = $linkHistory->replicate()->fill([
+                                'link_id' => $childLink->id,
+                            ]);
+                            $newLinkHistory->save();
+                        }
+                    }
                 }
                 if (isset($value['reaction']) && strlen($value['reaction'])) {
                     $lastHistory = LinkHistory::where('link_id', $link->id)
@@ -328,12 +344,21 @@ class UserLinkController extends Controller
                         ->orderByDesc('id')
                         ->first();
                     $value['diff_reaction'] = $lastHistory?->reaction ? ((int)$value['reaction'] - (int)$lastHistory->reaction) : (int)$value['reaction'];
-                    LinkHistory::create([
+                    $linkHistory = LinkHistory::create([
                         'reaction' => $value['reaction'],
                         'diff_reaction' => $value['diff_reaction'],
                         'link_id' => $link->id,
                         'type' => GlobalConstant::TYPE_REACTION
                     ]);
+                    // sync data of count of reaction
+                    if ($childLinks) {
+                        foreach ($childLinks as $childLink) {
+                            $newLinkHistory = $linkHistory->replicate()->fill([
+                                'link_id' => $childLink->id,
+                            ]);
+                            $newLinkHistory->save();
+                        }
+                    }
                 }
                 //
                 unset($value['link_or_post_id']);
