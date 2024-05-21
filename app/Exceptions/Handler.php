@@ -27,6 +27,7 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
         });
         $this->renderable(function (Throwable $e) {
+            dd($e);
             return response()->json([
                 'status' => GlobalConstant::STATUS_ERROR,
                 'message' => $e->getMessage()

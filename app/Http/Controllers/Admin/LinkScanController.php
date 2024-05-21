@@ -46,17 +46,19 @@ class LinkScanController extends Controller
             }
 
             // check exist link
-            // $userLink = UserLink::with(['link', 'user'])
-            //     ->where('user_id', $user->id)
-            //     ->whereHas('link', function ($q) use ($data) {
-            //         $q->where('link_or_post_id', $data['link_or_post_id']);
-            //     })
-            //     ->first();
+            $userLink = UserLink::with(['link', 'user'])
+                ->where('user_id', $user->id)
+                ->whereHas('link', function ($q) use ($data) {
+                    $q->where('link_or_post_id', $data['link_or_post_id']);
+                })
+                ->first();
 
-            // if ($userLink) {
-            //     throw new Exception('Đã tồn tại link hoặc post ID bên bảng '
-            //         . ($userLink->type == GlobalConstant::TYPE_SCAN ? 'link quét' : 'link theo dõi'));
-            // }
+            if ($userLink) {
+                if ($userLink->type == GlobalConstant::TYPE_SCAN) {
+                    throw new Exception('Đã tồn tại link hoặc post ID bên bảng '
+                        . ($userLink->type == GlobalConstant::TYPE_SCAN ? 'link quét' : 'link theo dõi'));
+                }
+            }
 
             $data['is_scan'] = GlobalConstant::IS_ON;
             $data['type'] = GlobalConstant::TYPE_SCAN;

@@ -16,13 +16,6 @@ use Toastr;
 
 class UserLinkController extends Controller
 {
-    public function getLinkOrPostIdFromUrl(string $url = '')
-    {
-        $url = explode('/', $url);
-
-        return  $url[count($url) - 1];
-    }
-
     public function getAll(Request $request)
     {
         $comment_from = $request->comment_from;
@@ -294,9 +287,13 @@ class UserLinkController extends Controller
             DB::beginTransaction();
 
             foreach ($data['links'] as $key => &$value) {
-                $link = Link::firstWhere('link_or_post_id', $value['link_or_post_id']);
+                $link = Link::with(['parentLink'])
+                    ->firstWhere('link_or_post_id', $value['link_or_post_id']);
                 if (!$link) {
                     throw new Exception('link_or_post_id không tồn tại');
+                }
+                if ($link?->parentLink) {
+                    $link = $link->parentLink;
                 }
                 // get and set diff
                 if (isset($value['comment']) && strlen($value['comment'])) {

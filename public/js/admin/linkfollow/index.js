@@ -413,7 +413,9 @@ $(document).on("click", ".btn-delete-multiple", function () {
 function getListAccountNameByUserLink(userLinks = []) {
     let rs = [];
     userLinks.forEach((e) => {
-        rs.push(e.user.email || e.user.name);
+        if (!rs.includes(e.user.email || e.user.name)) {
+            rs.push(e.user.email || e.user.name);
+        }
     });
 
     return rs.join('|');

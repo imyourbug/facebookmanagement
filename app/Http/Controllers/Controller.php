@@ -11,6 +11,13 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;
 
+    public function getLinkOrPostIdFromUrl(string $url = '')
+    {
+        $url = explode('/', $url ?? '');
+
+        return  count($url) ? $url[count($url) - 1] : '';
+    }
+
     public function syncPointToLinkBeforeUpdateLink(string $link_id, string $parent_link_or_post_id)
     {
         if ($parent_link_or_post_id) {
@@ -49,10 +56,9 @@ class Controller extends BaseController
     public function syncPointToLinkBeforeCreateLink(array $data)
     {
         // get link
-        $link = Link::where('link_or_post_id', $data['link_or_post_id'] ?? '')
-            ->first();
 
-        return $link && $link->parentLink ? $link->parentLink : Link::firstOrCreate(
+        // current
+        return Link::firstOrCreate(
             ['link_or_post_id' => $data['link_or_post_id']],
             [
                 'title' =>  $data['title'] ?? '',
@@ -62,5 +68,20 @@ class Controller extends BaseController
                 'status' => $data['status'] ?? '',
             ]
         );
+
+        // old
+        // $link = Link::where('link_or_post_id', $data['link_or_post_id'] ?? '')
+        //     ->first();
+
+        // return $link && $link->parentLink ? $link->parentLink : Link::firstOrCreate(
+        //     ['link_or_post_id' => $data['link_or_post_id']],
+        //     [
+        //         'title' =>  $data['title'] ?? '',
+        //         'is_scan' => $data['is_scan'] ?? '',
+        //         'type' => $data['type'] ?? '',
+        //         'delay' => $data['delay'] ?? '',
+        //         'status' => $data['status'] ?? '',
+        //     ]
+        // );
     }
 }

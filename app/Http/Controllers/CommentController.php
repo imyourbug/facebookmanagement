@@ -17,13 +17,6 @@ use Toastr;
 
 class CommentController extends Controller
 {
-    public function getLinkOrPostIdFromUrl(string $url = '')
-    {
-        $url = explode('/', $url);
-
-        return  $url[count($url) - 1];
-    }
-
     public function getAllCommentUser(Request $request)
     {
         $user_id = $request->user_id;
@@ -39,34 +32,35 @@ class CommentController extends Controller
         $name_facebook = $request->name_facebook;
         $today = $request->today;
         $limit = $request->limit;
-        $ids = $request->ids ? explode(',', $request->ids) : [];
+        $ids = $request->ids ?? [];
         $link_or_post_id = is_numeric($request->link_or_post_id) ? $request->link_or_post_id : $this->getLinkOrPostIdFromUrl($request->link_or_post_id ?? '');
 
-        // $list_link_ids = Link::all();
+        $list_link_ids = Link::all();
 
-        // $list_link_of_user = Link::with(['userLinks'])
-        //     ->when($user_id, function ($q) use ($user_id) {
-        //         return $q->whereHas('userLinks', function ($q) use ($user_id) {
-        //             $q->where('user_id', $user_id);
-        //         });
-        //     })
-        //     ->get()
-        //     ->pluck('link_or_post_id')
-        //     ->toArray();
+        $list_link_of_user = Link::with(['userLinks'])
+            ->when($user_id, function ($q) use ($user_id) {
+                return $q->whereHas('userLinks', function ($q) use ($user_id) {
+                    $q->where('user_id', $user_id);
+                });
+            })
+            ->get()
+            ->pluck('link_or_post_id')
+            ->toArray();
 
-        // foreach ($list_link_ids as $link) {
-        //     if (in_array($link->parent_link_or_post_id, $list_link_of_user)) {
-        //         $list_link_of_user = array_diff($list_link_of_user, [$link->parent_link_or_post_id]);
-        //         $list_link_of_user[] =  $link->link_or_post_id;
-        //     }
-        // }
+        foreach ($list_link_ids as $link) {
+            if (in_array($link->parent_link_or_post_id, $list_link_of_user)) {
+                $list_link_of_user = array_diff($list_link_of_user, [$link->parent_link_or_post_id]);
+                $list_link_of_user[] =  $link->link_or_post_id;
+            }
+        }
 
-        // $list_link_of_user = array_unique($list_link_of_user);
+        $list_link_of_user = array_unique($list_link_of_user);
 
+        DB::enableQueryLog();
         $comments = LinkComment::with(['comment.getUid', 'link.userLinks.user'])
-            // ->whereHas('link', function ($q) use ($list_link_of_user) {
-            //     $q->whereIn('link_or_post_id', $list_link_of_user);
-            // })
+            ->whereHas('link', function ($q) use ($list_link_of_user) {
+                $q->whereIn('link_or_post_id', $list_link_of_user);
+            })
             ->when($to, function ($q) use ($to) {
                 return $q->whereHas('comment', function ($q) use ($to) {
                     $q->where('created_at', '<=', $to);
@@ -150,12 +144,146 @@ class CommentController extends Controller
         if ($limit) {
             $comments = $comments->limit($limit);
         }
+        // dd(DB::getRawQueryLog());
 
         return response()->json([
             'status' => 0,
-            'comments' => $comments->get()
+            'comments' => collect($comments->get())->values()
         ]);
     }
+
+    // public function getAllCommentUser(Request $request)
+    // {
+    //     $user_id = $request->user_id;
+    //     $comment_id = $request->comment_id;
+    //     $to = $request->to;
+    //     $from = $request->from;
+    //     $content = $request->content;
+    //     $user = $request->user;
+    //     $uid = $request->uid;
+    //     $note = $request->note;
+    //     $phone = $request->phone;
+    //     $title = $request->title;
+    //     $name_facebook = $request->name_facebook;
+    //     $today = $request->today;
+    //     $limit = $request->limit;
+    //     $ids = $request->ids ?? [];
+    //     $link_or_post_id = is_numeric($request->link_or_post_id) ? $request->link_or_post_id : $this->getLinkOrPostIdFromUrl($request->link_or_post_id ?? '');
+
+    //     $list_link_ids = Link::all();
+
+    //     $list_link_of_user = Link::with(['userLinks'])
+    //         ->when($user_id, function ($q) use ($user_id) {
+    //             return $q->whereHas('userLinks', function ($q) use ($user_id) {
+    //                 $q->where('user_id', $user_id);
+    //             });
+    //         })
+    //         ->get()
+    //         ->pluck('link_or_post_id')
+    //         ->toArray();
+
+    //     foreach ($list_link_ids as $link) {
+    //         if (in_array($link->parent_link_or_post_id, $list_link_of_user)) {
+    //             $list_link_of_user = array_diff($list_link_of_user, [$link->parent_link_or_post_id]);
+    //             $list_link_of_user[] =  $link->link_or_post_id;
+    //         }
+    //     }
+
+    //     $list_link_of_user = array_unique($list_link_of_user);
+
+    //     $comments = LinkComment::with(['comment.getUid', 'link.userLinks.user'])
+    //         ->whereHas('link', function ($q) use ($list_link_of_user) {
+    //             $q->whereIn('link_or_post_id', $list_link_of_user);
+    //         })
+    //         ->when($to, function ($q) use ($to) {
+    //             return $q->whereHas('comment', function ($q) use ($to) {
+    //                 $q->where('created_at', '<=', $to);
+    //             });
+    //         })
+    //         ->when($from, function ($q) use ($from) {
+    //             return $q->whereHas('comment', function ($q) use ($from) {
+    //                 $q->where(
+    //                     'created_at',
+    //                     '>=',
+    //                     $from
+    //                 );
+    //             });
+    //         })
+    //         ->when($comment_id, function ($q) use ($comment_id) {
+    //             return $q->where('comment_id', $comment_id);
+    //         })
+    //         // user_id
+    //         ->when($user_id, function ($q) use ($user_id) {
+    //             return $q->whereHas('userLinks', function ($q) use ($user_id) {
+    //                 $q->where('user_id', $user_id);
+    //             });
+    //         })
+    //         // today
+    //         ->when($today, function ($q) use ($today) {
+    //             return $q->whereHas('comment', function ($q) use ($today) {
+    //                 $q->where('created_at', 'like', "%$today%");
+    //             });
+    //         })
+    //         // title
+    //         ->when($title, function ($q) use ($title) {
+    //             return $q->whereHas('comment', function ($q) use ($title) {
+    //                 $q->where('title', 'like', "%$title%");
+    //             });
+    //         })
+    //         // link_or_post_id
+    //         ->when($link_or_post_id, function ($q) use ($link_or_post_id) {
+    //             return $q->whereHas('link', function ($q) use ($link_or_post_id) {
+    //                 $q->where('link_or_post_id', 'like', "%$link_or_post_id%");
+    //             });
+    //         })
+    //         // name_facebook
+    //         ->when($name_facebook, function ($q) use ($name_facebook) {
+    //             return $q->whereHas('comment', function ($q) use ($name_facebook) {
+    //                 $q->where('name_facebook', 'like', "%$name_facebook%");
+    //             });
+    //         })
+    //         // note
+    //         ->when($note, function ($q) use ($note) {
+    //             return $q->whereHas('comment', function ($q) use ($note) {
+    //                 $q->where('note', 'like', "%$note%");
+    //             });
+    //         })
+    //         // content
+    //         ->when($content, function ($q) use ($content) {
+    //             return $q->whereHas('comment', function ($q) use ($content) {
+    //                 $q->where('content', 'like', "%$content%");
+    //             });
+    //         })
+    //         // phone
+    //         ->when($phone, function ($q) use ($phone) {
+    //             // return $q->whereHas('comment.getUid', function ($q) use ($phone) {
+    //             //     $q->where('phone', 'like', "%$phone%");
+    //             // });
+    //             return $q->where('phone', 'like', "%$phone%");
+    //         })
+    //         // uid
+    //         ->when($uid, function ($q) use ($uid) {
+    //             return $q->whereHas('comment', function ($q) use ($uid) {
+    //                 $q->where('uid', 'like', "%$uid%");
+    //             });
+    //         })
+    //         // ids
+    //         ->when(count($ids), function ($q) use ($ids) {
+    //             $q->whereIn('id', $ids);
+    //         })
+    //         // order
+    //         ->orderByDesc('created_at');
+
+    //     // limit
+    //     if ($limit) {
+    //         $comments = $comments->limit($limit);
+    //     }
+
+    //     return response()->json([
+    //         'status' => 0,
+    //         'comments' => $comments->get()
+    //     ]);
+    // }
 
     public function getAll(Request $request)
     {
@@ -172,25 +300,48 @@ class CommentController extends Controller
         $name_facebook = $request->name_facebook;
         $today = $request->today;
         $limit = $request->limit;
-        $ids = $request->ids ? explode(',', $request->ids) : [];
+        $ids = $request->ids ?? [];
         $link_or_post_id = is_numeric($request->link_or_post_id) ? $request->link_or_post_id : $this->getLinkOrPostIdFromUrl($request->link_or_post_id ?? '');
 
-        $comments = LinkComment::with(['comment.getUid', 'link.userLinks.user'])
+        $links = Link::with(['userLinks', 'parentLink'])
             ->when($user_id, function ($q) use ($user_id) {
-                return $q->whereHas('link.userLinks', function ($q) use ($user_id) {
+                return $q->whereHas('userLinks', function ($q) use ($user_id) {
                     $q->where('user_id', $user_id);
                 });
             })
             ->when($user, function ($q) use ($user) {
-                return $q->whereHas('link.userLinks', function ($q) use ($user) {
+                return $q->whereHas('userLinks', function ($q) use ($user) {
                     $q->where('user_id', $user);
                 });
             })
+            ->get();
+
+        $list_link_of_user = [];
+        foreach ($links as $key => $link) {
+            $tmp_link_or_post_id = $link?->parentLink ? $link->parentLink->link_or_post_id : $link->link_or_post_id;
+            if (!in_array($tmp_link_or_post_id, $list_link_of_user)) {
+                $list_link_of_user[] = $tmp_link_or_post_id;
+            }
+        }
+
+        DB::enableQueryLog();
+        $comments = LinkComment::with([
+            'comment.getUid', 'link.userLinks.user',
+            'link.userLinks.user', 'link.childLinks.userLinks.user',
+            'link.parentLink.userLinks.user',
+            'link.parentLink.childLinks.userLinks.user'
+        ])
+            // default
+            ->whereHas('link', function ($q) use ($list_link_of_user) {
+                $q->whereIn('link_or_post_id', $list_link_of_user);
+            })
+            // to
             ->when($to, function ($q) use ($to) {
                 return $q->whereHas('comment', function ($q) use ($to) {
                     $q->where('created_at', '<=', $to);
                 });
             })
+            // from
             ->when($from, function ($q) use ($from) {
                 return $q->whereHas('comment', function ($q) use ($from) {
                     $q->where(
@@ -200,6 +351,7 @@ class CommentController extends Controller
                     );
                 });
             })
+            // comment_id
             ->when($comment_id, function ($q) use ($comment_id) {
                 return $q->where('comment_id', $comment_id);
             })
@@ -264,9 +416,33 @@ class CommentController extends Controller
             $comments = $comments->limit($limit);
         }
 
+        $comments = $comments->get()?->toArray() ?? [];;
+        // dd(DB::getRawQueryLog());
+        
+        $result_comments = [];
+        foreach ($comments as $value) {
+            $link = $value['link'];
+            if (strlen($value['link']['parent_link_or_post_id'] ?? '')) {
+                $link = $value['link']['parent_link'];
+            }
+            $account = [];
+            foreach ($link['user_links'] as $is_on_user_link) {
+                $account[$is_on_user_link['id']] = $is_on_user_link;
+            }
+            foreach ($link['child_links'] as $childLink) {
+                foreach ($childLink['user_links']  as $is_on_user_link) {
+                    $account[$is_on_user_link['id']] = $is_on_user_link;
+                }
+            }
+            $result_comments[] = [
+                ...$value,
+                'accounts' => collect($account)->values()
+            ];
+        }
+
         return response()->json([
             'status' => 0,
-            'comments' => $comments->get()
+            'comments' => $result_comments
         ]);
     }
 

@@ -59,7 +59,7 @@
             </div>
         </div>
     </div>
-    <div class="row">
+    {{-- <div class="row">
         <div class="col-lg-12">
             <div class="card direct-chat direct-chat-primary">
                 <div class="card-header ui-sortable-handle header-color" style="cursor: move;">
@@ -84,5 +84,5 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
 @endsection

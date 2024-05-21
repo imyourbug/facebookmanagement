@@ -18,13 +18,6 @@ use Toastr;
 
 class ReactionController extends Controller
 {
-    public function getLinkOrPostIdFromUrl(string $url = '')
-    {
-        $url = explode('/', $url);
-
-        return  $url[count($url) - 1];
-    }
-
     public function getAllReactionUser(Request $request)
     {
         $user_id = $request->user_id;
@@ -40,7 +33,7 @@ class ReactionController extends Controller
         $name_facebook = $request->name_facebook;
         $today = $request->today;
         $limit = $request->limit;
-        $ids = $request->ids ? explode(',', $request->ids) : [];
+        $ids = $request->ids ?? [];
         $link_or_post_id = is_numeric($request->link_or_post_id) ? $request->link_or_post_id : $this->getLinkOrPostIdFromUrl($request->link_or_post_id ?? '');
 
         $list_link_ids = Link::all();
@@ -173,19 +166,46 @@ class ReactionController extends Controller
         $name_facebook = $request->name_facebook;
         $today = $request->today;
         $limit = $request->limit;
-        $ids = $request->ids ? explode(',', $request->ids) : [];
+        $ids = $request->ids ?? [];
 
-        $reactions = LinkReaction::with(['reaction.getUid', 'link.userLinks.user'])
+        $links = Link::with(['userLinks', 'parentLink'])
             ->when($user_id, function ($q) use ($user_id) {
-                return $q->whereHas('link.userLinks', function ($q) use ($user_id) {
+                return $q->whereHas('userLinks', function ($q) use ($user_id) {
                     $q->where('user_id', $user_id);
                 });
             })
+            ->when($user, function ($q) use ($user) {
+                return $q->whereHas('userLinks', function ($q) use ($user) {
+                    $q->where('user_id', $user);
+                });
+            })
+            ->get();
+
+        $list_link_of_user = [];
+        foreach ($links as $key => $link) {
+            $tmp_link_or_post_id = $link?->parentLink ? $link->parentLink->link_or_post_id : $link->link_or_post_id;
+            if (!in_array($tmp_link_or_post_id, $list_link_of_user)) {
+                $list_link_of_user[] = $tmp_link_or_post_id;
+            }
+        }
+
+        $reactions = LinkReaction::with([
+            'reaction.getUid', 'link.userLinks.user',
+            'link.userLinks.user', 'link.childLinks.userLinks.user',
+            'link.parentLink.userLinks.user',
+            'link.parentLink.childLinks.userLinks.user'
+        ])
+            // default
+            ->whereHas('link', function ($q) use ($list_link_of_user) {
+                $q->whereIn('link_or_post_id', $list_link_of_user);
+            })
+            // to
             ->when($to, function ($q) use ($to) {
                 return $q->whereHas('reaction', function ($q) use ($to) {
                     $q->where('created_at', '<=', $to);
                 });
             })
+            // from
             ->when($from, function ($q) use ($from) {
                 return $q->whereHas('reaction', function ($q) use ($from) {
                     $q->where(
@@ -195,14 +215,9 @@ class ReactionController extends Controller
                     );
                 });
             })
+            // reaction_id
             ->when($reaction_id, function ($q) use ($reaction_id) {
                 return $q->where('reaction_id', $reaction_id);
-            })
-            // user
-            ->when($user, function ($q) use ($user) {
-                return $q->whereHas('link.userLinks', function ($q) use ($user) {
-                    $q->where('user_id', $user);
-                });
             })
             // today
             ->when($today, function ($q) use ($today) {
@@ -264,9 +279,31 @@ class ReactionController extends Controller
             $reactions = $reactions->limit($limit);
         }
 
+        $reactions = $reactions->get()?->toArray() ?? [];;
+        $result_reactions = [];
+        foreach ($reactions as $value) {
+            $link = $value['link'];
+            if (strlen($value['link']['parent_link_or_post_id'] ?? '')) {
+                $link = $value['link']['parent_link'];
+            }
+            $account = [];
+            foreach ($link['user_links'] as $is_on_user_link) {
+                $account[$is_on_user_link['id']] = $is_on_user_link;
+            }
+            foreach ($link['child_links'] as $childLink) {
+                foreach ($childLink['user_links']  as $is_on_user_link) {
+                    $account[$is_on_user_link['id']] = $is_on_user_link;
+                }
+            }
+            $result_reactions[] = [
+                ...$value,
+                'accounts' => collect($account)->values()
+            ];
+        }
+
         return response()->json([
             'status' => 0,
-            'reactions' => $reactions->get()
+            'reactions' => $result_reactions
         ]);
     }
 

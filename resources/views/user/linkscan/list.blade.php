@@ -185,7 +185,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-lg-6 col-sm-12">
+                        <div class="col-lg-6 col-sm-12 hidden-filter">
                             <div class="form-group">
                                 <label for="menu">Data update count</label>
                                 <div class="row">

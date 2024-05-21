@@ -12,17 +12,12 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Throwable;
-use Toastr;
 
 class LinkController extends Controller
 {
-    public function getLinkOrPostIdFromUrl(string $url = '')
-    {
-        $url = explode('/', $url);
-
-        return  $url[count($url) - 1];
-    }
-
+    /**
+     * Only for admin/linkrunning
+     */
     public function getAll(Request $request)
     {
         $comment_from = $request->comment_from;
@@ -53,9 +48,18 @@ class LinkController extends Controller
         $query = '(HOUR(CURRENT_TIMESTAMP()) * 60 + MINUTE(CURRENT_TIMESTAMP()) - HOUR(updated_at) * 60 - MINUTE(updated_at))/60 + DATEDIFF(CURRENT_TIMESTAMP(), updated_at) * 24';
         $queryLastData = '(HOUR(CURRENT_TIMESTAMP()) * 60 + MINUTE(CURRENT_TIMESTAMP()) - HOUR(created_at) * 60 - MINUTE(created_at))/60 + DATEDIFF(CURRENT_TIMESTAMP(), created_at) * 24';
 
-        // DB::enableQueryLog();
+        DB::enableQueryLog();
 
-        $links = Link::with(['commentLinks.comment', 'userLinks.user', 'isOnUserLinks'])
+        $links = Link::with([
+            'commentLinks.comment', 'userLinks.user',
+            'isOnUserLinks.user', 'childLinks.isOnUserLinks.user',
+            'parentLink.isOnUserLinks.user',
+            'parentLink.childLinks.isOnUserLinks.user'
+        ])
+            // default just get all link has at least an userLink record with is_scan = ON
+            ->whereHas('userLinks', function ($q) {
+                $q->where('is_scan', GlobalConstant::IS_ON);
+            })
             // title
             ->when($title, function ($q) use ($title) {
                 return $q->where('title', 'like', "%$title%");
@@ -207,31 +211,38 @@ class LinkController extends Controller
             ->when(strlen($status), function ($q) use ($status) {
                 return $q->where('status', $status);
             })
-            // default just get all link has at least an userLink record with is_scan = ON
-            ->whereHas('userLinks', function ($q) {
-                $q->where('is_scan', GlobalConstant::IS_ON);
-            })
-            //
+            // default get all link is root
+            // ->when(function ($q) {
+            //     $q->where('parent_link_or_post_id', '');
+            // })
+            // default order by created_at descending
             ->orderByDesc('created_at')
             ->get()?->toArray() ?? [];
 
         // dd(DB::getRawQueryLog());
-
-        $links = array_map(function ($value) {
-            return [
+        $result_links = [];
+        foreach ($links as $value) {
+            if (strlen($value['parent_link_or_post_id'] ?? '')) {
+                $value = $value['parent_link'];
+            }
+            $account = [];
+            foreach ($value['is_on_user_links'] as $is_on_user_link) {
+                $account[$is_on_user_link['id']] = $is_on_user_link;
+            }
+            foreach ($value['child_links'] as $childLink) {
+                foreach ($childLink['is_on_user_links']  as $is_on_user_link) {
+                    $account[$is_on_user_link['id']] = $is_on_user_link;
+                }
+            }
+            $result_links[$value['link_or_post_id']] = [
                 ...$value,
-                'accounts' => UserLink::with(['link', 'user'])
-                    ->where('is_scan', GlobalConstant::IS_ON)
-                    ->whereHas('link', function ($q) use ($value) {
-                        $q->where('link_or_post_id', $value['link_or_post_id']);
-                    })
-                    ->get()
+                'accounts' => collect($account)->values()
             ];
-        }, $links);
+        }
 
         return response()->json([
             'status' => 0,
-            'links' => $links,
+            'links' => collect($result_links)->values(),
             'user' => User::firstWhere('id', $user_id),
         ]);
     }
@@ -260,6 +271,8 @@ class LinkController extends Controller
             'links.*.is_scan' => 'nullable|in:0,1,2',
             'links.*.note' => 'nullable|string',
             'links.*.link_or_post_id' => 'required|string',
+            'links.*.parent_link_or_post_id' => 'nullable|string',
+            'links.*.end_cursor' => 'nullable|string',
             'links.*.type' => 'required|in:0,1,2',
         ]);
 
@@ -409,9 +422,9 @@ class LinkController extends Controller
                 }
 
                 // sync point to link before update link
-                if (!empty($value['parent_link_or_post_id'])) {
-                    $this->syncPointToLinkBeforeUpdateLink($link->id, $value['parent_link_or_post_id']);
-                }
+                // if (!empty($value['parent_link_or_post_id'])) {
+                //     $this->syncPointToLinkBeforeUpdateLink($link->id, $value['parent_link_or_post_id']);
+                // }
             }
             DB::commit();
         } catch (Throwable $e) {
@@ -462,9 +475,9 @@ class LinkController extends Controller
             // ]);
 
             // sync point to link before update link
-            if (!empty($data['parent_link_or_post_id'])) {
-                $this->syncPointToLinkBeforeUpdateLink($link->id, $data['parent_link_or_post_id']);
-            }
+            // if (!empty($data['parent_link_or_post_id'])) {
+            //     $this->syncPointToLinkBeforeUpdateLink($link->id, $data['parent_link_or_post_id']);
+            // }
 
             DB::commit();
 
@@ -516,11 +529,11 @@ class LinkController extends Controller
         $links->update($data);
 
         // sync point to link before update link
-        if (!empty($data['parent_link_or_post_id'])) {
-            foreach ($links as $link) {
-                $this->syncPointToLinkBeforeUpdateLink($link->id, $data['parent_link_or_post_id']);
-            }
-        }
+        // if (!empty($data['parent_link_or_post_id'])) {
+        //     foreach ($links as $link) {
+        //         $this->syncPointToLinkBeforeUpdateLink($link->id, $data['parent_link_or_post_id']);
+        //     }
+        // }
 
         return response()->json([
             'status' => 0,
@@ -627,7 +640,9 @@ class LinkController extends Controller
     {
         return response()->json([
             'status' => 0,
-            'links' => Link::all()
+            'links' => Link::where('parent_link_or_post_id', '')
+                ->orWhereNull('parent_link_or_post_id')
+                ->get()
         ]);
     }
 }

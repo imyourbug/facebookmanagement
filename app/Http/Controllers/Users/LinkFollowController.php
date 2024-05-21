@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Users;
 use App\Constant\GlobalConstant;
 use App\Http\Controllers\Controller;
 use App\Models\Link;
-use App\Models\User;
 use App\Models\UserLink;
 use Exception;
 use Illuminate\Http\Request;
@@ -50,17 +49,17 @@ class LinkFollowController extends Controller
                 throw new Exception('Đã quá giới hạn link được thêm');
             }
 
-            // $userLink = UserLink::with(['link', 'user'])
-            //     ->where('user_id', Auth::id())
-            //     ->whereHas('link', function ($q) use ($data) {
-            //         $q->where('link_or_post_id', $data['link_or_post_id']);
-            //     })
-            //     ->first();
+            $userLink = UserLink::with(['link', 'user'])
+                ->where('user_id', Auth::id())
+                ->whereHas('link', function ($q) use ($data) {
+                    $q->where('link_or_post_id', $data['link_or_post_id']);
+                })
+                ->first();
 
-            // if ($userLink) {
-            //     throw new Exception('Đã tồn tại link hoặc post ID bên bảng '
-            //         . ($userLink->type == GlobalConstant::TYPE_SCAN ? 'link quét' : 'link theo dõi'));
-            // }
+            if ($userLink) {
+                throw new Exception('Đã tồn tại link hoặc post ID bên bảng '
+                    . ($userLink->type == GlobalConstant::TYPE_SCAN ? 'link quét' : 'link theo dõi'));
+            }
 
             $data['is_scan'] = GlobalConstant::IS_ON;
             $data['type'] = GlobalConstant::TYPE_FOLLOW;
