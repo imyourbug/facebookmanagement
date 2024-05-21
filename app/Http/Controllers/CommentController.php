@@ -418,7 +418,7 @@ class CommentController extends Controller
 
         $comments = $comments->get()?->toArray() ?? [];;
         // dd(DB::getRawQueryLog());
-        
+
         $result_comments = [];
         foreach ($comments as $value) {
             $link = $value['link'];

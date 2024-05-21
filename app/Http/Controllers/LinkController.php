@@ -638,11 +638,27 @@ class LinkController extends Controller
 
     public function index()
     {
+        $links = Link::with([
+            'parentLink'
+        ])
+            // default just get all link has at least an userLink record with is_scan = ON
+            ->whereHas('userLinks', function ($q) {
+                $q->whereIn('is_scan', GlobalConstant::LINK_TYPE);
+            })
+            ->get()?->toArray() ?? [];
+
+        // dd(DB::getRawQueryLog());
+        $result_links = [];
+        foreach ($links as $value) {
+            if (strlen($value['parent_link_or_post_id'] ?? '')) {
+                $value = $value['parent_link'];
+            }
+            $result_links[$value['link_or_post_id']] = $value;
+        }
+
         return response()->json([
             'status' => 0,
-            'links' => Link::where('parent_link_or_post_id', '')
-                ->orWhereNull('parent_link_or_post_id')
-                ->get()
+            'links' => collect($result_links)->values(),
         ]);
     }
 }

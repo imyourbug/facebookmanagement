@@ -536,9 +536,10 @@ class UserLinkController extends Controller
             }
             UserLink::with(['link'])->whereIn('id', $request->ids)->update($dataUpdate);
             if (strlen($data['is_scan'] ?? '')) {
-                $userLinks = UserLink::with(['link'])->whereIn('id', $request->ids)->get();
+                $userLinks = UserLink::with(['link.parentLink'])->whereIn('id', $request->ids)->get();
                 foreach ($userLinks as $userLink) {
                     $link = $userLink->link;
+                    $linkParent = $link?->parentLink;
                     switch ((int)$data['is_scan']) {
                             // turn off
                         case 0:
@@ -550,12 +551,29 @@ class UserLinkController extends Controller
                                 $link->update([
                                     'is_scan' => GlobalConstant::IS_OFF
                                 ]);
+                            // check for parent link
+                            if ($linkParent) {
+                                $countOnRecords = UserLink::where('link_id', $linkParent->id)
+                                    ->where('is_scan', GlobalConstant::IS_ON)
+                                    ->get()
+                                    ->count();
+                                if (!$countOnRecords)
+                                    $linkParent->update([
+                                        'is_scan' => GlobalConstant::IS_OFF
+                                    ]);
+                            }
                             break;
                             // turn on
                         case 1:
                             $link->update([
                                 'is_scan' => GlobalConstant::IS_ON
                             ]);
+                            // check for parent link
+                            if ($linkParent) {
+                                $linkParent->update([
+                                    'is_scan' => GlobalConstant::IS_ON
+                                ]);
+                            }
                             break;
                     }
                 }
@@ -579,18 +597,47 @@ class UserLinkController extends Controller
     {
         try {
             DB::beginTransaction();
-            $userLinks = UserLink::with(['link'])->whereIn('id', $request->ids)->get();
+
+            $list_link_ids = Link::all();
+
+            $list_link_of_user = Link::with(['userLinks'])
+                ->get()
+                ->pluck('link_or_post_id')
+                ->toArray();
+
+            foreach ($list_link_ids as $link) {
+                if (in_array($link->parent_link_or_post_id, $list_link_of_user)) {
+                    $list_link_of_user = array_diff($list_link_of_user, [$link->parent_link_or_post_id]);
+                    $list_link_of_user[] =  $link->link_or_post_id;
+                }
+            }
+
+            $list_link_of_user = array_unique($list_link_of_user);
+
+            $userLinks = UserLink::with(['link.childLinks.userLinks'])->whereIn('id', $request->ids)->get();
+
+
             foreach ($userLinks as $userLink) {
                 $link = $userLink->link;
-                $countOnRecords = UserLink::where('link_id', $link->id)
+                $list_id = [$link->id];
+                $childLinks = $link?->childLinks;
+                if ($childLinks) {
+                    foreach ($childLinks as $childLink) {
+                        if (!in_array($childLink->id, $list_id)) {
+                            $list_id[] = $childLink->id;
+                        }
+                    }
+                }
+                $countOnRecords = UserLink::whereIn('link_id', $list_id)
                     ->where('is_scan', GlobalConstant::IS_ON)
                     ->where('id', '!=', $userLink->id)
                     ->get()
                     ->count();
-                if (!$countOnRecords)
+                if (!$countOnRecords) {
                     $link->update([
                         'is_scan' => GlobalConstant::IS_OFF
                     ]);
+                }
             }
             UserLink::whereIn('id', $request->ids)->delete();
 
