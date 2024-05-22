@@ -270,6 +270,7 @@ class LinkController extends Controller
             'links.*.diff_reaction' => 'nullable|string',
             'links.*.is_scan' => 'nullable|in:0,1,2',
             'links.*.note' => 'nullable|string',
+            'links.*.image' => 'nullable|string',
             'links.*.link_or_post_id' => 'required|string',
             'links.*.parent_link_or_post_id' => 'nullable|string',
             'links.*.end_cursor' => 'nullable|string',
@@ -306,6 +307,7 @@ class LinkController extends Controller
                 'links.*.diff_reaction' => 'nullable|string',
                 'links.*.is_scan' => 'nullable|in:0,1,2',
                 'links.*.note' => 'nullable|string',
+                'links.*.image' => 'nullable|string',
                 'links.*.link_or_post_id' => 'required|string',
                 'links.*.parent_link_or_post_id' => 'nullable|string',
                 'links.*.end_cursor' => 'nullable|string',
@@ -354,6 +356,7 @@ class LinkController extends Controller
                 'links.*.is_scan' => 'nullable|in:0,1,2',
                 'links.*.status' => 'nullable|in:0,1',
                 'links.*.note' => 'nullable|string',
+                'links.*.image' => 'nullable|string',
                 'links.*.end_cursor' => 'nullable|string',
                 'links.*.type' => 'nullable|in:0,1,2',
             ]);
@@ -361,7 +364,7 @@ class LinkController extends Controller
             DB::beginTransaction();
 
             foreach ($data['links'] as $key => &$value) {
-                $link = Link::firstWhere('link_or_post_id', $value['link_or_post_id']);
+                $link = Link::with(['childLinks'])->firstWhere('link_or_post_id', $value['link_or_post_id']);
                 if (!$link) {
                     throw new Exception('link_or_post_id không tồn tại');
                 }
@@ -490,6 +493,7 @@ class LinkController extends Controller
                 'is_scan' => 'nullable|in:0,1,2',
                 'status' => 'nullable|in:0,1',
                 'note' => 'nullable|string',
+                'image' => 'nullable|string',
                 'end_cursor' => 'nullable|string',
                 'link_or_post_id' => 'nullable|string',
                 'parent_link_or_post_id' => 'nullable|string',
@@ -546,6 +550,7 @@ class LinkController extends Controller
             'is_scan' => 'nullable|in:0,1,2',
             'status' => 'nullable|in:0,1',
             'note' => 'nullable|string',
+            'image' => 'nullable|string',
             'delay' => 'nullable|string',
             'end_cursor' => 'nullable|string',
             'parent_link_or_post_id' => 'nullable|string',

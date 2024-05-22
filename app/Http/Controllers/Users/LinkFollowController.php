@@ -37,6 +37,7 @@ class LinkFollowController extends Controller
                 'diff_reaction' => 'nullable|string',
                 'is_scan' => 'nullable|in:0,1,2',
                 'note' => 'nullable|string',
+                'image' => 'nullable|string',
                 'link_or_post_id' => 'required|string',
             ]);
             $user = Auth::user();
@@ -135,6 +136,7 @@ class LinkFollowController extends Controller
                 'diff_reaction' => 'nullable|string',
                 'is_scan' => 'nullable|in:0,1',
                 'note' => 'nullable|string',
+                'image' => 'nullable|string',
                 'link_or_post_id' => 'required|string',
             ]);
             unset($data['id']);

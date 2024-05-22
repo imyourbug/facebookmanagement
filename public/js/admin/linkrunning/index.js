@@ -76,7 +76,7 @@ $(document).ready(function () {
             {
                 data: function (d) {
                     return `<p class="show-content tool-tip" data-id="${d.id}" data-link_or_post_id="${d.link_or_post_id}" data-content="${d.content}">
-                    <img style="width: 50px;height:50px" src="${d.content}" alt="image" />
+                    <img style="width: 50px;height:50px" src="${d.image}" alt="image" />
                     <div style="display:none;width: max-content;
                                 background-color: black;
                                 color: #fff;

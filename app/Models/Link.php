@@ -27,6 +27,7 @@ class Link extends Model
         'end_cursor',
         'delay',
         'status',
+        'image',
         //
         'comment',
         'diff_comment',

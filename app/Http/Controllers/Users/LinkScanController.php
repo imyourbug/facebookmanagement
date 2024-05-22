@@ -31,6 +31,7 @@ class LinkScanController extends Controller
                 'content' => 'nullable|string',
                 'is_scan' => 'nullable|in:0,1',
                 'note' => 'nullable|string',
+                'image' => 'nullable|string',
                 'link_or_post_id' => 'required|string'
             ]);
 
@@ -135,6 +136,7 @@ class LinkScanController extends Controller
                 'diff_reaction' => 'nullable|string',
                 'is_scan' => 'nullable|in:0,1',
                 'note' => 'nullable|string',
+                'image' => 'nullable|string',
                 'link_or_post_id' => 'required|string',
             ]);
             unset($data['id']);

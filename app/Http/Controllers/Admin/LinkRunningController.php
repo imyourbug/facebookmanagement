@@ -37,11 +37,12 @@ class LinkRunningController extends Controller
                 'is_scan' => 'nullable|in:0,1',
                 'note' => 'nullable|string',
                 'delay' => 'nullable|string',
+                'image' => 'nullable|string',
                 'link_or_post_id' => 'required|string',
             ]);
             unset($data['id']);
             DB::beginTransaction();
-            $link = Link::firstWhere('id', $request->input('id'));
+            $link = Link::with(['childLinks.userLinks'])->firstWhere('id', $request->input('id'));
             if ($link) {
                 $link->update($data);
                 // UserLink::where('user_id', $data['user_id'])
@@ -50,13 +51,35 @@ class LinkRunningController extends Controller
                 //         'title' => $link->title,
                 //         'note' => $link->note,
                 //     ]);
+                $childLinks = $link?->childLinks ?? [];
+                unset($data['link_or_post_id']);
+                $list_link_ids = [$link->id];
+                foreach ($childLinks as $childLink) {
+                    $childLink->update($data);
+                    $userLinks = $childLink?->userLinks ?? [];
+                    if (!in_array($childLink->id, $list_link_ids)) {
+                        $list_link_ids[] = $childLink->id;
+                    }
+                    foreach ($userLinks as $userLink) {
+                        $userLink->update([
+                            'title' => $data['title'],
+                        ]);
+                    }
+                }
+                UserLink::with(['link'])->whereHas('link', function ($q) use ($list_link_ids) {
+                    $q->whereIn('link_id', $list_link_ids);
+                })
+                    ->update([
+                        'title' => $data['title'] ?? '',
+                    ]);
             }
+
+            DB::commit();
+            Toastr::success(__('message.success.update'), __('title.toastr.success'));
         } catch (Throwable $e) {
             DB::rollBack();
             Toastr::error($e->getMessage(), __('title.toastr.fail'));
         }
-        DB::commit();
-        Toastr::success(__('message.success.update'), __('title.toastr.success'));
 
         return redirect()->back();
     }
