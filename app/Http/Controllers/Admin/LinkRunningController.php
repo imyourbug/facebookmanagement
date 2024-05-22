@@ -36,6 +36,7 @@ class LinkRunningController extends Controller
                 'diff_reaction' => 'nullable|string',
                 'is_scan' => 'nullable|in:0,1',
                 'note' => 'nullable|string',
+                'delay' => 'nullable|string',
                 'link_or_post_id' => 'required|string',
             ]);
             unset($data['id']);
