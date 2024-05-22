@@ -439,10 +439,23 @@ class LinkController extends Controller
                 //
                 unset($value['link_or_post_id']);
                 $link->update($value);
+                $list_link_ids = [$link->id];
                 if ($childLinks) {
                     foreach ($childLinks as $childLink) {
                         $childLink->update($value);
+                        if (!in_array($childLink->id, $list_link_ids)) {
+                            $list_link_ids[] = $childLink->id;
+                        }
                     }
+                }
+                $title = $value['title'] ?? '';
+                if (strlen($title)) {
+                    UserLink::with(['link'])->whereHas('link', function ($q) use ($list_link_ids) {
+                        $q->whereIn('link_id', $list_link_ids);
+                    })
+                        ->update([
+                            'title' => $title,
+                        ]);
                 }
                 $value['link_id'] = $link->id;
                 $value['created_at'] = now();

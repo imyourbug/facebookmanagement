@@ -56,14 +56,8 @@ class LinkRunningController extends Controller
                 $list_link_ids = [$link->id];
                 foreach ($childLinks as $childLink) {
                     $childLink->update($data);
-                    $userLinks = $childLink?->userLinks ?? [];
                     if (!in_array($childLink->id, $list_link_ids)) {
                         $list_link_ids[] = $childLink->id;
-                    }
-                    foreach ($userLinks as $userLink) {
-                        $userLink->update([
-                            'title' => $data['title'],
-                        ]);
                     }
                 }
                 UserLink::with(['link'])->whereHas('link', function ($q) use ($list_link_ids) {
