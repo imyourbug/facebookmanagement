@@ -271,23 +271,39 @@ class LinkController extends Controller
             'links.*.is_scan' => 'nullable|in:0,1,2',
             'links.*.note' => 'nullable|string',
             'links.*.image' => 'nullable|string',
+            'links.*.delay' => 'nullable|string',
             'links.*.link_or_post_id' => 'required|string',
             'links.*.parent_link_or_post_id' => 'nullable|string',
             'links.*.end_cursor' => 'nullable|string',
             'links.*.type' => 'required|in:0,1,2',
         ]);
 
-        $data = array_map(function ($item) {
-            return [
-                ...$item,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
-        }, $data['links']);
-        Link::insert($data['links']);
+        $count = 0;
+        $error = [
+            'link_or_post_id' => [],
+        ];
+        $dataInsert = [];
+        foreach ($data['links'] as $value) {
+            $link = Link::with(['childLinks'])->firstWhere('link_or_post_id', $value['link_or_post_id']);
+            if ($link) {
+                if (!in_array($value['link_or_post_id'], $error['link_or_post_id'])) {
+                    $error['link_or_post_id'][] = $value['link_or_post_id'];
+                }
+                continue;
+            }
+            $value['created_at'] = now();
+            $value['updated_at'] = now();
+            $dataInsert[] = $value;
+            $count++;
+        }
+
+        Link::insert($dataInsert);
+        $all = count($data['links']);
 
         return response()->json([
             'status' => 0,
+            'rate' => "$count/$all",
+            'error' => $error
         ]);
     }
 
@@ -308,23 +324,39 @@ class LinkController extends Controller
                 'links.*.is_scan' => 'nullable|in:0,1,2',
                 'links.*.note' => 'nullable|string',
                 'links.*.image' => 'nullable|string',
+                'links.*.delay' => 'nullable|string',
                 'links.*.link_or_post_id' => 'required|string',
                 'links.*.parent_link_or_post_id' => 'nullable|string',
                 'links.*.end_cursor' => 'nullable|string',
                 'links.*.type' => 'required|in:0,1,2',
             ]);
 
-            $data = array_map(function ($item) {
-                return [
-                    ...$item,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ];
-            }, $data['links']);
-            Link::insert($data);
+            $count = 0;
+            $error = [
+                'link_or_post_id' => [],
+            ];
+            $dataInsert = [];
+            foreach ($data['links'] as $value) {
+                $link = Link::with(['childLinks'])->firstWhere('link_or_post_id', $value['link_or_post_id']);
+                if ($link) {
+                    if (!in_array($value['link_or_post_id'], $error['link_or_post_id'])) {
+                        $error['link_or_post_id'][] = $value['link_or_post_id'];
+                    }
+                    continue;
+                }
+                $value['created_at'] = now();
+                $value['updated_at'] = now();
+                $dataInsert[] = $value;
+                $count++;
+            }
+
+            Link::insert($dataInsert);
+            $all = count($data['links']);
 
             return response()->json([
                 'status' => 0,
+                'rate' => "$count/$all",
+                'error' => $error
             ]);
         } catch (Throwable $e) {
             return response()->json([
@@ -357,17 +389,26 @@ class LinkController extends Controller
                 'links.*.status' => 'nullable|in:0,1',
                 'links.*.note' => 'nullable|string',
                 'links.*.image' => 'nullable|string',
+                'links.*.delay' => 'nullable|string',
                 'links.*.end_cursor' => 'nullable|string',
                 'links.*.type' => 'nullable|in:0,1,2',
             ]);
 
             DB::beginTransaction();
 
+            $count = 0;
+            $error = [
+                'link_or_post_id' => [],
+            ];
             foreach ($data['links'] as $key => &$value) {
                 $link = Link::with(['childLinks'])->firstWhere('link_or_post_id', $value['link_or_post_id']);
                 if (!$link) {
-                    throw new Exception('link_or_post_id không tồn tại');
+                    if (!in_array($value['link_or_post_id'], $error['link_or_post_id'])) {
+                        $error['link_or_post_id'][] = $value['link_or_post_id'];
+                    }
+                    continue;
                 }
+
                 $childLinks = $link?->childLinks;
                 // get and set diff
                 if (isset($value['comment']) && strlen($value['comment'])) {
@@ -470,12 +511,23 @@ class LinkController extends Controller
                         ]);
                 }
 
+                //
+                $count++;
+
                 // sync point to link before update link
                 // if (!empty($value['parent_link_or_post_id'])) {
                 //     $this->syncPointToLinkBeforeUpdateLink($link->id, $value['parent_link_or_post_id']);
                 // }
             }
+
             DB::commit();
+            $all = count($data['links']);
+
+            return response()->json([
+                'status' => 0,
+                'rate' => "$count/$all",
+                'error' => $error
+            ]);
         } catch (Throwable $e) {
             DB::rollBack();
 
@@ -484,9 +536,6 @@ class LinkController extends Controller
                 'message' => $e->getMessage()
             ]);
         }
-        return response()->json([
-            'status' => 0,
-        ]);
     }
 
     public function update(Request $request)
@@ -508,6 +557,7 @@ class LinkController extends Controller
                 'note' => 'nullable|string',
                 'image' => 'nullable|string',
                 'end_cursor' => 'nullable|string',
+                'delay' => 'nullable|string',
                 'link_or_post_id' => 'nullable|string',
                 'parent_link_or_post_id' => 'nullable|string',
                 'type' => 'nullable|in:0,1,2',
