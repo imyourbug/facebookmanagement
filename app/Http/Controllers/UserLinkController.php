@@ -280,6 +280,7 @@ class UserLinkController extends Controller
                 'links.*.is_scan' => 'nullable|in:0,1,2',
                 'links.*.status' => 'nullable|in:0,1',
                 'links.*.note' => 'nullable|string',
+                'links.*.delay' => 'nullable|string',
                 'links.*.end_cursor' => 'nullable|string',
                 'links.*.type' => 'nullable|in:0,1,2',
             ]);
@@ -407,6 +408,7 @@ class UserLinkController extends Controller
                 'is_scan' => 'nullable|in:0,1,2',
                 'status' => 'nullable|in:0,1',
                 'note' => 'nullable|string',
+                'delay' => 'nullable|string',
                 'end_cursor' => 'nullable|string',
                 'link_or_post_id' => 'nullable|string',
                 'parent_link_or_post_id' => 'nullable|string',
