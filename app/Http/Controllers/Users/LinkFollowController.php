@@ -78,6 +78,7 @@ class LinkFollowController extends Controller
 
             DB::beginTransaction();
 
+            $data['user_id'] = $user->id;
             $link = $this->syncPointToLinkBeforeCreateLink($data);
             $userLink =  UserLink::withTrashed()
                 ->where('link_id', $link->id)

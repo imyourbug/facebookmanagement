@@ -14,13 +14,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 @endpush
 @section('content')
-    <form action="{{ route('admin.linkscans.update', ['id' => $link->id]) }}" method="POST">
+    <form action="{{ route('admin.linkscans.update', ['id' => $userLink->id]) }}" method="POST">
         <div class="card-body">
             <div class="row">
                 <div class="col-lg-6 col-sm-12">
                     <div class="form-group">
                         <label for="menu">Tiêu đề <span class="required">(*)</span></label>
-                        <input type="text" class="form-control" name="title" value="{{ old('title') ?? $userLink->title }}"
+                        <input type="text" class="form-control" name="title" value="{{ old('title') ?? $userLink?->title }}"
                             placeholder="Nhập tiêu đề">
                     </div>
                 </div>
@@ -28,7 +28,7 @@
                     <div class="form-group">
                         <label for="menu">Link hoặc PostID <span class="required">(*)</span></label>
                         <input type="text" class="form-control" name="link_or_post_id"
-                            value="{{ old('link_or_post_id') ?? $link->link_or_post_id }}"
+                            value="{{ old('link_or_post_id') ?? $userLink?->link_or_post_id }}"
                             placeholder="Nhập link hoặc PostID">
                     </div>
                 </div>
@@ -37,7 +37,7 @@
                 <div class="col-lg-12 col-sm-12">
                     <div class="form-group">
                         <label for="menu">Note <span class="required">(*)</span></label>
-                        <input type="text" class="form-control" name="note" value="{{ old('note') ?? $userLink->note }}"
+                        <input type="text" class="form-control" name="note" value="{{ old('note') ?? $userLink?->note }}"
                             placeholder="Nhập ghi chú">
                     </div>
                 </div>

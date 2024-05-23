@@ -135,7 +135,7 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return `<a class="btn btn-primary btn-sm" href='/admin/linkscans/update/${d.id}?user_id=${d.user_id}'>
+                    return `<a class="btn btn-primary btn-sm" href='/admin/linkscans/update/${d.link.id}?user_id=${d.user_id}'>
                                 <i class="fas fa-edit"></i>
                             </a>
                             <button data-id="${d.id}" data-user_id="${d.user_id}" class="btn btn-success btn-sm btn-follow">

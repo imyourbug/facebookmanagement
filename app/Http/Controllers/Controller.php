@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Constant\GlobalConstant;
 use App\Models\Link;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -56,18 +57,38 @@ class Controller extends BaseController
     public function syncPointToLinkBeforeCreateLink(array $data)
     {
         // get link
+        $link = Link::with(['userLinks'])->firstWhere('link_or_post_id', $data['link_or_post_id']);
+        if (!$link) {
+            $link = Link::create(
+                [
+                    'link_or_post_id', $data['link_or_post_id'],
+                    'title' =>  $data['title'] ?? '',
+                    'is_scan' => $data['is_scan'] ?? '',
+                    'type' => $data['type'] ?? '',
+                    'delay' => $data['delay'] ?? '',
+                    'status' => $data['status'] ?? '',
+                ]
+            );
+        } else {
+            $userLink =  UserLink::where('link_id', $link->id,)
+                ->where('user_id', $data['user_id'])
+                ->where('is_scan', GlobalConstant::IS_ON)
+                ->first();
+            if (!$userLink) {
+                $link->update([
+                    'comment' => 0,
+                    'diff_comment' => 0,
+                    'data' => 0,
+                    'diff_data' => 0,
+                    'reaction' => 0,
+                    'diff_reaction' => 0,
+                    'note' => '',
+                ]);
+            }
+        }
 
         // current
-        return Link::firstOrCreate(
-            ['link_or_post_id' => $data['link_or_post_id']],
-            [
-                'title' =>  $data['title'] ?? '',
-                'is_scan' => $data['is_scan'] ?? '',
-                'type' => $data['type'] ?? '',
-                'delay' => $data['delay'] ?? '',
-                'status' => $data['status'] ?? '',
-            ]
-        );
+        return $link;
 
         // old
         // $link = Link::where('link_or_post_id', $data['link_or_post_id'] ?? '')
