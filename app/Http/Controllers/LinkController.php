@@ -558,7 +558,7 @@ class LinkController extends Controller
                 'image' => 'nullable|string',
                 'end_cursor' => 'nullable|string',
                 'delay' => 'nullable|string',
-                'link_or_post_id' => 'nullable|string',
+                // 'link_or_post_id' => 'nullable|string',
                 'parent_link_or_post_id' => 'nullable|string',
                 'type' => 'nullable|in:0,1,2',
                 'user_id' => 'nullable|integer',
@@ -617,7 +617,7 @@ class LinkController extends Controller
             'delay' => 'nullable|string',
             'end_cursor' => 'nullable|string',
             'parent_link_or_post_id' => 'nullable|string',
-            'link_or_post_id' => 'nullable|string',
+            // 'link_or_post_id' => 'nullable|string',
             'type' => 'nullable|in:0,1,2',
             'user_id' => 'nullable|integer',
         ]);

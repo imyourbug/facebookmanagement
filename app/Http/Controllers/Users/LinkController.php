@@ -103,7 +103,7 @@ class LinkController extends Controller
             'image' => 'nullable|string',
             'is_scan' => 'nullable|in:0,1,2',
             'note' => 'nullable|string',
-            'link_or_post_id' => 'nullable|string',
+            // 'link_or_post_id' => 'nullable|string',
             'type' => 'nullable|in:0,1,2',
         ]);
 
