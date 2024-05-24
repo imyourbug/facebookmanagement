@@ -62,7 +62,7 @@ class Controller extends BaseController
         if (!$link) {
             $link = Link::create(
                 [
-                    'link_or_post_id', $data['link_or_post_id'],
+                    'link_or_post_id' => $data['link_or_post_id'],
                     'title' =>  $data['title'] ?? '',
                     'is_scan' => $data['is_scan'] ?? '',
                     'type' => $data['type'] ?? '',

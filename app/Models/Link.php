@@ -28,7 +28,6 @@ class Link extends Model
         'delay',
         'status',
         'image',
-        //
         'comment',
         'diff_comment',
         'data',

@@ -94,7 +94,7 @@ class LinkScanController extends Controller
                     'created_at' => now(),
                 ]);
             } else {
-                DB::table('user_links')->insert(
+                UserLink::create(
                     [
                         'user_id' => $data['user_id'],
                         'link_id' => $link->id,
