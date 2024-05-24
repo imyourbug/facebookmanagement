@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Constant\GlobalConstant;
 use App\Models\Link;
+use App\Models\UserLink;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;

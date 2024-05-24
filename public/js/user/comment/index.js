@@ -175,6 +175,7 @@ function reloadAll() {
     // enable or disable button
     $('.btn-control').prop('disabled', tempAllRecord.length ? false : true);
     $('.count-select').text(`Đã chọn: ${tempAllRecord.length}`);
+    $('.count-comment').text(`Bình luận: ${tempAllRecord.length}`);
 }
 
 $(document).on("click", ".btn-select-all", function () {

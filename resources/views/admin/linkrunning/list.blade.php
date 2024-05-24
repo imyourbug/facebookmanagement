@@ -32,7 +32,7 @@
                             id="number-link" />
                         <label class="">Số link đang quét:
                             {{ \App\Models\Setting::firstWhere('key', 'number-link')?->value ?? 0 }}</label><br>
-                        <label class="">Số user:
+                        <label class="">Số token:
                             {{ \App\Models\Setting::firstWhere('key', 'number-user')?->value ?? 0 }}</label><br>
                         <label class="count-link">Số luồng: </label><br>
                         <label class="filtering">Lọc theo: Không</label><br>
@@ -51,11 +51,11 @@
                         <thead>
                             <tr>
                                 <th><input class="btn-select-all" type="checkbox" /></th>
-                                <th>Link|PostID</th>
+                                <th>ID</th>
                                 <th>Data cuối</th>
                                 <th>Ngày cập nhật</th>
                                 <th>Tài khoản</th>
-                                <th>Tiêu đề</th>
+                                <th>Tên bài</th>
                                 <th>Nội dung</th>
                                 <th>Bình luận</th>
                                 <th>Data</th>
@@ -216,16 +216,16 @@
                     <div class="row">
                         <div class="col-lg-6 col-sm-12">
                             <div class="form-group">
-                                <label for="menu">Tiêu đề</label>
-                                <input type="text" data-name="Tiêu đề" class="form-control" id="title"
-                                    value="" placeholder="Tiêu đề">
+                                <label for="menu">Tên bài</label>
+                                <input type="text" data-name="Tên bài" class="form-control" id="title"
+                                    value="" placeholder="Tên bài">
                             </div>
                         </div>
                         <div class="col-lg-6 col-sm-12">
                             <div class="form-group">
-                                <label for="menu">Link|PostID</label>
-                                <input type="text" data-name="Link|PostID" class="form-control" id="link_or_post_id"
-                                    value="" placeholder="Link|PostID">
+                                <label for="menu">ID</label>
+                                <input type="text" data-name="ID" class="form-control" id="link_or_post_id"
+                                    value="" placeholder="ID">
                             </div>
                         </div>
 

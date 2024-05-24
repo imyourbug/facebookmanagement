@@ -62,7 +62,7 @@
             <div class="modal-body">
                 <div class="input-group mb-3">
                     <input name="tel_or_email" id="tel_or_email" type="text" value="" class="form-control"
-                        placeholder="Nhập tiêu đề">
+                        placeholder="Nhập tên bài">
                     <div class="input-group-append">
                         <div class="input-group-text">
                             <span class="fas fa-envelope"></span>

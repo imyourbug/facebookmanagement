@@ -740,26 +740,42 @@ class LinkController extends Controller
     public function index()
     {
         $links = Link::with([
-            'parentLink'
+            'parentLink',
+            'userLinks',
+            'isOnUserLinks',
         ])
             // default just get all link has at least an userLink record with is_scan = ON
-            ->whereHas('userLinks', function ($q) {
-                $q->whereIn('is_scan', GlobalConstant::LINK_TYPE);
-            })
+            // ->whereHas('userLinks', function ($q) {
+            //     // $q->whereIn('is_scan', GlobalConstant::LINK_TYPE);
+            //     $q->where('is_scan', GlobalConstant::IS_ON);
+            // })
             ->get()?->toArray() ?? [];
 
-        // dd(DB::getRawQueryLog());
         $result_links = [];
         foreach ($links as $value) {
             if (strlen($value['parent_link_or_post_id'] ?? '')) {
                 $value = $value['parent_link'];
             }
-            $result_links[$value['link_or_post_id']] = $value;
+            if (((int) ($value['is_scan'] ?? 0) === GlobalConstant::IS_ON)) {
+                $result_links[$value['link_or_post_id']] = $value;
+            }
         }
 
         return response()->json([
             'status' => 0,
             'links' => collect($result_links)->values(),
+        ]);
+    }
+
+    public function getAllLink()
+    {
+        return response()->json([
+            'status' => 0,
+            'links' => Link::with([
+                'parentLink',
+                'isOnUserLinks'
+            ])
+                ->get(),
         ]);
     }
 }

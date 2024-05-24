@@ -208,10 +208,12 @@
         // show content
         $(document).on('mouseenter', '.show-content', async function() {
             let content = $(this).data('content');
-            let link_or_post_id = $(this).data('link_or_post_id');
-            let id = $(this).data('id');
-            $('.tooltip-content-' + id).css('display', 'block');
-            $('.tooltip-content-' + id).html(`Nội dung: ${content || 'Trống'}`);
+            if (content) {
+                let link_or_post_id = $(this).data('link_or_post_id');
+                let id = $(this).data('id');
+                $('.tooltip-content-' + id).css('display', 'block');
+                $('.tooltip-content-' + id).html(`${content || 'Trống'}`);
+            }
         });
 
         $(document).on('mouseleave', '.show-content', function() {
@@ -239,7 +241,7 @@
             let type = $(this).data('type');
             $('.tooltip-title-' + id).css('display', 'block');
             $('.tooltip-title-' + id).html(type == 'content' ? `Nội dung: ${content || ''}` :
-                `Link|PostId: ${link_or_post_id || ''}`);
+                `ID: ${link_or_post_id || ''}`);
         });
 
         $(document).on('mouseleave', '.show-title', function() {

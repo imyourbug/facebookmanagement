@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('uids', function (Blueprint $table) {
             $table->string('uid')->primary();
-            $table->string('phone')->nullable();
+            $table->longText('phone')->nullable();
             $table->timestamps();
         });
     }

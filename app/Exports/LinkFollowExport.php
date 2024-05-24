@@ -41,7 +41,7 @@ class LinkFollowExport implements FromCollection, WithHeadings, WithColumnWidths
             'Data cuối',
             'Ngày tạo',
             'Tài khoản',
-            'Tiêu đề',
+            'Tên bài',
             'Nội dung',
             'Bình luận',
             'Data',
