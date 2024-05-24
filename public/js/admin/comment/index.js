@@ -191,7 +191,6 @@ function reloadAll() {
     // enable or disable button
     $('.btn-control').prop('disabled', tempAllRecord.length ? false : true);
     $('.count-select').text(`Đã chọn: ${tempAllRecord.length}`);
-    $('.count-comment').text(`Bình luận: ${tempAllRecord.length}`);
 }
 
 $(document).on("click", ".btn-select-all", function () {
@@ -265,6 +264,8 @@ $(document).on("click", ".btn-filter", async function () {
     $('.btn-select-all').prop('checked', true);
     // reload all
     reloadAll();
+    //
+    $('.count-comment').text(`Bình luận: ${tempAllRecord.length}`);
 });
 
 $(document).on("click", ".btn-refresh", function () {
@@ -278,7 +279,7 @@ $(document).on("click", ".btn-refresh", function () {
 
     // reload table
     dataTable.ajax
-        .url(`/api/comments/getAll`)
+        .url(`/api/comments/getAll?today=${new Date().toJSON().slice(0, 10)}`)
         .load();
 
     // reload count and record
@@ -321,9 +322,8 @@ $(document).on("click", ".btn-delete", function () {
 function reload() {
     $.ajax({
         type: "GET",
-        // url: `/api/comments/getAll?today=${new Date().toJSON().slice(0, 10)}`,
-        url: `/api/comments/getAll`,
-        data: { ids: tempAllRecord },
+        url: `/api/comments/getAll?today=${new Date().toJSON().slice(0, 10)}`,
+        // url: `/api/comments/getAll`,
         success: function (response) {
             if (response.status == 0) {
                 $('.count-comment').text(`Bình luận: ${response.comments.length}`);

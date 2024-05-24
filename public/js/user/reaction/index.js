@@ -152,7 +152,6 @@ function reloadAll() {
     // enable or disable button
     $('.btn-control').prop('disabled', tempAllRecord.length ? false : true);
     $('.count-select').text(`Đã chọn: ${tempAllRecord.length}`);
-    $('.count-reaction').text(`Cảm xúc: ${tempAllRecord.length}`);
 }
 
 $(document).on("click", ".btn-select-all", function () {
@@ -225,6 +224,7 @@ $(document).on("click", ".btn-filter", async function () {
     $('.btn-select-all').prop('checked', true);
     // reload all
     reloadAll();
+    $('.count-reaction').text(`Cảm xúc: ${tempAllRecord.length}`);
 });
 
 $(document).on("click", ".btn-refresh", function () {

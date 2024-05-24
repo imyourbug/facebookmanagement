@@ -103,6 +103,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::delete('/{id}/destroy', 'LinkController@destroy')->name('destroy');
         Route::post('/deleteAll', 'LinkController@deleteAll')->name('deleteAll');
         Route::post('/deleteAllUserLink', 'LinkController@deleteAllUserLink')->name('deleteAllUserLink');
+        Route::post('/deleteAllByListLinkOrPostId', 'LinkController@deleteAllByListLinkOrPostId')->name('deleteAllByListLinkOrPostId');
     });
 
     #userlinks

@@ -170,7 +170,6 @@ function reloadAll() {
     // enable or disable button
     $('.btn-control').prop('disabled', tempAllRecord.length ? false : true);
     $('.count-select').text(`Đã chọn: ${tempAllRecord.length}`);
-    $('.count-reaction').text(`Cảm xúc: ${tempAllRecord.length}`);
 }
 
 $(document).on("click", ".btn-select-all", function () {
@@ -244,6 +243,7 @@ $(document).on("click", ".btn-filter", async function () {
     $('.btn-select-all').prop('checked', true);
     // reload all
     reloadAll();
+    $('.count-reaction').text(`Cảm xúc: ${tempAllRecord.length}`);
 });
 
 $(document).on("click", ".btn-refresh", function () {
@@ -257,7 +257,7 @@ $(document).on("click", ".btn-refresh", function () {
 
     // reload table
     dataTable.ajax
-        .url(`/api/reactions/getAll`)
+        .url(`/api/reactions/getAll?today=${new Date().toJSON().slice(0, 10)}`)
         .load();
 
     // reload count and record
@@ -300,8 +300,8 @@ $(document).on("click", ".btn-delete", function () {
 async function reload() {
     await $.ajax({
         type: "GET",
-        // url: `/api/reactions/getAll?today=${new Date().toJSON().slice(0, 10)}`,
-        url: `/api/reactions/getAll`,
+        url: `/api/reactions/getAll?today=${new Date().toJSON().slice(0, 10)}`,
+        // url: `/api/reactions/getAll`,
         success: function (response) {
             if (response.status == 0) {
                 $('.count-reaction').text(`Cảm xúc: ${response.reactions.length}`);

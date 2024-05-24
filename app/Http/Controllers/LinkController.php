@@ -335,7 +335,7 @@ class LinkController extends Controller
             $error = [
                 'link_or_post_id' => [],
             ];
-            $dataInsert = [];
+            DB::beginTransaction();
             foreach ($data['links'] as $value) {
                 $link = Link::with(['childLinks'])->firstWhere('link_or_post_id', $value['link_or_post_id']);
                 if ($link) {
@@ -346,12 +346,17 @@ class LinkController extends Controller
                 }
                 $value['created_at'] = now();
                 $value['updated_at'] = now();
-                $dataInsert[] = $value;
+                Link::create($value);
+                $link_or_post_id = $value['parent_link_or_post_id'] ?? '';
+                if (strlen($link_or_post_id)) {
+                    unset($value['link_or_post_id']);
+                    $value['parent_link_or_post_id'] = '';
+                    Link::updateOrCreate(['link_or_post_id' => $link_or_post_id], $value);
+                }
                 $count++;
             }
-
-            Link::insert($dataInsert);
             $all = count($data['links']);
+            DB::commit();
 
             return response()->json([
                 'status' => 0,
@@ -359,6 +364,8 @@ class LinkController extends Controller
                 'error' => $error
             ]);
         } catch (Throwable $e) {
+            DB::rollBack();
+
             return response()->json([
                 'status' => 1,
                 'message' => $e->getMessage()
@@ -777,5 +784,39 @@ class LinkController extends Controller
             ])
                 ->get(),
         ]);
+    }
+
+    public function deleteAllByListLinkOrPostId(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $links =  Link::with(['childLinks'])->whereIn('link_or_post_id', $request->link_or_post_id)->orderBy('id');
+            foreach ($links->get() as $link) {
+                if ($link->childLinks()->count()) {
+                    $newParentLink = $link->childLinks()->first();
+                    foreach ($link->childLinks() as $childLink) {
+                        $childLink->update([
+                            'parent_link_or_post_id' => $newParentLink->link_or_post_id ?? '',
+                        ]);
+                    }
+                    $newParentLink->update([
+                        'parent_link_or_post_id' => '',
+                    ]);
+                }
+            }
+            Link::whereIn('link_or_post_id', $request->link_or_post_id)->delete();
+
+            DB::commit();
+            return response()->json([
+                'status' => 0,
+            ]);
+        } catch (Throwable $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => 1,
+                'message' => $e->getMessage()
+            ]);
+        }
     }
 }
