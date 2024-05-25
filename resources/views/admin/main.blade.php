@@ -239,9 +239,14 @@
             let link_or_post_id = $(this).data('link_or_post_id');
             let id = $(this).data('id');
             let type = $(this).data('type');
-            $('.tooltip-title-' + id).css('display', 'block');
-            $('.tooltip-title-' + id).html(type == 'content' ? `Nội dung: ${content || ''}` :
-                `ID: ${link_or_post_id || ''}`);
+            if (type == 'content') {
+                $('.tooltip-title-' + id).css('display', content ? 'block' : none);
+                $('.tooltip-title-' + id).html(`Nội dung: ${content || ''}`);
+            } else {
+                $('.tooltip-title-' + id).css('display', 'block');
+                $('.tooltip-title-' + id).html(`ID: ${link_or_post_id || ''}`);
+            }
+
         });
 
         $(document).on('mouseleave', '.show-title', function() {

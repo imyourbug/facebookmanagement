@@ -37,12 +37,12 @@ $(document).ready(function () {
         columns: [
             {
                 data: function (d) {
-                    return `<input class="btn-select" type="checkbox" data-id="${d.comment.id}" />`;
+                    return `<input class="btn-select" type="checkbox" data-id="${d.id}" />`;
                 }
             },
             {
                 data: function (d) {
-                    return d.link.link_or_post_id;
+                    return d.link_or_post_id;
                 },
             },
             {
@@ -52,12 +52,12 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return d.comment.uid;
+                    return d.uid;
                 },
             },
             {
                 data: function (d) {
-                    return d.comment.created_at;
+                    return d.created_at;
                 },
             },
             {
@@ -67,52 +67,52 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return `<p class="show-title tool-tip" data-type='content' data-content="${d.link.content}" data-link_or_post_id="${d.link.link_or_post_id}" data-id="${d.comment.id}">${d.comment.title}
+                    return `<p class="show-title tool-tip" data-type='content' data-content="${d.link.content}" data-link_or_post_id="${d.link.link_or_post_id}" data-id="${d.id}">${d.title}
                     <div style="display:none;width: max-content;
                                 background-color: black;
                                 color: #fff;
                                 border-radius: 6px;
                                 padding: 5px 10px;
                                 position: absolute;
-                                z-index: 1;" class="tooltip-title tooltip-title-${d.comment.id}">
+                                z-index: 1;" class="tooltip-title tooltip-title-${d.id}">
                     </div></p>`;
                 },
             },
             {
                 data: function (d) {
-                    return `<p class="show-uid tool-tip" data-id="${d.comment.id}" data-value="${d.comment.uid}" data-uid="${d.comment.uid}">${d.comment.name_facebook || ''}
+                    return `<p class="show-uid tool-tip" data-id="${d.id}" data-value="${d.uid}" data-uid="${d.uid}">${d.name_facebook || ''}
                     <div style="display:none;width: max-content;
                                 background-color: black;
                                 color: #fff;
                                 border-radius: 6px;
                                 padding: 5px 10px;
                                 position: absolute;
-                                z-index: 1;" class="tooltip-uid tooltip-uid-${d.comment.id}">
+                                z-index: 1;" class="tooltip-uid tooltip-uid-${d.id}">
                     </div></p>`;
                 },
             },
             {
                 data: function (d) {
-                    return displayPhoneByRole(d.comment.get_uid ? d.comment.get_uid.phone : '');
+                    return displayPhoneByRole(d.get_uid ? d.get_uid.phone : '');
                 },
             },
             {
                 data: function (d) {
-                    return d.comment.content;
+                    return d.content;
                 },
             },
             {
                 data: function (d) {
-                    return d.comment.note;
+                    return d.note;
                 },
             },
             {
                 data: function (d) {
-                    return `<button class="btn btn-sm btn-primary btn-edit" data-note="${d.comment.note}"
-                            data-target="#modalEditComment" data-toggle="modal" data-id=${d.comment.id}>
+                    return `<button class="btn btn-sm btn-primary btn-edit" data-note="${d.note}"
+                            data-target="#modalEditComment" data-toggle="modal" data-id=${d.id}>
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button data-id="${d.comment.id}" class="btn btn-danger btn-sm btn-delete">
+                            <button data-id="${d.id}" class="btn btn-danger btn-sm btn-delete">
                                 <i class="fas fa-trash"></i>
                             </button>`;
                 },
@@ -176,11 +176,11 @@ function getQueryUrlWithParams() {
     return query;
 }
 
-function getListAccountNameByUserLink(userLinks = []) {
+function getListAccountNameByUserLink(accounts = []) {
     let rs = [];
-    userLinks.forEach((e) => {
-        if (!rs.includes(e.user.email || e.user.name)) {
-            rs.push(e.user.email || e.user.name);
+    accounts.forEach((e) => {
+        if (!rs.includes(e)) {
+            rs.push(e);
         }
     });
 
@@ -222,7 +222,6 @@ $(document).on("click", ".btn-select", async function () {
     } else {
         tempAllRecord = tempAllRecord.filter((e) => e != id);
     }
-    console.log(tempAllRecord);
     reloadAll();
 });
 
@@ -251,7 +250,7 @@ $(document).on("click", ".btn-filter", async function () {
         success: function (response) {
             if (response.status == 0) {
                 response.comments.forEach((e) => {
-                    tempAllRecord.push(e.comment.id);
+                    tempAllRecord.push(e.id);
                 });
             }
         }
@@ -279,7 +278,8 @@ $(document).on("click", ".btn-refresh", function () {
 
     // reload table
     dataTable.ajax
-        .url(`/api/comments/getAll?today=${new Date().toJSON().slice(0, 10)}`)
+        .url(`/api/comments/getAll`)
+        // .url(`/api/comments/getAll?today=${new Date().toJSON().slice(0, 10)}`)
         .load();
 
     // reload count and record
@@ -392,7 +392,7 @@ $(document).on("click", ".btn-copy-uid", function () {
                 let uids = [];
                 let comments = ids.length ? response.comments.slice(0, $('#number').val()) : response.comments;
                 comments.forEach((e) => {
-                    uids.push(e.comment.uid);
+                    uids.push(e.uid);
                 });
                 navigator.clipboard.writeText(uids.join('\n'));
                 closeModal('modalCopyUid');

@@ -12,10 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         //
-        Schema::table('user_links', function (Blueprint $table) {
-            $table->string('type')->nullable();
+        Schema::table('links', function (Blueprint $table) {
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->string('active')->nullable()->default(1);
+            $table->softDeletes();
+            $table->string('is_on_at')->nullable()->default(now()->format('Y-m-d H:i:s'));
         });
-
     }
 
     /**

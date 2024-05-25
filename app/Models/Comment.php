@@ -24,6 +24,7 @@ class Comment extends Model
         'note',
         'name_facebook',
         'comment_id',
+        'link_or_post_id',
         'created_at'
     ];
 
@@ -32,8 +33,13 @@ class Comment extends Model
         return $this->hasOne(Uid::class, 'uid', 'uid');
     }
 
-    public function commentLinks()
+    public function link()
     {
-        return $this->hasMany(LinkComment::class, 'comment_id', 'id');
+        return $this->hasOne(Link::class, 'link_or_post_id', 'link_or_post_id');
+    }
+
+    public function commentLink()
+    {
+        return $this->hasOne(LinkComment::class, 'comment_id', 'id');
     }
 }

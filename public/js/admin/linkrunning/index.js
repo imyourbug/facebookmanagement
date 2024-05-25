@@ -57,12 +57,13 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return getListAccountNameByUserLink(d.accounts);
+                    console.log(d);
+                    return `${getListAccountNameByUserLink(d.user ? (d.user.name || d.user.email) : '', d.accounts)}`;
                 },
             },
             {
                 data: function (d) {
-                    return `<p class="show-title tool-tip" data-id="${d.id}" data-link_or_post_id="${d.link_or_post_id}">${getListTitleByUserLink(d.accounts)}
+                    return `<p class="show-title tool-tip" data-id="${d.id}" data-link_or_post_id="${d.link_or_post_id}">${getListTitleByUserLink(d.title, d.is_on_user_links)}
                     <div style="display:none;width: max-content;
                                 background-color: black;
                                 color: #fff;
@@ -481,20 +482,26 @@ $(document).on("click", ".btn-delete", function () {
     }
 });
 
-function getListAccountNameByUserLink(userLinks = []) {
+function getListAccountNameByUserLink(name = '', userLinks = []) {
     let rs = [];
+    if (name) {
+        rs.push(name);
+    }
     console.log(userLinks);
     userLinks.forEach((e) => {
-        if (!rs.includes(e.user.email || e.user.name)) {
-            rs.push(e.user.email || e.user.name);
+        if (!rs.includes(e.email || e.name)) {
+            rs.push(e.email || e.name);
         }
     });
 
     return rs.join('|');
 }
 
-function getListTitleByUserLink(userLinks = []) {
+function getListTitleByUserLink(title = '', userLinks = []) {
     let rs = [];
+    if (title) {
+        rs.push(title);
+    }
     userLinks.forEach((e) => {
         if (!rs.includes(e.title || '')) {
             rs.push(e.title || '');
@@ -512,9 +519,9 @@ $(document).on("click", ".btn-status", function () {
         let link_id = $(this).data("link_id");
         $.ajax({
             type: "POST",
-            url: `/api/links/update`,
+            url: `/api/links/updateLinkByListLinkId`,
             data: {
-                id: link_id,
+                ids: [link_id],
                 status,
                 user_id,
             },

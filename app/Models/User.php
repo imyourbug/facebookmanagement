@@ -59,7 +59,10 @@ class User extends Authenticatable
         return $this->hasMany(UserRole::class, 'user_id', 'id');
     }
 
-    
+    public function links()
+    {
+        return $this->hasMany(UserRole::class, 'user_id', 'id');
+    }
 
     protected function getTimeToExpireAttribute()
     {

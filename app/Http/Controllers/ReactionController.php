@@ -168,68 +168,61 @@ class ReactionController extends Controller
         $limit = $request->limit;
         $ids = $request->ids ?? [];
 
-        $links = Link::with(['userLinks', 'parentLink'])
-            ->when($user_id, function ($q) use ($user_id) {
-                return $q->whereHas('userLinks', function ($q) use ($user_id) {
-                    $q->where('user_id', $user_id);
-                });
-            })
-            ->when($user, function ($q) use ($user) {
-                return $q->whereHas('userLinks', function ($q) use ($user) {
-                    $q->where('user_id', $user);
-                });
-            })
-            ->get();
+        // $links = Link::with(['userLinks', 'parentLink'])
+        //     ->when($user_id, function ($q) use ($user_id) {
+        //         return $q->where('user_id', $user_id);
+        //     })
+        //     ->when($user, function ($q) use ($user) {
+        //         return $q->where('user_id', $user);
+        //     })
+        //     ->get();
 
-        $list_link_of_user = [];
-        foreach ($links as $key => $link) {
-            $tmp_link_or_post_id = $link?->parentLink ? $link->parentLink->link_or_post_id : $link->link_or_post_id;
-            if (!in_array($tmp_link_or_post_id, $list_link_of_user)) {
-                $list_link_of_user[] = $tmp_link_or_post_id;
-            }
-        }
+        // $list_link_of_user = [];
+        // foreach ($links as $key => $link) {
+        //     $tmp_link_or_post_id = $link?->parentLink ? $link->parentLink->link_or_post_id : $link->link_or_post_id;
+        //     if (!in_array($tmp_link_or_post_id, $list_link_of_user)) {
+        //         $list_link_of_user[] = $tmp_link_or_post_id;
+        //     }
+        // }
 
-        $reactions = LinkReaction::with([
-            'reaction.getUid', 'link.userLinks.user',
-            'link.userLinks.user', 'link.childLinks.userLinks.user',
+        $reactions = Reaction::with([
+            'getUid',
+            'link.user',
+            'link.userLinks.user',
+            'link.userLinks.user',
+            'link.childLinks.user',
+            'link.parentLink.user',
+            'link.childLinks.userLinks.user',
             'link.parentLink.userLinks.user',
-            'link.parentLink.childLinks.userLinks.user'
+            'link.parentLink.childLinks.user'
         ])
             // default
-            ->whereHas('link', function ($q) use ($list_link_of_user) {
-                $q->whereIn('link_or_post_id', $list_link_of_user);
-            })
+            // ->whereHas('link', function ($q) use ($list_link_of_user) {
+            //     $q->whereIn('link_or_post_id', $list_link_of_user);
+            // })
             // to
             ->when($to, function ($q) use ($to) {
-                return $q->whereHas('reaction', function ($q) use ($to) {
-                    $q->where('created_at', '<=', $to);
-                });
+                return $q->where('created_at', '<=', $to);
             })
             // from
             ->when($from, function ($q) use ($from) {
-                return $q->whereHas('reaction', function ($q) use ($from) {
-                    $q->where(
-                        'created_at',
-                        '>=',
-                        $from
-                    );
-                });
+                return $q->where(
+                    'created_at',
+                    '>=',
+                    $from
+                );
             })
             // reaction_id
             ->when($reaction_id, function ($q) use ($reaction_id) {
-                return $q->where('reaction_id', $reaction_id);
+                return $q->where('id', $reaction_id);
             })
             // today
             ->when($today, function ($q) use ($today) {
-                return $q->whereHas('reaction', function ($q) use ($today) {
-                    $q->where('created_at', 'like', "%$today%");
-                });
+                return $q->where('created_at', 'like', "%$today%");
             })
             // title
             ->when($title, function ($q) use ($title) {
-                return $q->whereHas('reaction', function ($q) use ($title) {
-                    $q->where('title', 'like', "%$title%");
-                });
+                return $q->where('title', 'like', "%$title%");
             })
             // link_or_post_id
             ->when($link_or_post_id, function ($q) use ($link_or_post_id) {
@@ -239,33 +232,23 @@ class ReactionController extends Controller
             })
             // name_facebook
             ->when($name_facebook, function ($q) use ($name_facebook) {
-                return $q->whereHas('reaction', function ($q) use ($name_facebook) {
-                    $q->where('name_facebook', 'like', "%$name_facebook%");
-                });
+                return $q->where('name_facebook', 'like', "%$name_facebook%");
             })
             // note
             ->when($note, function ($q) use ($note) {
-                return $q->whereHas('reaction', function ($q) use ($note) {
-                    $q->where('note', 'like', "%$note%");
-                });
+                return $q->where('note', 'like', "%$note%");
             })
             // reaction
             ->when($reaction, function ($q) use ($reaction) {
-                return $q->whereHas('reaction', function ($q) use ($reaction) {
-                    $q->where('reaction', 'like', "%$reaction%");
-                });
+                return $q->where('reaction', 'like', "%$reaction%");
             })
             // phone
             ->when($phone, function ($q) use ($phone) {
-                return $q->whereHas('reaction.getUid', function ($q) use ($phone) {
-                    $q->where('phone', 'like', "%$phone%");
-                });
+                return $q->where('phone', 'like', "%$phone%");
             })
             // uid
             ->when($uid, function ($q) use ($uid) {
-                return $q->whereHas('reaction', function ($q) use ($uid) {
-                    $q->where('uid', 'like', "%$uid%");
-                });
+                return $q->where('uid', 'like', "%$uid%");
             })
             // ids
             ->when(count($ids), function ($q) use ($ids) {
@@ -278,7 +261,6 @@ class ReactionController extends Controller
         if ($limit) {
             $reactions = $reactions->limit($limit);
         }
-
         $reactions = $reactions->get()?->toArray() ?? [];;
         $result_reactions = [];
         foreach ($reactions as $value) {
@@ -287,12 +269,15 @@ class ReactionController extends Controller
                 $link = $value['link']['parent_link'];
             }
             $account = [];
-            foreach ($link['user_links'] as $is_on_user_link) {
-                $account[$is_on_user_link['id']] = $is_on_user_link;
+            if (!empty($link['user']['name'])) {
+                $account[] = $link['user']['name'];
             }
-            foreach ($link['child_links'] as $childLink) {
-                foreach ($childLink['user_links']  as $is_on_user_link) {
-                    $account[$is_on_user_link['id']] = $is_on_user_link;
+            // foreach ($link['user_links'] as $is_on_user_link) {
+            //     $account[$is_on_user_link['id']] = $is_on_user_link;
+            // }
+            foreach ($link['child_links'] ?? [] as $childLink) {
+                if (!empty($childLink['user']['name']) && !in_array($childLink['user']['name'], $account)) {
+                    $account[] = $childLink['user']['name'];
                 }
             }
             $result_reactions[] = [
@@ -344,12 +329,10 @@ class ReactionController extends Controller
                     // throw new Exception('Không tồn tại link_or_post_id');
                     continue;
                 }
-                $count_uid = LinkReaction::with(['reaction'])
-                    ->where('link_id', $link->id)
+                $count_uid = Reaction::with(['link'])
+                    ->where('link_or_post_id', $link->link_or_post_id)
                     ->when(strlen($value['uid'] ?? ''), function ($q) use ($value) {
-                        return $q->whereHas('reaction', function ($q) use ($value) {
-                            $q->where('uid', $value['uid']);
-                        });
+                        return $q->where('uid', $value['uid']);
                     })
                     ->get()
                     ->count();
@@ -360,13 +343,8 @@ class ReactionController extends Controller
                     continue;
                 }
 
-                $unique_link_ids[$link->id] = $link->id;
-                unset($value['link_or_post_id']);
+                $unique_link_ids[$link->id] = $link;
                 $reaction = Reaction::create($value);
-                LinkReaction::create([
-                    'link_id' => $link->id,
-                    'reaction_id' => $reaction->id,
-                ]);
                 // get data phone
                 $pattern = '/\d{10,11}/';
                 preg_match_all($pattern, $reaction->phone, $matches);
@@ -394,20 +372,20 @@ class ReactionController extends Controller
                 }
                 // update column reaction of link
                 $dataLinks = [];
-                foreach ($unique_link_ids as $link_id) {
-                    $count_reaction = LinkReaction::where('link_id', $link_id)
+                foreach ($unique_link_ids as $link) {
+                    $count_reaction = Reaction::where('link_or_post_id', $link->link_or_post_id)
                         ->get()
                         ->count();
                     // get history
                     $lastHistory = LinkHistory::with(['link'])
                         ->where('type', GlobalConstant::TYPE_REACTION)
-                        ->where('link_id', $link_id)
+                        ->where('link_id', $link->id)
                         ->orderByDesc('id')
                         ->first();
                     //
                     $diff_reaction = $lastHistory?->reaction ? $count_reaction - (int)$lastHistory->reaction : $count_reaction;
                     //
-                    Link::firstWhere('id', $link_id)
+                    Link::firstWhere('id', $link->id)
                         ->update([
                             'reaction' => $count_reaction,
                             'diff_reaction' => $diff_reaction,
@@ -416,7 +394,7 @@ class ReactionController extends Controller
                     $dataLinks[] = [
                         'reaction' => $count_reaction,
                         'diff_reaction' => $diff_reaction,
-                        'link_id' => $link_id,
+                        'link_id' => $link->id,
                         'type' => GlobalConstant::TYPE_REACTION,
                         'created_at' => now(),
                         'updated_at' => now(),
@@ -470,7 +448,7 @@ class ReactionController extends Controller
             $from = $request->from ?? '';
             $to = $request->to ?? '';
 
-            $reactions = LinkReaction::with(['link.userLinks.user', 'reaction'])
+            $reactions = Reaction::with(['link.userLinks.user'])
                 ->orderByDesc('id')
                 ->when($from, function ($q) use ($from) {
                     return $q->where('created_at', '>=', $from);

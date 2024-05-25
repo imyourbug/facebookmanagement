@@ -36,8 +36,10 @@
                     let countScan = 0;
                     let countFollow = 0;
                     response.links.forEach((e) => {
-                        if (e.link.type == 0) {
+                        if (e.type == 0) {
                             countScan++;
+                        }
+                        if (e.type == 1) {
                             countFollow++;
                         }
                     });

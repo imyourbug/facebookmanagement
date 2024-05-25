@@ -19,6 +19,7 @@ return new class extends Migration
             $table->longText('content')->nullable();
             $table->longText('note')->nullable();
             $table->string('comment_id')->nullable();
+            $table->string('link_or_post_id')->nullable();
             $table->timestamps();
         });
     }

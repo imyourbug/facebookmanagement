@@ -48,176 +48,127 @@ class UserLinkController extends Controller
 
         // DB::enableQueryLog();
 
-        $userLinks = UserLink::with(['link.commentLinks.comment', 'user'])
+        $userLinks = Link::with(['commentLinks.comment', 'user'])
             // title
             ->when($title, function ($q) use ($title) {
-                return $q->whereHas('link', function ($q) use ($title) {
-                    $q->where('title', 'like', "%$title%");
-                });
+                return $q->where('title', 'like', "%$title%");
             })
             // link_or_post_id
             ->when($link_or_post_id, function ($q) use ($link_or_post_id) {
-                return $q->whereHas('link', function ($q) use ($link_or_post_id) {
-                    $q->where('link_or_post_id', 'like', "%$link_or_post_id%");
-                });
+                return $q->where('link_or_post_id', 'like', "%$link_or_post_id%");
             })
             // content
             ->when($content, function ($q) use ($content) {
-                return $q->whereHas('link', function ($q) use ($content) {
-                    $q->where('content', 'like', "%$content%");
-                });
+                return $q->where('content', 'like', "%$content%");
             })
             ->when($user_id, function ($q) use ($user_id) {
                 return $q->where('user_id', $user_id);
             })
             ->when($link_id, function ($q) use ($link_id) {
-                return $q->where('link_id', $link_id);
+                return $q->where('id', $link_id);
             })
             // delay
             ->when(strlen($delay_from), function ($q) use ($delay_from, $delay_to) {
                 return $q->when(strlen($delay_to), function ($q) use ($delay_from, $delay_to) {
-                    return $q->whereHas('link', function ($q) use ($delay_from, $delay_to) {
-                        $q->whereRaw('delay >= ?', $delay_from)
-                            ->whereRaw('delay <= ?', $delay_to);
-                    });
+                    return $q->whereRaw('delay >= ?', $delay_from)
+                        ->whereRaw('delay <= ?', $delay_to);
                 }, function ($q) use ($delay_from) {
-                    return $q->whereHas('link', function ($q) use ($delay_from) {
-                        $q->whereRaw('delay >= ?', $delay_from);
-                    });
+                    return $q->whereRaw('delay >= ?', $delay_from);
                 });
             }, function ($q) use ($delay_to) {
                 return $q->when(strlen($delay_to), function ($q) use ($delay_to) {
-                    return $q->whereHas('link', function ($q) use ($delay_to) {
-                        $q->whereRaw('delay <= ?', $delay_to);
-                    });
+                    return $q->whereRaw('delay <= ?', $delay_to);
                 });
             })
             // data
             ->when(strlen($data_from), function ($q) use ($data_from, $data_to) {
                 return $q->when(strlen($data_to), function ($q) use ($data_from, $data_to) {
-                    return $q->whereHas('link', function ($q) use ($data_from, $data_to) {
-                        $q->whereRaw('diff_data >= ?', $data_from)
-                            ->whereRaw('diff_data <= ?', $data_to);
-                    });
+                    return $q->whereRaw('diff_data >= ?', $data_from)
+                        ->whereRaw('diff_data <= ?', $data_to);
                 }, function ($q) use ($data_from) {
-                    return $q->whereHas('link', function ($q) use ($data_from) {
-                        $q->whereRaw('diff_data >= ?', $data_from);
-                    });
+                    return $q->whereRaw('diff_data >= ?', $data_from);
                 });
             }, function ($q) use ($data_to) {
                 return $q->when(strlen($data_to), function ($q) use ($data_to) {
-                    return $q->whereHas('link', function ($q) use ($data_to) {
-                        $q->whereRaw('diff_data <= ?', $data_to);
-                    });
+                    return $q->whereRaw('diff_data <= ?', $data_to);
                 });
             })
             // reaction
             ->when(strlen($reaction_from), function ($q) use ($reaction_from, $reaction_to) {
                 return $q->when(strlen($reaction_to), function ($q) use ($reaction_from, $reaction_to) {
-                    return $q->whereHas('link', function ($q) use ($reaction_from, $reaction_to) {
-                        $q->whereRaw('diff_reaction >= ?', $reaction_from)
-                            ->whereRaw('diff_reaction <= ?', $reaction_to);
-                    });
+                    return $q->whereRaw('diff_reaction >= ?', $reaction_from)
+                        ->whereRaw('diff_reaction <= ?', $reaction_to);
                 }, function ($q) use ($reaction_from) {
-                    return $q->whereHas('link', function ($q) use ($reaction_from) {
-                        $q->whereRaw('diff_reaction >= ?', $reaction_from);
-                    });
+                    return $q->whereRaw('diff_reaction >= ?', $reaction_from);
                 });
             }, function ($q) use ($reaction_to) {
                 return $q->when(strlen($reaction_to), function ($q) use ($reaction_to) {
-                    return $q->whereHas('link', function ($q) use ($reaction_to) {
-                        $q->whereRaw('diff_reaction <= ?', $reaction_to);
-                    });
+                    return $q->whereRaw('diff_reaction <= ?', $reaction_to);
                 });
             })
             // comment
             ->when(strlen($comment_from), function ($q) use ($comment_from, $comment_to) {
                 return $q->when(strlen($comment_to), function ($q) use ($comment_from, $comment_to) {
-                    return $q->whereHas('link', function ($q) use ($comment_from, $comment_to) {
-                        $q->whereRaw('diff_comment >= ?', $comment_from)
-                            ->whereRaw('diff_comment <= ?', $comment_to);
-                    });
+                    return $q->whereRaw('diff_comment >= ?', $comment_from)
+                        ->whereRaw('diff_comment <= ?', $comment_to);
                 }, function ($q) use ($comment_from) {
-                    return $q->whereHas('link', function ($q) use ($comment_from) {
-                        $q->whereRaw('diff_comment >= ?', $comment_from);
-                    });
+                    return $q->whereRaw('diff_comment >= ?', $comment_from);
                 });
             }, function ($q) use ($comment_to) {
                 return $q->when(strlen($comment_to), function ($q) use ($comment_to) {
-                    return $q->whereHas('link', function ($q) use ($comment_to) {
-                        $q->whereRaw('diff_comment <= ?', $comment_to);
-                    });
+                    return $q->whereRaw('diff_comment <= ?', $comment_to);
                 });
             })
             // last data
             ->when(strlen($last_data_from), function ($q) use ($last_data_from, $last_data_to, $queryLastData) {
                 return $q->when(strlen($last_data_to), function ($q) use ($last_data_from, $last_data_to, $queryLastData) {
-                    return $q->whereHas('link.commentLinks', function ($q) use ($last_data_from, $last_data_to, $queryLastData) {
-                        $q->whereRaw("$queryLastData >= ?", $last_data_from)
-                            ->whereRaw("$queryLastData <= ?", $last_data_to);
-                    });
+                    return $q->whereRaw("$queryLastData >= ?", $last_data_from)
+                        ->whereRaw("$queryLastData <= ?", $last_data_to);
                 }, function ($q) use ($last_data_from, $queryLastData) {
-                    return $q->whereHas('link.commentLinks', function ($q) use ($last_data_from, $queryLastData) {
-                        $q->whereRaw("$queryLastData >= ?", $last_data_from);
-                    });
+                    return $q->whereRaw("$queryLastData >= ?", $last_data_from);
                 });
             }, function ($q) use ($last_data_to, $queryLastData) {
                 return $q->when(strlen($last_data_to), function ($q) use ($last_data_to, $queryLastData) {
-                    return $q->whereHas('link.commentLinks', function ($q) use ($last_data_to, $queryLastData) {
-                        $q->whereRaw("$queryLastData <= ?", $last_data_to);
-                    });
+                    return $q->whereRaw("$queryLastData <= ?", $last_data_to);
                 });
             })
             // data update count
             ->when(strlen($time_from), function ($q) use ($time_from, $time_to, $query) {
                 return $q->when(strlen($time_to), function ($q) use ($time_from, $time_to, $query) {
-                    return $q->whereHas('link', function ($q) use ($time_from, $time_to, $query) {
-                        $q->whereRaw("$query >= ?", $time_from)
-                            ->whereRaw("$query <= ?", $time_to);
-                    });
+                    return $q->whereRaw("$query >= ?", $time_from)
+                        ->whereRaw("$query <= ?", $time_to);
                 }, function ($q) use ($time_from, $query) {
-                    return $q->whereHas('link', function ($q) use ($time_from, $query) {
-                        $q->whereRaw("$query >= ?", $time_from);
-                    });
+                    return $q->whereRaw("$query >= ?", $time_from);
                 });
             }, function ($q) use ($time_to, $query) {
                 return $q->when(strlen($time_to), function ($q) use ($time_to, $query) {
-                    return $q->whereHas('link', function ($q) use ($time_to, $query) {
-                        $q->whereRaw("$query <= ?", $time_to);
-                    });
+                    return $q->whereRaw("$query <= ?", $time_to);
                 });
             })
             // date
             ->when($from, function ($q) use ($from, $to) {
                 return $q->when($to, function ($q) use ($from, $to) {
-                    return $q->whereHas('link', function ($q) use ($from, $to) {
-                        $q->whereRaw('created_at >= ?', $from)
-                            ->whereRaw('created_at <= ?', $to . ' 23:59:59');
-                    });
+                    return $q->whereRaw('created_at >= ?', $from)
+                        ->whereRaw('created_at <= ?', $to . ' 23:59:59');
                 }, function ($q) use ($from) {
-                    return $q->whereHas('link', function ($q) use ($from) {
-                        $q->whereRaw('created_at >= ?', $from);
-                    });
+                    return $q->whereRaw('created_at >= ?', $from);
                 });
             }, function ($q) use ($to) {
                 return $q->when($to, function ($q) use ($to) {
-                    return $q->whereHas('link', function ($q) use ($to) {
-                        $q->whereRaw('created_at <= ?', $to . ' 23:59:59');
-                    });
+                    return $q->whereRaw('created_at <= ?', $to . ' 23:59:59');
                 });
             })
             // is_scan
             ->when(is_numeric($is_scan) || is_array($is_scan), function ($q) use ($is_scan) {
-                return $q->whereHas('link', function ($q) use ($is_scan) {
-                    switch (true) {
-                        case is_array($is_scan):
-                            $q->whereIn('is_scan', $is_scan);
-                            break;
-                        default:
-                            $q->where('is_scan', $is_scan);
-                            break;
-                    }
-                });
+                switch (true) {
+                    case is_array($is_scan):
+                        $q = $q->whereIn('is_scan', $is_scan);
+                        break;
+                    default:
+                        $q = $q->where('is_scan', $is_scan);
+                        break;
+                }
+                return $q;
             })
             // user
             ->when($user, function ($q) use ($user) {
@@ -225,9 +176,7 @@ class UserLinkController extends Controller
             })
             // note
             ->when($note, function ($q) use ($note) {
-                return $q->whereHas('link', function ($q) use ($note) {
-                    $q->where('note', 'like', "%$note%");
-                });
+                return $q->where('note', 'like', "%$note%");
             })
             // type
             ->when(in_array($type, GlobalConstant::LINK_TYPE), function ($q) use ($type) {
@@ -235,24 +184,22 @@ class UserLinkController extends Controller
             })
             // status
             ->when(strlen($status), function ($q) use ($status) {
-                return $q->whereHas('link', function ($q) use ($status) {
-                    $q->where('status', $status);
-                });
+                return $q->where('status', $status);
             })
             ->orderByDesc('created_at')
             ->get()?->toArray() ?? [];
 
         // dd(DB::getRawQueryLog());
 
-        $userLinks = array_map(function ($value) {
-            return [
-                ...$value,
-                'accounts' => UserLink::with(['link', 'user'])
-                    ->whereHas('link', function ($q) use ($value) {
-                        $q->where('link_or_post_id', $value['link']['link_or_post_id']);
-                    })->get()
-            ];
-        }, $userLinks);
+        // $userLinks = array_map(function ($value) {
+        //     return [
+        //         ...$value,
+        //         'accounts' => UserLink::with(['link', 'user'])
+        //             ->whereHas('link', function ($q) use ($value) {
+        //                 $q->where('link_or_post_id', $value['link']['link_or_post_id']);
+        //             })->get()
+        //     ];
+        // }, $userLinks);
 
         return response()->json([
             'status' => 0,
@@ -514,7 +461,7 @@ class UserLinkController extends Controller
             if (strlen($type) && (int)$type === GlobalConstant::TYPE_FOLLOW && $user_id) {
                 $user = User::firstWhere('id', $user_id);
 
-                $userLinks = UserLink::with(['link', 'user'])
+                $userLinks = Link::with(['user'])
                     ->where('user_id', $user->id)
                     ->where('type', GlobalConstant::TYPE_FOLLOW)
                     ->get();
@@ -527,7 +474,7 @@ class UserLinkController extends Controller
             if (strlen($type) && (int)$type === GlobalConstant::TYPE_SCAN && $user_id) {
                 $user = User::firstWhere('id', $user_id);
 
-                $userLinks = UserLink::with(['link', 'user'])
+                $userLinks = Link::with(['user'])
                     ->where('user_id', $user->id)
                     ->where('type', GlobalConstant::TYPE_SCAN)
                     ->get();
@@ -553,7 +500,6 @@ class UserLinkController extends Controller
                     $dataUpdate[$key] =  $data[$key];
                 }
             }
-            DB::beginTransaction();
             // update created_at
             if (strlen($data['type'] ?? '')) {
                 $dataUpdate['created_at'] = now();
@@ -561,50 +507,8 @@ class UserLinkController extends Controller
             if (!empty($data['is_scan'])) {
                 $dataUpdate['is_on_at'] = now();
             }
-            UserLink::with(['link'])->whereIn('id', $request->ids)->update($dataUpdate);
-            if (strlen($data['is_scan'] ?? '')) {
-                $userLinks = UserLink::with(['link.parentLink'])->whereIn('id', $request->ids)->get();
-                foreach ($userLinks as $userLink) {
-                    $link = $userLink->link;
-                    $linkParent = $link?->parentLink;
-                    switch ((int)$data['is_scan']) {
-                            // turn off
-                        case 0:
-                            $countOnRecords = UserLink::where('link_id', $link->id)
-                                ->where('is_scan', GlobalConstant::IS_ON)
-                                ->get()
-                                ->count();
-                            if (!$countOnRecords)
-                                $link->update([
-                                    'is_scan' => GlobalConstant::IS_OFF
-                                ]);
-                            // check for parent link
-                            if ($linkParent) {
-                                $countOnRecords = UserLink::where('link_id', $linkParent->id)
-                                    ->where('is_scan', GlobalConstant::IS_ON)
-                                    ->get()
-                                    ->count();
-                                if (!$countOnRecords)
-                                    $linkParent->update([
-                                        'is_scan' => GlobalConstant::IS_OFF
-                                    ]);
-                            }
-                            break;
-                            // turn on
-                        case 1:
-                            $link->update([
-                                'is_scan' => GlobalConstant::IS_ON
-                            ]);
-                            // check for parent link
-                            if ($linkParent) {
-                                $linkParent->update([
-                                    'is_scan' => GlobalConstant::IS_ON
-                                ]);
-                            }
-                            break;
-                    }
-                }
-            }
+            DB::beginTransaction();
+            Link::whereIn('id', $request->ids)->update($dataUpdate);
             DB::commit();
 
             return response()->json([
@@ -625,48 +529,7 @@ class UserLinkController extends Controller
         try {
             DB::beginTransaction();
 
-            $list_link_ids = Link::all();
-
-            $list_link_of_user = Link::with(['userLinks'])
-                ->get()
-                ->pluck('link_or_post_id')
-                ->toArray();
-
-            foreach ($list_link_ids as $link) {
-                if (in_array($link->parent_link_or_post_id, $list_link_of_user)) {
-                    $list_link_of_user = array_diff($list_link_of_user, [$link->parent_link_or_post_id]);
-                    $list_link_of_user[] =  $link->link_or_post_id;
-                }
-            }
-
-            $list_link_of_user = array_unique($list_link_of_user);
-
-            $userLinks = UserLink::with(['link.childLinks.userLinks'])->whereIn('id', $request->ids)->get();
-
-
-            foreach ($userLinks as $userLink) {
-                $link = $userLink->link;
-                $list_id = [$link->id];
-                $childLinks = $link?->childLinks;
-                if ($childLinks) {
-                    foreach ($childLinks as $childLink) {
-                        if (!in_array($childLink->id, $list_id)) {
-                            $list_id[] = $childLink->id;
-                        }
-                    }
-                }
-                $countOnRecords = UserLink::whereIn('link_id', $list_id)
-                    ->where('is_scan', GlobalConstant::IS_ON)
-                    ->where('id', '!=', $userLink->id)
-                    ->get()
-                    ->count();
-                if (!$countOnRecords) {
-                    $link->update([
-                        'is_scan' => GlobalConstant::IS_OFF
-                    ]);
-                }
-            }
-            UserLink::whereIn('id', $request->ids)->delete();
+            Link::whereIn('id', $request->ids)->delete();
 
             DB::commit();
             return response()->json([

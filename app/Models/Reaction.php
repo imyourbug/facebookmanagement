@@ -22,6 +22,7 @@ class Reaction extends Model
         'content',
         'name_facebook',
         'note',
+        'link_or_post_id',
     ];
 
     public function getUid()
@@ -34,5 +35,8 @@ class Reaction extends Model
         return $this->hasMany(LinkReaction::class, 'reaction_id', 'id');
     }
 
-    
+    public function link()
+    {
+        return $this->hasOne(Link::class, 'link_or_post_id', 'link_or_post_id');
+    }
 }

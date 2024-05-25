@@ -4,6 +4,9 @@ namespace App\Constant;
 
 class GlobalConstant
 {
+    public const ACTIVE = 1;
+    public const IN_ACTIVE = 0;
+
     public const TYPE_SCAN = 0;
     public const TYPE_FOLLOW = 1;
     public const TYPE_RUNNING = 2;

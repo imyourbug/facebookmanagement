@@ -37,7 +37,7 @@ $(document).ready(function () {
         columns: [
             {
                 data: function (d) {
-                    return `<input class="btn-select" type="checkbox" data-id="${d.reaction.id}" />`;
+                    return `<input class="btn-select" type="checkbox" data-id="${d.id}" />`;
                 }
             },
             {
@@ -52,12 +52,12 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return d.reaction.uid;
+                    return d.uid;
                 },
             },
             {
                 data: function (d) {
-                    return d.reaction.created_at;
+                    return d.created_at;
                 },
             },
             {
@@ -68,61 +68,61 @@ $(document).ready(function () {
 
             {
                 data: function (d) {
-                    return `<p class="show-title tool-tip" data-type='content' data-content="${d.reaction.content}" data-link_or_post_id="${d.link.link_or_post_id}" data-id="${d.reaction.id}">${d.reaction ? (d.reaction.title || '') : ''}
+                    return `<p class="show-title tool-tip" data-type='content' data-content="${d.content}" data-link_or_post_id="${d.link.link_or_post_id}" data-id="${d.id}">${d ? (d.title || '') : ''}
                     <div style="display:none;width: max-content;
                                 background-color: black;
                                 color: #fff;
                                 border-radius: 6px;
                                 padding: 5px 10px;
                                 position: absolute;
-                                z-index: 1;" class="tooltip-title tooltip-title-${d.reaction.id}">
+                                z-index: 1;" class="tooltip-title tooltip-title-${d.id}">
                     </div></p>`;
                 },
             },
             {
                 data: function (d) {
-                    return `<p class="show-name_facebook tool-tip" data-id="${d.reaction.id}" data-value="${d.reaction.uid}" data-uid="${d.reaction.uid}">${d.reaction ? (d.reaction.name_facebook || '') : ''}
+                    return `<p class="show-name_facebook tool-tip" data-id="${d.id}" data-value="${d.uid}" data-uid="${d.uid}">${d ? (d.name_facebook || '') : ''}
                     <div style="display:none;width: max-content;
                                 background-color: black;
                                 color: #fff;
                                 border-radius: 6px;
                                 padding: 5px 10px;
                                 position: absolute;
-                                z-index: 1;" class="tooltip-name_facebook tooltip-name_facebook-${d.reaction.id}">
+                                z-index: 1;" class="tooltip-name_facebook tooltip-name_facebook-${d.id}">
                     </div></p>`;
                 },
             },
             // {
             //     data: function (d) {
-            //         return `<p class="show-uid tool-tip" data-id="${d.reaction.id}" data-value="${d.reaction.uid}" data-uid="${d.reaction.uid}">${d.reaction.uid}
+            //         return `<p class="show-uid tool-tip" data-id="${d.id}" data-value="${d.uid}" data-uid="${d.uid}">${d.uid}
             //         <div style="display:none;width: max-content;
             //                     background-color: black;
             //                     color: #fff;
             //                     border-radius: 6px;
             //                     padding: 5px 10px;
             //                     position: absolute;
-            //                     z-index: 1;" class="tooltip-uid tooltip-uid-${d.reaction.id}">
+            //                     z-index: 1;" class="tooltip-uid tooltip-uid-${d.id}">
             //         </div></p>`;
             //     },
             // },
             {
                 data: function (d) {
-                    return d.reaction ? d.reaction.reaction : '';
+                    return d.reaction || '';
                 },
             },
             {
                 data: function (d) {
-                    return displayPhoneByRole(d.reaction.get_uid ? d.reaction.get_uid.phone : '');
+                    return displayPhoneByRole(d.get_uid ? d.get_uid.phone : '');
                 },
             },
             {
                 data: function (d) {
-                    return d.reaction.note;
+                    return d.note;
                 },
             },
             {
                 data: function (d) {
-                    return `<button data-id="${d.reaction.id}" class="btn btn-danger btn-sm btn-delete">
+                    return `<button data-id="${d.id}" class="btn btn-danger btn-sm btn-delete">
                                 <i class="fas fa-trash"></i>
                             </button>`;
                 },
@@ -155,11 +155,11 @@ function getQueryUrlWithParams() {
     return query;
 }
 
-function getListAccountNameByUserLink(userLinks = []) {
+function getListAccountNameByUserLink(accounts = []) {
     let rs = [];
-    userLinks.forEach((e) => {
-        if (!rs.includes(e.user.email || e.user.name)) {
-            rs.push(e.user.email || e.user.name);
+    accounts.forEach((e) => {
+        if (!rs.includes(e)) {
+            rs.push(e);
         }
     });
 
@@ -230,7 +230,7 @@ $(document).on("click", ".btn-filter", async function () {
         success: function (response) {
             if (response.status == 0) {
                 response.reactions.forEach((e) => {
-                    tempAllRecord.push(e.reaction.id);
+                    tempAllRecord.push(e.id);
                 });
             }
         }
@@ -257,7 +257,8 @@ $(document).on("click", ".btn-refresh", function () {
 
     // reload table
     dataTable.ajax
-        .url(`/api/reactions/getAll?today=${new Date().toJSON().slice(0, 10)}`)
+        .url(`/api/reactions/getAll`)
+        // .url(`/api/reactions/getAll?today=${new Date().toJSON().slice(0, 10)}`)
         .load();
 
     // reload count and record
@@ -369,7 +370,7 @@ $(document).on("click", ".btn-copy-uid", function () {
                 let uids = [];
                 let reactions = ids.length ? response.reactions.slice(0, $('#number').val()) : response.reactions;
                 reactions.forEach((e) => {
-                    uids.push(e.reaction.uid);
+                    uids.push(e.uid);
                 });
                 navigator.clipboard.writeText(uids.join(','));
                 closeModal('modalCopyUid');

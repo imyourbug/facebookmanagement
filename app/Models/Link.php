@@ -5,10 +5,11 @@ namespace App\Models;
 use App\Constant\GlobalConstant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Link extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $casts = [
         'created_at' => 'datetime:H:i:s Y/m/d',
@@ -34,28 +35,44 @@ class Link extends Model
         'diff_data',
         'reaction',
         'diff_reaction',
+        'user_id',
+        'active',
     ];
+
+    public function user()
+    {
+        return $this->hasOne(User::class, 'id', 'user_id');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(
+            Comment::class,
+            'link_or_post_id',
+            'link_or_post_id'
+        );
+    }
 
     public function userLinks()
     {
-        return $this->hasMany(UserLink::class, 'link_id', 'id')->orderBy('is_on_at');
+        return $this->hasMany(Link::class, 'parent_link_or_post_id', 'link_or_post_id')->orderBy('is_on_at');
     }
 
     public function userLinksWithTrashed()
     {
-        return $this->hasMany(UserLink::class, 'link_id', 'id')->withTrashed()->orderBy('is_on_at');
+        return $this->hasMany(Link::class, 'parent_link_or_post_id', 'link_or_post_id')->withTrashed()->orderBy('is_on_at');
     }
 
     public function isOnUserLinks()
     {
-        return $this->hasMany(UserLink::class, 'link_id', 'id')
+        return $this->hasMany(Link::class, 'parent_link_or_post_id', 'link_or_post_id')
             ->where('is_scan', GlobalConstant::IS_ON)
             ->orderBy('is_on_at');
     }
 
     public function isFollowTypeUserLinks()
     {
-        return $this->hasMany(UserLink::class, 'link_id', 'id')
+        return $this->hasMany(Link::class, 'parent_link_or_post_id', 'link_or_post_id')
             ->where('type', GlobalConstant::TYPE_FOLLOW)
             ->orderBy('is_on_at');
     }

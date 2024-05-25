@@ -38,7 +38,7 @@ $(document).ready(function () {
         columns: [
             {
                 data: function (d) {
-                    return `<input class="btn-select" type="checkbox" data-id="${d.comment.id}" />`;
+                    return `<input class="btn-select" type="checkbox" data-id="${d.id}" />`;
                 }
             },
             {
@@ -53,62 +53,62 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return d.comment.uid;
+                    return d.uid;
                 },
             },
             {
                 data: function (d) {
-                    return d.comment.created_at;
+                    return d.created_at;
                 },
             },
             {
                 data: function (d) {
-                    return `<p class="show-title tool-tip" data-type='content' data-content="${d.link.content}" data-link_or_post_id="${d.link.link_or_post_id}" data-id="${d.comment.id}">${d.comment.title}
+                    return `<p class="show-title tool-tip" data-type='content' data-content="${d.link.content}" data-link_or_post_id="${d.link.link_or_post_id}" data-id="${d.id}">${d.title}
                     <div style="display:none;width: max-content;
                                 background-color: black;
                                 color: #fff;
                                 border-radius: 6px;
                                 padding: 5px 10px;
                                 position: absolute;
-                                z-index: 1;" class="tooltip-title tooltip-title-${d.comment.id}">
+                                z-index: 1;" class="tooltip-title tooltip-title-${d.id}">
                     </div></p>`;
                 },
             },
             {
                 data: function (d) {
-                    return `<p class="show-name_facebook tool-tip" data-id="${d.comment.id}" data-value="${d.comment.uid}" data-uid="${d.comment.uid}">${d.comment.name_facebook || ''}
+                    return `<p class="show-name_facebook tool-tip" data-id="${d.id}" data-value="${d.uid}" data-uid="${d.uid}">${d.name_facebook || ''}
                     <div style="display:none;width: max-content;
                                 background-color: black;
                                 color: #fff;
                                 border-radius: 6px;
                                 padding: 5px 10px;
                                 position: absolute;
-                                z-index: 1;" class="tooltip-name_facebook tooltip-name_facebook-${d.comment.id}">
+                                z-index: 1;" class="tooltip-name_facebook tooltip-name_facebook-${d.id}">
                     </div></p>`;
                 },
             },
             {
                 data: function (d) {
-                    return displayPhoneByRole(d.comment.get_uid ? d.comment.get_uid.phone : '', is_display_phone);
+                    return displayPhoneByRole(d.get_uid ? d.get_uid.phone : '', is_display_phone);
                 },
             },
             {
                 data: function (d) {
-                    return d.comment.content;
+                    return d.content;
                 },
             },
             {
                 data: function (d) {
-                    return d.comment.note;
+                    return d.note;
                 },
             },
             {
                 data: function (d) {
-                    return `<button class="btn btn-sm btn-primary btn-edit" data-note="${d.comment.note}"
-                            data-target="#modalEditComment" data-toggle="modal" data-id=${d.comment.id}>
+                    return `<button class="btn btn-sm btn-primary btn-edit" data-note="${d.note}"
+                            data-target="#modalEditComment" data-toggle="modal" data-id=${d.id}>
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button data-id="${d.comment.id}" class="btn btn-danger btn-sm btn-delete">
+                            <button data-id="${d.id}" class="btn btn-danger btn-sm btn-delete">
                                 <i class="fas fa-trash"></i>
                             </button>`;
                 },

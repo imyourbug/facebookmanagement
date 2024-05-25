@@ -51,15 +51,17 @@ class LinkController extends Controller
         DB::enableQueryLog();
 
         $links = Link::with([
-            'commentLinks.comment', 'userLinks.user',
-            'isOnUserLinks.user', 'childLinks.isOnUserLinks.user',
+            'user',
+            'userLinks.user',
+            'parentLink.user',
+            'childLinks.user',
+            'isOnUserLinks.user',
+            'childLinks.isOnUserLinks.user',
             'parentLink.isOnUserLinks.user',
             'parentLink.childLinks.isOnUserLinks.user'
         ])
             // default just get all link has at least an userLink record with is_scan = ON
-            ->whereHas('userLinks', function ($q) {
-                $q->where('is_scan', GlobalConstant::IS_ON);
-            })
+            ->where('is_scan', GlobalConstant::IS_ON)
             // title
             ->when($title, function ($q) use ($title) {
                 return $q->where('title', 'like', "%$title%");
@@ -181,23 +183,17 @@ class LinkController extends Controller
             ->when(is_numeric($is_scan) || is_array($is_scan), function ($q) use ($is_scan) {
                 switch (true) {
                     case is_array($is_scan):
-                        return $q->whereHas('userLinks', function ($q) use ($is_scan) {
-                            $q->whereIn('is_scan', $is_scan);
-                        });
+                        return  $q->whereIn('is_scan', $is_scan);
                         break;
                     default:
-                        return $q->whereHas('userLinks', function ($q) use ($is_scan) {
-                            $q->where('is_scan', $is_scan);
-                        });
+                        return  $q->where('is_scan', $is_scan);
                         break;
                 }
             })
             // user
             ->when($user, function ($q) use ($user) {
-                return $q->whereHas('userLinks', function ($q) use ($user) {
-                    $q->where('user_id', $user)
-                        ->where('is_scan',  GlobalConstant::IS_ON);
-                });
+                return $q->where('user_id', $user)
+                    ->where('is_scan',  GlobalConstant::IS_ON);
             })
             // note
             ->when($note, function ($q) use ($note) {
@@ -227,13 +223,13 @@ class LinkController extends Controller
             }
             $account = [];
             foreach ($value['is_on_user_links'] as $is_on_user_link) {
-                $account[$is_on_user_link['id']] = $is_on_user_link;
+                $account[] = $is_on_user_link['user'];
             }
-            foreach ($value['child_links'] as $childLink) {
-                foreach ($childLink['is_on_user_links']  as $is_on_user_link) {
-                    $account[$is_on_user_link['id']] = $is_on_user_link;
-                }
-            }
+            // foreach ($value['child_links'] as $childLink) {
+            //     foreach ($childLink['is_on_user_links']  as $is_on_user_link) {
+            //         $account[$is_on_user_link['id']] = $is_on_user_link;
+            //     }
+            // }
             $result_links[$value['link_or_post_id']] = [
                 ...$value,
                 'accounts' => collect($account)->values()
@@ -768,19 +764,7 @@ class LinkController extends Controller
             if (strlen($value['parent_link_or_post_id'] ?? '')) {
                 $value = $value['parent_link'];
             }
-            if (
-                !empty($value['is_on_user_links'])
-                ||
-                !empty($value['is_follow_type_user_links'])
-                ||
-                (
-                    empty($value['is_on_user_links'])
-                    && empty($value['is_follow_type_user_links'])
-                    && !empty($value['child_links'])
-                )
-            ) {
-                $result_links[$value['link_or_post_id']] = $value;
-            }
+            $result_links[$value['link_or_post_id']] = $value;
         }
 
         return response()->json([

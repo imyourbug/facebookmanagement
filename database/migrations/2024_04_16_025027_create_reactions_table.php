@@ -18,6 +18,7 @@ return new class extends Migration
             $table->longText('phone')->nullable();
             $table->longText('reaction')->nullable();
             $table->longText('note')->nullable();
+            $table->string('link_or_post_id')->nullable();
             $table->timestamps();
         });
     }

@@ -19,7 +19,6 @@ class LinkScanController extends Controller
     {
         try {
             $data = $request->validate([
-                'user_id' => 'required|string',
                 'title' => 'nullable|string',
                 'time' => 'nullable|string',
                 'content' => 'nullable|string',
@@ -33,11 +32,11 @@ class LinkScanController extends Controller
                 'note' => 'nullable|string',
                 'image' => 'nullable|string',
                 'link_or_post_id' => 'required|string',
-                'user_id' => 'required|string',
+                'user_id' => 'nullable|string',
             ]);
             $user = User::firstWhere('id', $data['user_id']);
 
-            $userLinks = UserLink::with(['link', 'user'])
+            $userLinks = Link::with(['user'])
                 ->where('user_id', $user->id)
                 ->where('type', GlobalConstant::TYPE_SCAN)
                 ->get();
@@ -47,11 +46,9 @@ class LinkScanController extends Controller
             }
 
             // check exist link
-            $userLink = UserLink::with(['link', 'user'])
+            $userLink = Link::with(['user'])
                 ->where('user_id', $user->id)
-                ->whereHas('link', function ($q) use ($data) {
-                    $q->where('link_or_post_id', $data['link_or_post_id']);
-                })
+                ->where('link_or_post_id', $data['link_or_post_id'])
                 ->first();
 
             if ($userLink) {
@@ -76,9 +73,8 @@ class LinkScanController extends Controller
             }
 
             DB::beginTransaction();
-            $link = $this->syncPointToLinkBeforeCreateLink($data);
-            $userLink =  UserLink::withTrashed()
-                ->where('link_id', $link->id,)
+            $userLink =  Link::withTrashed()
+                ->where('link_or_post_id', $data['link_or_post_id'])
                 ->where('user_id', $data['user_id'])
                 ->first();
 
@@ -90,27 +86,25 @@ class LinkScanController extends Controller
                     'title' => $data['title'],
                     'type' => $data['type'],
                     'is_scan' => $data['is_scan'],
+                    'link_or_post_id' => $data['link_or_post_id'],
                     'is_on_at' => now(),
                     'created_at' => now(),
                 ]);
             } else {
-                UserLink::create(
+                Link::create(
                     [
+                        'link_or_post_id' => $data['link_or_post_id'],
                         'user_id' => $data['user_id'],
-                        'link_id' => $link->id,
                         'is_scan' => $data['is_scan'],
                         'title' => $data['title'] ?? '',
                         'type' => $data['type'],
-                        'note' => $link->note ?? '',
-                        'is_on_at' => now(),
+                        'note' => $data['note'] ?? '',
+                        'is_on_at' => now()->format('Y-m-d H:i:s'),
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]
                 );
             }
-            $link->update([
-                'is_scan' => $data['is_scan']
-            ]);
 
             Toastr::success('Thêm thành công', 'Thông báo');
             DB::commit();
@@ -139,20 +133,10 @@ class LinkScanController extends Controller
                 'note' => 'nullable|string',
                 'image' => 'nullable|string',
                 'link_or_post_id' => 'required|string',
-                'user_id' => 'required|string',
             ]);
             unset($data['id']);
             DB::beginTransaction();
-            $link = Link::firstWhere('id', $request->input('id'));
-            if ($link) {
-                $link->update($data);
-                UserLink::where('user_id', $data['user_id'])
-                    ->where('link_id', $link->id)
-                    ->update([
-                        'title' => $link->title,
-                        'note' => $link->note,
-                    ]);
-            }
+            Link::firstWhere('id', $request->input('id'))->update($data);
         } catch (Throwable $e) {
             DB::rollBack();
             Toastr::error($e->getMessage(), __('title.toastr.fail'));
@@ -176,9 +160,7 @@ class LinkScanController extends Controller
         return view('admin.linkscan.edit', [
             'title' => 'Chi tiết link quét',
             'link' => Link::firstWhere('id', $id),
-            'userLink' => UserLink::where('link_id', $id)
-                ->where('user_id', $request->user_id)
-                ->first(),
+            'userLink' => Link::firstWhere('id', $id),
         ]);
     }
 

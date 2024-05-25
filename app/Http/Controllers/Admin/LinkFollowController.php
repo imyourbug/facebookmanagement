@@ -37,7 +37,7 @@ class LinkFollowController extends Controller
             ]);
             $user = User::firstWhere('id', $data['user_id']);
 
-            $userLinks = UserLink::with(['link', 'user'])
+            $userLinks = Link::with(['user'])
                 ->where('user_id', $user->id)
                 ->where('type', GlobalConstant::TYPE_FOLLOW)
                 ->get();
@@ -45,11 +45,9 @@ class LinkFollowController extends Controller
                 throw new Exception('Đã quá giới hạn link được thêm');
             }
 
-            $userLink = UserLink::with(['link', 'user'])
+            $userLink = Link::with(['user'])
                 ->where('user_id', $user->id)
-                ->whereHas('link', function ($q) use ($data) {
-                    $q->where('link_or_post_id', $data['link_or_post_id']);
-                })
+                ->where('link_or_post_id', $data['link_or_post_id'])
                 ->first();
 
             if ($userLink) {
@@ -72,9 +70,8 @@ class LinkFollowController extends Controller
             }
 
             DB::beginTransaction();
-            $link = $this->syncPointToLinkBeforeCreateLink($data);
-            $userLink =  UserLink::withTrashed()
-                ->where('link_id', $link->id,)
+            $userLink =  Link::withTrashed()
+                ->where('link_or_post_id', $data['link_or_post_id'])
                 ->where('user_id', $data['user_id'])
                 ->first();
 
@@ -90,15 +87,15 @@ class LinkFollowController extends Controller
                     'is_on_at' => now(),
                 ]);
             } else {
-                DB::table('user_links')->insert(
+                Link::create(
                     [
+                        'link_or_post_id' => $data['link_or_post_id'],
                         'user_id' => $data['user_id'],
-                        'link_id' => $link->id,
                         'is_scan' => $data['is_scan'],
                         'title' => $data['title'],
                         'type' => $data['type'],
-                        'note' => $link->note,
-                        'is_on_at' => now(),
+                        'note' => $data['note'] ?? '',
+                        'is_on_at' => now()->format('Y-m-d H:i:s'),
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]
@@ -136,16 +133,7 @@ class LinkFollowController extends Controller
             ]);
             unset($data['id']);
             DB::beginTransaction();
-            $link = Link::firstWhere('id', $request->input('id'));
-            if ($link) {
-                $link->update($data);
-                UserLink::where('user_id', $data['user_id'])
-                    ->where('link_id', $link->id)
-                    ->update([
-                        'title' => $link->title,
-                        'note' => $link->note,
-                    ]);
-            }
+            Link::firstWhere('id', $request->input('id'))->update($data);
         } catch (Throwable $e) {
             DB::rollBack();
             Toastr::error($e->getMessage(), __('title.toastr.fail'));
