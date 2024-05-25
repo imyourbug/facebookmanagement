@@ -360,9 +360,9 @@ $(document).on("click", ".btn-follow", function () {
         let user_id = $('#user_id').val();
         $.ajax({
             type: "POST",
-            url: `/api/userlinks/update`,
+            url: `/api/userlinks/updateLinkByListLinkId`,
             data: {
-                id,
+                ids: [id],
                 type: 1,
                 is_scan: 0,
                 user_id

@@ -327,7 +327,7 @@ $(document).on("click", ".btn-scan", function () {
         let user_id = $('#user_id').val();
         $.ajax({
             type: "POST",
-            url: `/api/userlinks/update`,
+            url: `/api/userlinks/updateLinkByListLinkId`,
             data: {
                 id,
                 type: 0,

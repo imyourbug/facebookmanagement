@@ -747,9 +747,14 @@ class LinkController extends Controller
     public function index()
     {
         $links = Link::with([
-            'parentLink',
+            'childLinks',
             'userLinks',
             'isOnUserLinks',
+            'isFollowTypeUserLinks',
+            'parentLink.childLinks',
+            'parentLink.userLinks',
+            'parentLink.isOnUserLinks',
+            'parentLink.isFollowTypeUserLinks',
         ])
             // default just get all link has at least an userLink record with is_scan = ON
             // ->whereHas('userLinks', function ($q) {
@@ -763,7 +768,17 @@ class LinkController extends Controller
             if (strlen($value['parent_link_or_post_id'] ?? '')) {
                 $value = $value['parent_link'];
             }
-            if (((int) ($value['is_scan'] ?? 0) === GlobalConstant::IS_ON)) {
+            if (
+                !empty($value['is_on_user_links'])
+                ||
+                !empty($value['is_follow_type_user_links'])
+                ||
+                (
+                    empty($value['is_on_user_links'])
+                    && empty($value['is_follow_type_user_links'])
+                    && !empty($value['child_links'])
+                )
+            ) {
                 $result_links[$value['link_or_post_id']] = $value;
             }
         }
@@ -779,8 +794,13 @@ class LinkController extends Controller
         return response()->json([
             'status' => 0,
             'links' => Link::with([
-                'parentLink',
-                'isOnUserLinks'
+                'parentLink.childLinks',
+                'parentLink.userLinks',
+                'parentLink.isFollowTypeUserLinks',
+                'childLinks',
+                'userLinks',
+                'isOnUserLinks',
+                'isFollowTypeUserLinks',
             ])
                 ->get(),
         ]);

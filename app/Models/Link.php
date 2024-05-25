@@ -53,6 +53,13 @@ class Link extends Model
             ->orderBy('is_on_at');
     }
 
+    public function isFollowTypeUserLinks()
+    {
+        return $this->hasMany(UserLink::class, 'link_id', 'id')
+            ->where('type', GlobalConstant::TYPE_FOLLOW)
+            ->orderBy('is_on_at');
+    }
+
     public function commentLinks()
     {
         return $this->hasMany(LinkComment::class, 'link_id', 'id')->orderByDesc('created_at');
