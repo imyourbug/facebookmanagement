@@ -28,13 +28,15 @@
                     </div>
                     <div class="card-body" style="display: block;padding: 10px !important;">
                         <div class="row">
-                            <div class="col-lg-6 col-sm-12">
+                            <div class="col-lg-12 col-sm-12">
                                 <div class="form-group">
                                     <label for="menu">Tên bài <span class="required">(*)</span></label>
-                                    <input type="text" class="form-control" name="title" value="{{ old('title') }}"
-                                        placeholder="Nhập tên bài">
+                                    <textarea class="form-control" placeholder="Nhập tên bài" name="title" id="" cols="30" rows="5">{{ old('title') }}</textarea>
                                 </div>
                             </div>
+
+                        </div>
+                        <div class="row">
                             <div class="col-lg-6 col-sm-12">
                                 <div class="form-group">
                                     <label for="menu">Link hoặc PostID <span class="required">(*)</span></label>
@@ -42,8 +44,6 @@
                                         value="{{ old('link_or_post_id') }}" placeholder="Nhập link hoặc post ID">
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
                             <div class="col-lg-6 col-sm-12">
                                 <div class="form-group">
                                     <label for="menu">Người dùng <span class="required">(*)</span></label>

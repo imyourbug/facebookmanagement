@@ -347,12 +347,6 @@ class LinkController extends Controller
                 $value['created_at'] = now();
                 $value['updated_at'] = now();
                 Link::create($value);
-                $link_or_post_id = $value['parent_link_or_post_id'] ?? '';
-                if (strlen($link_or_post_id)) {
-                    unset($value['link_or_post_id']);
-                    $value['parent_link_or_post_id'] = '';
-                    Link::updateOrCreate(['link_or_post_id' => $link_or_post_id], $value);
-                }
                 $count++;
             }
             $all = count($data['links']);
@@ -486,7 +480,13 @@ class LinkController extends Controller
                 }
                 //
                 unset($value['link_or_post_id']);
+                $link_or_post_id = $value['parent_link_or_post_id'] ?? '';
                 $link->update($value);
+                if (strlen($link_or_post_id)) {
+                    $value['parent_link_or_post_id'] = '';
+                    // dd($value);
+                    Link::updateOrCreate(['link_or_post_id' => $link_or_post_id], $value);
+                }
                 $list_link_ids = [$link->id];
                 if ($childLinks) {
                     foreach ($childLinks as $childLink) {
