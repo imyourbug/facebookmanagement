@@ -6,7 +6,6 @@ use App\Constant\GlobalConstant;
 use App\Http\Controllers\Controller;
 use App\Models\Link;
 use App\Models\User;
-use App\Models\UserLink;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Throwable;
@@ -45,27 +44,11 @@ class LinkRunningController extends Controller
             $link = Link::with(['childLinks.userLinks'])->firstWhere('id', $request->input('id'));
             if ($link) {
                 $link->update($data);
-                // UserLink::where('user_id', $data['user_id'])
-                // ->where('link_id', $link->id)
-                //     ->update([
-                //         'title' => $link->title,
-                //         'note' => $link->note,
-                //     ]);
                 $childLinks = $link?->childLinks ?? [];
                 unset($data['link_or_post_id']);
-                $list_link_ids = [$link->id];
                 foreach ($childLinks as $childLink) {
                     $childLink->update($data);
-                    if (!in_array($childLink->id, $list_link_ids)) {
-                        $list_link_ids[] = $childLink->id;
-                    }
                 }
-                UserLink::with(['link'])->whereHas('link', function ($q) use ($list_link_ids) {
-                    $q->whereIn('link_id', $list_link_ids);
-                })
-                    ->update([
-                        'title' => $data['title'] ?? '',
-                    ]);
             }
 
             DB::commit();

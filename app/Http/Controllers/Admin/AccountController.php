@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Constant\GlobalConstant;
 use App\Http\Controllers\Controller;
+use App\Models\Link;
 use App\Models\Setting;
 use App\Models\User;
-use App\Models\UserLink;
 use App\Models\UserRole;
 use Exception;
 use Illuminate\Http\Request;
@@ -106,7 +106,7 @@ class AccountController extends Controller
             $user = User::firstWhere('id', $data['user_id']);
 
             // check limit scan
-            $userLinks = UserLink::with(['link', 'user'])
+            $userLinks = Link::with(['user'])
                 ->where('user_id', $user->id)
                 ->where('type', GlobalConstant::TYPE_SCAN)
                 ->orderBy('created_at');
@@ -116,7 +116,7 @@ class AccountController extends Controller
             }
 
             // check limit follow
-            $userLinks = UserLink::with(['link', 'user'])
+            $userLinks = Link::with(['user'])
                 ->where('user_id', $user->id)
                 ->where('type', GlobalConstant::TYPE_FOLLOW)
                 ->orderBy('created_at');

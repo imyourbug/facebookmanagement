@@ -5,43 +5,10 @@ namespace App\Http\Controllers\Users;
 use App\Constant\GlobalConstant;
 use App\Http\Controllers\Controller;
 use App\Models\Link;
-use App\Models\UserLink;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Throwable;
 
 class LinkController extends Controller
 {
-    public function getAll(Request $request)
-    {
-        $user_id = $request->user_id;
-        $link_id = $request->link_id;
-        $is_scan = $request->is_scan;
-        $type = $request->type;
-
-        return response()->json([
-            'status' => 0,
-            'links' => UserLink::with(['link', 'user'])
-                ->when($user_id, function ($q) use ($user_id) {
-                    return $q->where('user_id', $user_id);
-                })
-                ->when($link_id, function ($q) use ($link_id) {
-                    return $q->where('link_id', $link_id);
-                })
-                ->when($is_scan, function ($q) use ($is_scan) {
-                    return $q->whereHas('link', function ($q) use ($is_scan) {
-                        $q->whereIn('is_scan', $is_scan);
-                    });
-                })
-                ->when(in_array($type, GlobalConstant::LINK_STATUS), function ($q) use ($type) {
-                    return $q->whereHas('link', function ($q) use ($type) {
-                        $q->where('type', $type);
-                    });
-                })
-                ->get()
-        ]);
-    }
-
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -74,17 +41,6 @@ class LinkController extends Controller
         return response()->json([
             'status' => 0,
         ]);
-    }
-
-    public function getLinkScanIsOn(Request $request)
-    {
-        $user_id = $request->user_id;
-        $link_id = $request->link_id;
-
-        return UserLink::with(['link', 'user'])
-            ->where('user_id', $user_id)
-            ->where('link_id', $link_id)
-            ->get();
     }
 
     public function update(Request $request)

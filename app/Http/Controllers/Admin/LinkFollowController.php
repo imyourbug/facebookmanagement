@@ -6,7 +6,6 @@ use App\Constant\GlobalConstant;
 use App\Http\Controllers\Controller;
 use App\Models\Link;
 use App\Models\User;
-use App\Models\UserLink;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -85,6 +84,14 @@ class LinkFollowController extends Controller
                     'is_scan' => $data['is_scan'],
                     'created_at' => now(),
                     'is_on_at' => now(),
+                    'comment' => 0,
+                    'diff_comment' => 0,
+                    'data' => 0,
+                    'diff_data' => 0,
+                    'reaction' => 0,
+                    'diff_reaction' => 0,
+                    'note' => '',
+                    'delay' => $user->delay ?? 0,
                 ]);
             } else {
                 Link::create(
@@ -98,6 +105,7 @@ class LinkFollowController extends Controller
                         'is_on_at' => now()->format('Y-m-d H:i:s'),
                         'created_at' => now(),
                         'updated_at' => now(),
+                        'delay' => $user->delay ?? 0,
                     ]
                 );
             }
@@ -148,7 +156,7 @@ class LinkFollowController extends Controller
     {
         return view('admin.linkfollow.list', [
             'title' => 'Danh sách link theo dõi',
-            'users' => User::with(['userLinks'])->where('role', GlobalConstant::ROLE_USER)->get()
+            'users' => User::where('role', GlobalConstant::ROLE_USER)->get()
         ]);
     }
 
@@ -156,10 +164,7 @@ class LinkFollowController extends Controller
     {
         return view('admin.linkfollow.edit', [
             'title' => 'Chi tiết link theo dõi',
-            'link' => Link::firstWhere('id', $id),
-            'userLink' => UserLink::where('link_id', $id)
-                ->where('user_id', $request->user_id)
-                ->first(),
+            'link' => Link::with(['user'])->firstWhere('id', $id),
         ]);
     }
 

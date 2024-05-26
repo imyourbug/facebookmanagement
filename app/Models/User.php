@@ -49,9 +49,9 @@ class User extends Authenticatable
         'created_at' => 'date:d-m-Y',
     ];
 
-    public function userLinks()
+    public function link()
     {
-        return $this->hasMany(UserLink::class, 'user_id', 'id');
+        return $this->hasOne(Link::class, 'user_id', 'id');
     }
 
     public function userRoles()

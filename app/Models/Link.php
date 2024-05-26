@@ -37,6 +37,7 @@ class Link extends Model
         'diff_reaction',
         'user_id',
         'active',
+        'is_on_at',
     ];
 
     public function user()
@@ -75,11 +76,6 @@ class Link extends Model
         return $this->hasMany(Link::class, 'parent_link_or_post_id', 'link_or_post_id')
             ->where('type', GlobalConstant::TYPE_FOLLOW)
             ->orderBy('is_on_at');
-    }
-
-    public function commentLinks()
-    {
-        return $this->hasMany(LinkComment::class, 'link_id', 'id')->orderByDesc('created_at');
     }
 
     public function reactionLinks()

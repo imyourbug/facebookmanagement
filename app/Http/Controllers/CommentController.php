@@ -6,7 +6,6 @@ use App\Constant\GlobalConstant;
 use App\Http\Controllers\Controller;
 use App\Models\Comment;
 use App\Models\Link;
-use App\Models\LinkComment;
 use App\Models\LinkHistory;
 use App\Models\Uid;
 use Illuminate\Http\Request;
@@ -63,7 +62,7 @@ class CommentController extends Controller
             })
             ->when($to, function ($q) use ($to) {
                 return $q->whereHas('comment', function ($q) use ($to) {
-                    $q->where('created_at', '<=', $to);
+                    $q->where('created_at', '<=', $to . ' 23:59:59');
                 });
             })
             ->when($from, function ($q) use ($from) {
@@ -205,7 +204,7 @@ class CommentController extends Controller
             // })
             // to
             ->when($to, function ($q) use ($to) {
-                return $q->where('created_at', '<=', $to);
+                return $q->where('created_at', '<=', $to . ' 23:59:59');
             })
             // from
             ->when($from, function ($q) use ($from) {

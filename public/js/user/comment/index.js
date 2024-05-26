@@ -43,12 +43,12 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return d.link.link_or_post_id;
+                    return d.link ? d.link.link_or_post_id : '';
                 },
             },
             {
                 data: function (d) {
-                    return d.link.content;
+                    return d.link ? d.link.content : '';
                 },
             },
             {
@@ -63,7 +63,7 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return `<p class="show-title tool-tip" data-type='content' data-content="${d.link.content}" data-link_or_post_id="${d.link.link_or_post_id}" data-id="${d.id}">${d.title}
+                    return `<p class="show-title tool-tip" data-type='content' data-content="${d.link ? d.link.content : ''}" data-link_or_post_id="${d.link ? d.link.link_or_post_id : ''}" data-id="${d.id}">${d.title}
                     <div style="display:none;width: max-content;
                                 background-color: black;
                                 color: #fff;
@@ -235,7 +235,7 @@ $(document).on("click", ".btn-filter", async function () {
         success: function (response) {
             if (response.status == 0) {
                 response.comments.forEach((e) => {
-                    tempAllRecord.push(e.comment.id);
+                    tempAllRecord.push(e.id);
                 });
             }
         }

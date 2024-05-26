@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Link;
 use App\Models\LinkHistory;
 use App\Models\User;
-use App\Models\UserLink;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -52,6 +51,7 @@ class LinkController extends Controller
 
         $links = Link::with([
             'user',
+            'comments',
             'userLinks.user',
             'parentLink.user',
             'childLinks.user',
@@ -137,18 +137,18 @@ class LinkController extends Controller
             // last data
             ->when(strlen($last_data_from), function ($q) use ($last_data_from, $last_data_to, $queryLastData) {
                 return $q->when(strlen($last_data_to), function ($q) use ($last_data_from, $last_data_to, $queryLastData) {
-                    return $q->whereHas('commentLinks', function ($q) use ($last_data_from, $last_data_to, $queryLastData) {
+                    return $q->whereHas('comments', function ($q) use ($last_data_from, $last_data_to, $queryLastData) {
                         $q->whereRaw("$queryLastData >= ?", $last_data_from)
                             ->whereRaw("$queryLastData <= ?", $last_data_to);
                     });
                 }, function ($q) use ($last_data_from, $queryLastData) {
-                    return $q->whereHas('commentLinks', function ($q) use ($last_data_from, $queryLastData) {
+                    return $q->whereHas('comments', function ($q) use ($last_data_from, $queryLastData) {
                         $q->whereRaw("$queryLastData >= ?", $last_data_from);
                     });
                 });
             }, function ($q) use ($last_data_to, $queryLastData) {
                 return $q->when(strlen($last_data_to), function ($q) use ($last_data_to, $queryLastData) {
-                    return $q->whereHas('commentLinks', function ($q) use ($last_data_to, $queryLastData) {
+                    return $q->whereHas('comments', function ($q) use ($last_data_to, $queryLastData) {
                         $q->whereRaw("$queryLastData <= ?", $last_data_to);
                     });
                 });
@@ -157,13 +157,13 @@ class LinkController extends Controller
             ->when(strlen($time_from), function ($q) use ($time_from, $time_to, $query) {
                 return $q->when(strlen($time_to), function ($q) use ($time_from, $time_to, $query) {
                     return $q->whereRaw("$query >= ?", $time_from)
-                        ->whereRaw("$query <= ?", $time_to);
+                        ->whereRaw("$query <= ?", $time_to . ' 23:59:59');
                 }, function ($q) use ($time_from, $query) {
                     return $q->whereRaw("$query >= ?", $time_from);
                 });
             }, function ($q) use ($time_to, $query) {
                 return $q->when(strlen($time_to), function ($q) use ($time_to, $query) {
-                    return $q->whereRaw("$query <= ?", $time_to);
+                    return $q->whereRaw("$query <= ?", $time_to . ' 23:59:59');
                 });
             })
             // date
@@ -483,44 +483,16 @@ class LinkController extends Controller
                     // dd($value);
                     Link::updateOrCreate(['link_or_post_id' => $link_or_post_id], $value);
                 }
-                $list_link_ids = [$link->id];
+                $value['created_at'] = now();
+                $value['updated_at'] = now();
+                unset($value['parent_link_or_post_id']);
                 if ($childLinks) {
                     foreach ($childLinks as $childLink) {
                         $childLink->update($value);
-                        if (!in_array($childLink->id, $list_link_ids)) {
-                            $list_link_ids[] = $childLink->id;
-                        }
                     }
                 }
-                $title = $value['title'] ?? '';
-                if (strlen($title)) {
-                    UserLink::with(['link'])->whereHas('link', function ($q) use ($list_link_ids) {
-                        $q->whereIn('link_id', $list_link_ids);
-                    })
-                        ->update([
-                            'title' => $title,
-                        ]);
-                }
-                $value['link_id'] = $link->id;
-                $value['created_at'] = now();
-                $value['updated_at'] = now();
-                //
-                $is_scan = $value['is_scan'] ?? '';
-                if (strlen($is_scan)) {
-                    UserLink::where('link_id', $link->id)
-                        ->update([
-                            'is_scan' => $is_scan,
-                            'created_at' => now(),
-                        ]);
-                }
-
                 //
                 $count++;
-
-                // sync point to link before update link
-                // if (!empty($value['parent_link_or_post_id'])) {
-                //     $this->syncPointToLinkBeforeUpdateLink($link->id, $value['parent_link_or_post_id']);
-                // }
             }
 
             DB::commit();
@@ -625,12 +597,22 @@ class LinkController extends Controller
             'user_id' => 'nullable|integer',
         ]);
 
-        $links = Link::whereIn('id', $data['ids']);
+        $links = Link::with(['childLinks'])
+            ->whereIn('id', $data['ids']);
         if ($links->get()->count() === 0) {
             throw new Exception('Link không tồn tại');
         }
         unset($data['ids'], $data['user_id']);
         $links->update($data);
+        unset($data['parent_link_or_post_id']);
+        foreach ($links->get() as $link) {
+            $childLinks = $link?->childLinks;
+            if ($childLinks) {
+                foreach ($childLinks as $childLink) {
+                    $childLink->update($data);
+                }
+            }
+        }
 
         // sync point to link before update link
         // if (!empty($data['parent_link_or_post_id'])) {
@@ -711,21 +693,7 @@ class LinkController extends Controller
     {
         try {
             DB::beginTransaction();
-            $userLinks = UserLink::with(['link'])->whereIn('id', $request->ids)->get();
-            foreach ($userLinks as $userLink) {
-                $link = $userLink->link;
-                $countOnRecords = UserLink::where('link_id', $link->id)
-                    ->where('is_scan', GlobalConstant::IS_ON)
-                    ->where('id', '!=', $userLink->id)
-                    ->get()
-                    ->count();
-                if (!$countOnRecords)
-                    $link->update([
-                        'is_scan' => GlobalConstant::IS_OFF
-                    ]);
-            }
-            UserLink::whereIn('id', $request->ids)->delete();
-
+            Link::whereIn('id', $request->ids)->delete();
             DB::commit();
             return response()->json([
                 'status' => 0,
@@ -742,34 +710,19 @@ class LinkController extends Controller
 
     public function index()
     {
-        $links = Link::with([
-            'childLinks',
-            'userLinks',
-            'isOnUserLinks',
-            'isFollowTypeUserLinks',
-            'parentLink.childLinks',
-            'parentLink.userLinks',
-            'parentLink.isOnUserLinks',
-            'parentLink.isFollowTypeUserLinks',
-        ])
-            // default just get all link has at least an userLink record with is_scan = ON
-            // ->whereHas('userLinks', function ($q) {
-            //     // $q->whereIn('is_scan', GlobalConstant::LINK_TYPE);
-            //     $q->where('is_scan', GlobalConstant::IS_ON);
-            // })
-            ->get()?->toArray() ?? [];
+        $links = Link::get()?->toArray() ?? [];
 
-        $result_links = [];
-        foreach ($links as $value) {
-            if (strlen($value['parent_link_or_post_id'] ?? '')) {
-                $value = $value['parent_link'];
-            }
-            $result_links[$value['link_or_post_id']] = $value;
-        }
+        // $result_links = [];
+        // foreach ($links as $value) {
+        //     if (strlen($value['parent_link_or_post_id'] ?? '')) {
+        //         $value = $value['parent_link'];
+        //     }
+        //     $result_links[$value['link_or_post_id']] = $value;
+        // }
 
         return response()->json([
             'status' => 0,
-            'links' => collect($result_links)->values(),
+            'links' => $links,
         ]);
     }
 

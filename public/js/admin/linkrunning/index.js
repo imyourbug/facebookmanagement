@@ -542,9 +542,9 @@ $(document).on("click", ".btn-reset", function () {
         let id = $(this).data("id");
         $.ajax({
             type: "POST",
-            url: `/api/links/update`,
+            url: `/api/links/updateLinkByListLinkId`,
             data: {
-                id,
+                ids: [id],
                 is_scan: 2,
             },
             success: function (response) {

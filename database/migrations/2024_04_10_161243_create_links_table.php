@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('link_or_post_id');
             $table->string('type')->nullable();
             $table->string('end_cursor')->nullable();
+            // $table->string('is_on_at')->nullable()->default(now()->format('Y-m-d H:i:S'));
             $table->timestamps();
         });
     }

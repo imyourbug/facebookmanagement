@@ -6,7 +6,6 @@ use App\Constant\GlobalConstant;
 use App\Http\Controllers\Controller;
 use App\Models\Link;
 use App\Models\User;
-use App\Models\UserLink;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -83,12 +82,20 @@ class LinkScanController extends Controller
                     $userLink->restore();
                 }
                 $userLink->update([
-                    'title' => $data['title'],
-                    'type' => $data['type'],
-                    'is_scan' => $data['is_scan'],
+                    'title' => $data['title'] ?? '',
+                    'type' => $data['type'] ?? '',
+                    'is_scan' => $data['is_scan'] ?? '',
                     'link_or_post_id' => $data['link_or_post_id'],
                     'is_on_at' => now(),
                     'created_at' => now(),
+                    'comment' => 0,
+                    'diff_comment' => 0,
+                    'data' => 0,
+                    'diff_data' => 0,
+                    'reaction' => 0,
+                    'diff_reaction' => 0,
+                    'note' => '',
+                    'delay' => $user->delay ?? 0,
                 ]);
             } else {
                 Link::create(
@@ -102,6 +109,7 @@ class LinkScanController extends Controller
                         'is_on_at' => now()->format('Y-m-d H:i:s'),
                         'created_at' => now(),
                         'updated_at' => now(),
+                        'delay' => $user->delay ?? 0,
                     ]
                 );
             }
@@ -151,7 +159,7 @@ class LinkScanController extends Controller
     {
         return view('admin.linkscan.list', [
             'title' => 'Danh sách link quét',
-            'users' => User::with(['userLinks'])->where('role', GlobalConstant::ROLE_USER)->get()
+            'users' => User::where('role', GlobalConstant::ROLE_USER)->get()
         ]);
     }
 
@@ -167,7 +175,7 @@ class LinkScanController extends Controller
     public function destroy($id)
     {
         try {
-            UserLink::firstWhere('id', $id)->delete();
+            Link::firstWhere('id', $id)->delete();
 
             return response()->json([
                 'status' => 0,

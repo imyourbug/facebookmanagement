@@ -2,11 +2,8 @@
 
 namespace App\Http\Controllers\Users;
 
-use App\Constant\GlobalConstant;
 use App\Http\Controllers\Controller;
 use App\Models\Comment;
-use App\Models\LinkComment;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Throwable;
 use Toastr;

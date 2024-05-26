@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Users;
 use App\Constant\GlobalConstant;
 use App\Http\Controllers\Controller;
 use App\Models\Link;
-use App\Models\UserLink;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -42,7 +41,7 @@ class LinkFollowController extends Controller
             ]);
             $user = Auth::user();
 
-            $userLinks = UserLink::with(['link', 'user'])
+            $userLinks = Link::with(['user'])
                 ->where('user_id', $user->id)
                 ->where('type', GlobalConstant::TYPE_FOLLOW)
                 ->get();
@@ -50,11 +49,9 @@ class LinkFollowController extends Controller
                 throw new Exception('Đã quá giới hạn link được thêm');
             }
 
-            $userLink = UserLink::with(['link', 'user'])
+            $userLink = Link::with(['user'])
                 ->where('user_id', Auth::id())
-                ->whereHas('link', function ($q) use ($data) {
-                    $q->where('link_or_post_id', $data['link_or_post_id']);
-                })
+                ->where('link_or_post_id', $data['link_or_post_id'])
                 ->first();
 
             if ($userLink) {
@@ -79,9 +76,8 @@ class LinkFollowController extends Controller
             DB::beginTransaction();
 
             $data['user_id'] = $user->id;
-            $link = $this->syncPointToLinkBeforeCreateLink($data);
-            $userLink =  UserLink::withTrashed()
-                ->where('link_id', $link->id)
+            $userLink =  Link::withTrashed()
+                ->where('link_or_post_id', $data['link_or_post_id'])
                 ->where('user_id', $user->id)
                 ->first();
 
@@ -95,19 +91,21 @@ class LinkFollowController extends Controller
                     'is_scan' => $data['is_scan'],
                     'created_at' => now(),
                     'is_on_at' => now(),
+                    'delay' => $user->delay ?? 0,
                 ]);
             } else {
-                DB::table('user_links')->insert(
+                Link::create(
                     [
                         'user_id' => $user->id,
-                        'link_id' => $link->id,
+                        'link_or_post_id' => $data['link_or_post_id'],
                         'is_scan' => $data['is_scan'],
                         'title' => $data['title'],
                         'type' => $data['type'],
-                        'note' => $link->note,
+                        'note' => $data['note'] ?? '',
                         'is_on_at' => now(),
                         'created_at' => now(),
                         'updated_at' => now(),
+                        'delay' => $user->delay ?? 0,
                     ]
                 );
             }
@@ -142,16 +140,8 @@ class LinkFollowController extends Controller
             ]);
             unset($data['id']);
             DB::beginTransaction();
-            $link = Link::firstWhere('id', $request->input('id'));
-            if ($link) {
-                $link->update($data);
-                UserLink::where('user_id', Auth::id())
-                    ->where('link_id', $link->id)
-                    ->update([
-                        'title' => $link->title,
-                        'note' => $link->note,
-                    ]);
-            }
+            Link::firstWhere('id', $request->input('id'))
+                ->update($data);
         } catch (Throwable $e) {
             DB::rollBack();
             Toastr::error($e->getMessage(), __('title.toastr.fail'));
@@ -180,7 +170,7 @@ class LinkFollowController extends Controller
     {
         return view('user.linkfollow.edit', [
             'title' => 'Chi tiết link theo dõi',
-            'link' => Link::firstWhere('id', $id)
+            'link' => Link::with(['user'])->firstWhere('id', $id)
         ]);
     }
 

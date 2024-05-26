@@ -47,7 +47,7 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return d.link.content;
+                    return d.link ? d.link.content : '';
                 },
             },
             {
@@ -67,7 +67,7 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return `<p class="show-title tool-tip" data-type='content' data-content="${d.link.content}" data-link_or_post_id="${d.link.link_or_post_id}" data-id="${d.id}">${d.title}
+                    return `<p class="show-title tool-tip" data-type='content' data-content="${d.link ? d.link.content : ''}" data-link_or_post_id="${d.link ? d.link.link_or_post_id : ''}" data-id="${d.id}">${d.title}
                     <div style="display:none;width: max-content;
                                 background-color: black;
                                 color: #fff;
@@ -322,8 +322,8 @@ $(document).on("click", ".btn-delete", function () {
 function reload() {
     $.ajax({
         type: "GET",
-        url: `/api/comments/getAll?today=${new Date().toJSON().slice(0, 10)}`,
-        // url: `/api/comments/getAll`,
+        // url: `/api/comments/getAll?today=${new Date().toJSON().slice(0, 10)}`,
+        url: `/api/comments/getAll`,
         success: function (response) {
             if (response.status == 0) {
                 $('.count-comment').text(`Bình luận: ${response.comments.length}`);

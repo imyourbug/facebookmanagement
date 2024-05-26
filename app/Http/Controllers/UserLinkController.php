@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Link;
 use App\Models\LinkHistory;
 use App\Models\User;
-use App\Models\UserLink;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -48,7 +47,10 @@ class UserLinkController extends Controller
 
         // DB::enableQueryLog();
 
-        $userLinks = Link::with(['commentLinks.comment', 'user'])
+        $userLinks = Link::with(['comments', 'user'])
+            // default
+            ->whereNotNull('user_id')
+            ->where('user_id', '!=', '')
             // title
             ->when($title, function ($q) use ($title) {
                 return $q->where('title', 'like', "%$title%");
@@ -189,18 +191,6 @@ class UserLinkController extends Controller
             ->orderByDesc('created_at')
             ->get()?->toArray() ?? [];
 
-        // dd(DB::getRawQueryLog());
-
-        // $userLinks = array_map(function ($value) {
-        //     return [
-        //         ...$value,
-        //         'accounts' => UserLink::with(['link', 'user'])
-        //             ->whereHas('link', function ($q) use ($value) {
-        //                 $q->where('link_or_post_id', $value['link']['link_or_post_id']);
-        //             })->get()
-        //     ];
-        // }, $userLinks);
-
         return response()->json([
             'status' => 0,
             'links' => $userLinks,
@@ -317,7 +307,7 @@ class UserLinkController extends Controller
                 //
                 $is_scan = $value['is_scan'] ?? '';
                 if (strlen($is_scan)) {
-                    UserLink::where('link_id', $link->id)
+                    Link::where('link_id', $link->id)
                         ->update([
                             'is_scan' => $is_scan,
                             'created_at' => now(),
@@ -367,7 +357,7 @@ class UserLinkController extends Controller
             // check limit follow
             if (strlen($type) && (int)$type === GlobalConstant::TYPE_FOLLOW) {
                 $user = User::firstWhere('id', $data['user_id']);
-                $userLinks = UserLink::with(['link', 'user'])
+                $userLinks = Link::with(['user'])
                     ->where('user_id', $user->id)
                     ->where('type', GlobalConstant::TYPE_FOLLOW)
                     ->get();
@@ -379,7 +369,7 @@ class UserLinkController extends Controller
             // check limit scan
             if (strlen($type) && (int)$type === GlobalConstant::TYPE_SCAN) {
                 $user = User::firstWhere('id', $data['user_id']);
-                $userLinks = UserLink::with(['link', 'user'])
+                $userLinks = Link::with(['user'])
                     ->where('user_id', $user->id)
                     ->where('type', GlobalConstant::TYPE_SCAN)
                     ->get();
@@ -393,7 +383,7 @@ class UserLinkController extends Controller
             $type = $data['type'] ?? 0;
             $user_id = $data['user_id'] ?? '';
             if (strlen($is_scan) && strlen($user_id)) {
-                $check = UserLink::where('user_id', '!=', $user_id)
+                $check = Link::where('user_id', '!=', $user_id)
                     ->where('id', $data['id'])
                     ->where('is_scan', GlobalConstant::IS_ON)
                     ->get();
@@ -401,7 +391,7 @@ class UserLinkController extends Controller
                 if ($check->count()) {
                     $data['is_scan'] = GlobalConstant::IS_ON;
                 }
-                UserLink::where('user_id', $user_id)
+                Link::where('user_id', $user_id)
                     ->where('id', $data['id'])
                     ->update([
                         'is_scan' => $is_scan,

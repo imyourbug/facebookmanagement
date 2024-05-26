@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Constant\GlobalConstant;
 use App\Models\Link;
-use App\Models\UserLink;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
@@ -28,11 +27,9 @@ class Controller extends BaseController
             // get link
             $link = Link::with([
                 'userLinksWithTrashed.user', 'userLinks.user',
-                'commentLinks.comment', 'reactionLinks.reaction'
+                'reactionLinks.reaction'
             ])->firstWhere('id', $link_id);
             $userLinks =  $link->userLinks ?? [];
-            // $commentLinks =  $link->commentLinks ?? [];
-            // $reactionLinks =  $link->reactionLinks ?? [];
 
             // update to point to parent link
             foreach ($userLinks as $userLink) {
@@ -40,42 +37,15 @@ class Controller extends BaseController
                     'link_id' => $parent_child->id,
                 ]);
             }
-
-            // foreach ($commentLinks as $commentLink) {
-            //     $commentLink->update([
-            //         'link_id' => $parent_child->id,
-            //     ]);
-            // }
-
-            // foreach ($reactionLinks as $reactionLink) {
-            //     $reactionLink->update([
-            //         'link_id' => $parent_child->id,
-            //     ]);
-            // }
         }
     }
 
     public function syncPointToLinkBeforeCreateLink(array $data)
     {
         // get link
-        $link = Link::with(['userLinks'])->firstWhere('link_or_post_id', $data['link_or_post_id']);
-        if (!$link) {
-            $link = Link::create(
-                [
-                    'link_or_post_id' => $data['link_or_post_id'],
-                    'title' =>  $data['title'] ?? '',
-                    'is_scan' => $data['is_scan'] ?? '',
-                    'type' => $data['type'] ?? '',
-                    'delay' => $data['delay'] ?? '',
-                    'status' => $data['status'] ?? '',
-                ]
-            );
-        } else {
-            $userLink =  UserLink::where('link_id', $link->id,)
-                ->where('user_id', $data['user_id'])
-                ->where('is_scan', GlobalConstant::IS_ON)
-                ->first();
-            if (!$userLink) {
+        $link = Link::with(['userLinks'])->withTrashed()->firstWhere('link_or_post_id', $data['link_or_post_id']);
+        if ($link) {
+            if ($link->trashed()) {
                 $link->update([
                     'comment' => 0,
                     'diff_comment' => 0,
@@ -86,6 +56,27 @@ class Controller extends BaseController
                     'note' => '',
                 ]);
             }
+        } else {
+            $link = Link::updateOrCreate(
+                [
+                    'link_or_post_id' => $data['link_or_post_id']
+                ],
+                [
+                    'link_or_post_id' => $data['link_or_post_id'],
+                    'title' =>  $data['title'] ?? '',
+                    'is_scan' => $data['is_scan'] ?? '',
+                    'type' => $data['type'] ?? '',
+                    'delay' => $data['delay'] ?? '',
+                    'status' => $data['status'] ?? '',
+                    'comment' => 0,
+                    'diff_comment' => 0,
+                    'data' => 0,
+                    'diff_data' => 0,
+                    'reaction' => 0,
+                    'diff_reaction' => 0,
+                    'note' => '',
+                ]
+            );
         }
 
         // current

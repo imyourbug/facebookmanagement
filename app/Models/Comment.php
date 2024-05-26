@@ -37,9 +37,4 @@ class Comment extends Model
     {
         return $this->hasOne(Link::class, 'link_or_post_id', 'link_or_post_id');
     }
-
-    public function commentLink()
-    {
-        return $this->hasOne(LinkComment::class, 'comment_id', 'id');
-    }
 }

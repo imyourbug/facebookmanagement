@@ -240,7 +240,7 @@
             let id = $(this).data('id');
             let type = $(this).data('type');
             if (type == 'content') {
-                $('.tooltip-title-' + id).css('display', content ? 'block' : none);
+                $('.tooltip-title-' + id).css('display', content ? 'block' : 'none');
                 $('.tooltip-title-' + id).html(`Nội dung: ${content || ''}`);
             } else {
                 $('.tooltip-title-' + id).css('display', 'block');
