@@ -218,10 +218,10 @@ class LinkController extends Controller
         // dd(DB::getRawQueryLog());
         $result_links = [];
         foreach ($links as $value) {
+            $account[] = $value['user'];
             if (strlen($value['parent_link_or_post_id'] ?? '')) {
                 $value = $value['parent_link'];
             }
-            $account = [];
             foreach ($value['is_on_user_links'] as $is_on_user_link) {
                 $account[] = $is_on_user_link['user'];
             }
@@ -242,6 +242,33 @@ class LinkController extends Controller
             'user' => User::firstWhere('id', $user_id),
         ]);
     }
+
+    // public function getAllUsersByLinkOrPostId(string $link_or_post_id)
+    // {
+    //     $links = Link::with(['user', 'childLinks.user', 'isOnUserLinks.user'])
+    //     ->where('link_or_post_id', $link_or_post_id)
+    //     ->get();
+    //     foreach ($links as $value) {
+    //         if (strlen($value['parent_link_or_post_id'] ?? '')) {
+    //             $value = $value['parent_link'];
+    //         }
+    //         $account = [];
+    //         foreach ($value['is_on_user_links'] as $is_on_user_link) {
+    //             $account[] = $is_on_user_link['user'];
+    //         }
+    //         // foreach ($value['child_links'] as $childLink) {
+    //         //     foreach ($childLink['is_on_user_links']  as $is_on_user_link) {
+    //         //         $account[$is_on_user_link['id']] = $is_on_user_link;
+    //         //     }
+    //         // }
+    //         $result_links[$value['link_or_post_id']] = [
+    //             ...$value,
+    //             'accounts' => collect($account)->values()
+    //         ];
+    //     }
+
+    //     return $links;
+    // }
 
     public function getByType(Request $request)
     {
@@ -347,6 +374,142 @@ class LinkController extends Controller
             }
             $all = count($data['links']);
             DB::commit();
+
+            return response()->json([
+                'status' => 0,
+                'rate' => "$count/$all",
+                'error' => $error
+            ]);
+        } catch (Throwable $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => 1,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function updateLinkByLinkOrPostIdAndUserId(Request $request)
+    {
+        try {
+            $data = $request->validate([
+                'links' => 'required|array',
+                'links.*.link_or_post_id' => 'required|string',
+                'links.*.user_id' => 'required|string',
+                'links.*.parent_link_or_post_id' => 'nullable|string',
+                'links.*.title' => 'nullable|string',
+                'links.*.time' => 'nullable|string',
+                'links.*.content' => 'nullable|string',
+                'links.*.comment' => 'nullable|string',
+                'links.*.data' => 'nullable|string',
+                'links.*.reaction' => 'nullable|string',
+                'links.*.is_scan' => 'nullable|in:0,1,2',
+                'links.*.status' => 'nullable|in:0,1',
+                'links.*.note' => 'nullable|string',
+                'links.*.image' => 'nullable|string',
+                'links.*.delay' => 'nullable|string',
+                'links.*.end_cursor' => 'nullable|string',
+                'links.*.type' => 'nullable|in:0,1,2',
+            ]);
+
+            DB::beginTransaction();
+
+            $count = 0;
+            $error = [
+                'link_or_post_id' => [],
+            ];
+            foreach ($data['links'] as $key => &$value) {
+                $link = Link::with(['childLinks'])
+                    ->where('link_or_post_id', $value['link_or_post_id'])
+                    ->where('user_id', $value['user_id'])
+                    ->first();
+                if (!$link) {
+                    if (!in_array($value['link_or_post_id'], $error['link_or_post_id'])) {
+                        $error['link_or_post_id'][] = $value['link_or_post_id'];
+                    }
+                    continue;
+                }
+
+                $childLinks = $link?->childLinks;
+                // get and set diff
+                if (isset($value['comment']) && strlen($value['comment'])) {
+                    $lastHistory = LinkHistory::where('link_id', $link->id)
+                        ->where('type', GlobalConstant::TYPE_COMMENT)
+                        ->orderByDesc('id')
+                        ->first();
+                    $value['diff_comment'] = $lastHistory?->comment ? ((int)$value['comment'] - (int)$lastHistory->comment) : (int)$value['comment'];
+                    $linkHistory = LinkHistory::create([
+                        'comment' => $value['comment'],
+                        'diff_comment' => $value['diff_comment'],
+                        'link_id' => $link->id,
+                        'type' => GlobalConstant::TYPE_COMMENT
+                    ]);
+                    // sync data of count of comment
+                    if ($childLinks) {
+                        foreach ($childLinks as $childLink) {
+                            $newLinkHistory = $linkHistory->replicate()->fill([
+                                'link_id' => $childLink->id,
+                            ]);
+                            $newLinkHistory->save();
+                        }
+                    }
+                }
+                if (isset($value['data']) && strlen($value['data'])) {
+                    $lastHistory = LinkHistory::where('link_id', $link->id)
+                        ->where('type', GlobalConstant::TYPE_DATA)
+                        ->orderByDesc('id')
+                        ->first();
+                    $value['diff_data'] = $lastHistory?->data ? ((int)$value['data'] - (int)$lastHistory->data) : (int)$value['data'];
+                    $linkHistory = LinkHistory::create([
+                        'data' => $value['data'],
+                        'diff_data' => $value['diff_data'],
+                        'link_id' => $link->id,
+                        'type' => GlobalConstant::TYPE_DATA
+                    ]);
+                    // sync data of count of data
+                    if ($childLinks) {
+                        foreach ($childLinks as $childLink) {
+                            $newLinkHistory = $linkHistory->replicate()->fill([
+                                'link_id' => $childLink->id,
+                            ]);
+                            $newLinkHistory->save();
+                        }
+                    }
+                }
+                if (isset($value['reaction']) && strlen($value['reaction'])) {
+                    $lastHistory = LinkHistory::where('link_id', $link->id)
+                        ->where('type', GlobalConstant::TYPE_REACTION)
+                        ->orderByDesc('id')
+                        ->first();
+                    $value['diff_reaction'] = $lastHistory?->reaction ? ((int)$value['reaction'] - (int)$lastHistory->reaction) : (int)$value['reaction'];
+                    $linkHistory = LinkHistory::create([
+                        'reaction' => $value['reaction'],
+                        'diff_reaction' => $value['diff_reaction'],
+                        'link_id' => $link->id,
+                        'type' => GlobalConstant::TYPE_REACTION
+                    ]);
+                    // sync data of count of reaction
+                    if ($childLinks) {
+                        foreach ($childLinks as $childLink) {
+                            $newLinkHistory = $linkHistory->replicate()->fill([
+                                'link_id' => $childLink->id,
+                            ]);
+                            $newLinkHistory->save();
+                        }
+                    }
+                }
+                //
+                unset($value['link_or_post_id']);
+                unset($value['user_id']);
+                // update link
+                $link->update($value);
+                //
+                $count++;
+            }
+
+            DB::commit();
+            $all = count($data['links']);
 
             return response()->json([
                 'status' => 0,

@@ -50,7 +50,7 @@ class LinkScanController extends Controller
 
             if ($userLink) {
                 if ($userLink->type == GlobalConstant::TYPE_SCAN) {
-                    throw new Exception('Đã tồn tại link hoặc post ID bên bảng '
+                    throw new Exception('Đã tồn tại ID bài viết bên bảng '
                         . ($userLink->type == GlobalConstant::TYPE_SCAN ? 'link quét' : 'link theo dõi'));
                 }
             }

@@ -87,7 +87,6 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::get('/getAll', 'CommentController@getAll')->name('getAll');
         Route::post('/deleteAll', 'CommentController@deleteAll')->name('deleteAll');
         Route::post('/updateById', 'CommentController@updateById')->name('updateById');
-        Route::get('/getAllCommentUser', 'CommentController@getAllCommentUser')->name('getAllCommentUser');
     });
 
     #links
@@ -100,6 +99,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::post('/update', 'LinkController@update')->name('update');
         Route::post('/updateLinkByLinkOrPostId', 'LinkController@updateLinkByLinkOrPostId')->name('updateLinkByLinkOrPostId');
         Route::post('/updateLinkByListLinkId', 'LinkController@updateLinkByListLinkId')->name('updateLinkByListLinkId');
+        Route::post('/updateLinkByLinkOrPostIdAndUserId', 'LinkController@updateLinkByLinkOrPostIdAndUserId')->name('updateLinkByLinkOrPostIdAndUserId');
         Route::delete('/{id}/destroy', 'LinkController@destroy')->name('destroy');
         Route::post('/deleteAll', 'LinkController@deleteAll')->name('deleteAll');
         Route::post('/deleteAllUserLink', 'LinkController@deleteAllUserLink')->name('deleteAllUserLink');
