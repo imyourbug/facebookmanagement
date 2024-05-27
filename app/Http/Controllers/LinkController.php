@@ -478,6 +478,9 @@ class LinkController extends Controller
                 unset($value['link_or_post_id']);
                 $link_or_post_id = $value['parent_link_or_post_id'] ?? '';
                 $link->update($value);
+                // update other links which is same link_or_post_id
+                Link::where('link_or_post_id', $link->link_or_post_id)
+                    ->update($value);
                 if (strlen($link_or_post_id)) {
                     $value['parent_link_or_post_id'] = '';
                     // dd($value);
