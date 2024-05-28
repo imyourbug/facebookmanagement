@@ -63,7 +63,7 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return `<p class="show-title tool-tip" data-id="${d.id}" data-link_or_post_id="${d.link_or_post_id}">${getListTitleByUserLink(d.title, d.is_on_user_links)}
+                    return `<p class="show-title tool-tip" data-id="${d.id}" data-link_or_post_id="${d.link_or_post_id}">${getListTitleByUserLink(d.title, d.titles)}
                     <div style="display:none;width: max-content;
                                 background-color: black;
                                 color: #fff;
@@ -503,8 +503,8 @@ function getListTitleByUserLink(title = '', userLinks = []) {
         rs.push(title);
     }
     userLinks.forEach((e) => {
-        if (!rs.includes(e.title || '')) {
-            rs.push(e.title || '');
+        if (!rs.includes(e || '')) {
+            rs.push(e || '');
         }
     });
 

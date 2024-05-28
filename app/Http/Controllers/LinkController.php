@@ -52,6 +52,8 @@ class LinkController extends Controller
         $links = Link::with([
             'user',
             'comments',
+            'sameLinks.user',
+            'parentLink.sameLinks.user',
             'userLinks.user',
             'parentLink.user',
             'childLinks.user',
@@ -63,15 +65,15 @@ class LinkController extends Controller
             // default just get all link has at least an userLink record with is_scan = ON
             ->where('is_scan', GlobalConstant::IS_ON)
             // title
-            ->when($title, function ($q) use ($title) {
+            ->when(strlen($title), function ($q) use ($title) {
                 return $q->where('title', 'like', "%$title%");
             })
             // link_or_post_id
-            ->when($link_or_post_id, function ($q) use ($link_or_post_id) {
+            ->when(strlen($link_or_post_id), function ($q) use ($link_or_post_id) {
                 return $q->where('link_or_post_id', 'like', "%$link_or_post_id%");
             })
             // content
-            ->when($content, function ($q) use ($content) {
+            ->when(strlen($content), function ($q) use ($content) {
                 return $q->where('content', 'like', "%$content%");
             })
             ->when($user_id, function ($q) use ($user_id) {
@@ -191,12 +193,12 @@ class LinkController extends Controller
                 }
             })
             // user
-            ->when($user, function ($q) use ($user) {
+            ->when(strlen($user), function ($q) use ($user) {
                 return $q->where('user_id', $user)
                     ->where('is_scan',  GlobalConstant::IS_ON);
             })
             // note
-            ->when($note, function ($q) use ($note) {
+            ->when(strlen($note), function ($q) use ($note) {
                 return $q->where('note', 'like', "%$note%");
             })
             // type
@@ -218,21 +220,26 @@ class LinkController extends Controller
         // dd(DB::getRawQueryLog());
         $result_links = [];
         foreach ($links as $value) {
-            $account[] = $value['user'];
+            $accounts = [];
+            $titles = [];
             if (strlen($value['parent_link_or_post_id'] ?? '')) {
                 $value = $value['parent_link'];
             }
-            foreach ($value['is_on_user_links'] as $is_on_user_link) {
-                $account[] = $is_on_user_link['user'];
+            foreach (array_merge($value['is_on_user_links'], $value['same_links']) as $itemLink) {
+                if (!empty($itemLink['user'])) {
+                    $accounts[$itemLink['id']] = $itemLink['user'];
+                }
+                $titles[$itemLink['id']] = $itemLink['title'];
             }
             // foreach ($value['child_links'] as $childLink) {
             //     foreach ($childLink['is_on_user_links']  as $is_on_user_link) {
-            //         $account[$is_on_user_link['id']] = $is_on_user_link;
+            //         $accounts[$is_on_user_link['id']] = $is_on_user_link;
             //     }
             // }
             $result_links[$value['link_or_post_id']] = [
                 ...$value,
-                'accounts' => collect($account)->values()
+                'accounts' => collect($accounts)->values(),
+                'titles' => collect($titles)->values(),
             ];
         }
 
@@ -646,7 +653,6 @@ class LinkController extends Controller
                     ->update($value);
                 if (strlen($link_or_post_id)) {
                     $value['parent_link_or_post_id'] = '';
-                    // dd($value);
                     Link::updateOrCreate(['link_or_post_id' => $link_or_post_id], $value);
                 }
                 $value['created_at'] = now();

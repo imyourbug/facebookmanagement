@@ -86,19 +86,19 @@ $(document).ready(function () {
                     </div></p>`;
                 },
             },
-            {
-                data: function (d) {
-                    return `<p class="show-uid tool-tip" data-id="${d.id}" data-value="${d.uid}" data-uid="${d.uid}">${d.uid}
-                    <div style="display:none;width: max-content;
-                                background-color: black;
-                                color: #fff;
-                                border-radius: 6px;
-                                padding: 5px 10px;
-                                position: absolute;
-                                z-index: 1;" class="tooltip-uid tooltip-uid-${d.id}">
-                    </div></p>`;
-                },
-            },
+            // {
+            //     data: function (d) {
+            //         return `<p class="show-uid tool-tip" data-id="${d.id}" data-value="${d.uid}" data-uid="${d.uid}">${d.uid}
+            //         <div style="display:none;width: max-content;
+            //                     background-color: black;
+            //                     color: #fff;
+            //                     border-radius: 6px;
+            //                     padding: 5px 10px;
+            //                     position: absolute;
+            //                     z-index: 1;" class="tooltip-uid tooltip-uid-${d.id}">
+            //         </div></p>`;
+            //     },
+            // },
             {
                 data: function (d) {
                     return displayPhoneByRole(d.get_uid ? d.get_uid.phone : '', is_display_phone);

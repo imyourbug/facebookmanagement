@@ -3,8 +3,6 @@ var allRecord = [];
 var tempAllRecord = [];
 
 $(document).ready(function () {
-    reload();
-
     dataTable = $("#table").DataTable({
         columnDefs: [
             { visible: false, targets: 1 },
@@ -119,6 +117,7 @@ $(document).ready(function () {
             },
         ],
     });
+    reload();
 });
 
 $(document).on('click', '.btn-edit', function () {
@@ -322,8 +321,8 @@ $(document).on("click", ".btn-delete", function () {
 function reload() {
     $.ajax({
         type: "GET",
-        // url: `/api/comments/getAll?today=${new Date().toJSON().slice(0, 10)}`,
-        url: `/api/comments/getAll`,
+        // url: `/api/comments/getAll`,
+        url: dataTable.ajax.url(),
         success: function (response) {
             if (response.status == 0) {
                 $('.count-comment').text(`Bình luận: ${response.comments.length}`);
@@ -347,8 +346,8 @@ $(document).on("click", ".btn-delete-multiple", function () {
                 success: function (response) {
                     if (response.status == 0) {
                         toastr.success("Xóa thành công");
-                        reload();
                         dataTable.ajax.reload();
+                        reload();
                     } else {
                         toastr.error(response.message);
                     }

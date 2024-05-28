@@ -4,8 +4,6 @@ var tempAllRecord = [];
 var is_display_phone = $('#is_display_phone').val();
 
 $(document).ready(function () {
-    reload();
-
     dataTable = $("#table").DataTable({
         columnDefs: [
             { visible: false, targets: 1 },
@@ -115,6 +113,8 @@ $(document).ready(function () {
             },
         ],
     });
+
+    reload();
 });
 
 var searchParams = new Map([
@@ -303,10 +303,10 @@ $(document).on("click", ".btn-delete", function () {
 });
 
 async function reload() {
+    console.log(dataTable.ajax.url());
     $.ajax({
         type: "GET",
-        // url: `/api/comments/getAll?today=${new Date().toJSON().slice(0, 10)}&user_id=${$('#user_id').val()}`,
-        url: `/api/comments/getAll?user_id=${$('#user_id').val()}`,
+        url: dataTable.ajax.url(),
         data: { ids: tempAllRecord },
         success: function (response) {
             if (response.status == 0) {
@@ -331,8 +331,8 @@ $(document).on("click", ".btn-delete-multiple", function () {
                 success: function (response) {
                     if (response.status == 0) {
                         toastr.success("Xóa thành công");
-                        reload();
                         dataTable.ajax.reload();
+                        reload();
                     } else {
                         toastr.error(response.message);
                     }

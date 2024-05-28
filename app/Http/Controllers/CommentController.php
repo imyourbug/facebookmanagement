@@ -84,40 +84,40 @@ class CommentController extends Controller
                 return $q->where('comment_id', $comment_id);
             })
             // today
-            ->when($today, function ($q) use ($today) {
+            ->when(strlen($today), function ($q) use ($today) {
                 return $q->where('created_at', 'like', "%$today%");
             })
             // title
-            ->when($title, function ($q) use ($title) {
+            ->when(strlen($title), function ($q) use ($title) {
                 return $q->where('title', 'like', "%$title%");
             })
             // link_or_post_id
-            ->when($link_or_post_id, function ($q) use ($link_or_post_id) {
+            ->when(strlen($link_or_post_id), function ($q) use ($link_or_post_id) {
                 return $q->whereHas('link', function ($q) use ($link_or_post_id) {
                     $q->where('link_or_post_id', 'like', "%$link_or_post_id%");
                 });
             })
             // name_facebook
-            ->when($name_facebook, function ($q) use ($name_facebook) {
+            ->when(strlen($name_facebook), function ($q) use ($name_facebook) {
                 return $q->where('name_facebook', 'like', "%$name_facebook%");
             })
             // note
-            ->when($note, function ($q) use ($note) {
+            ->when(strlen($note), function ($q) use ($note) {
                 return $q->where('note', 'like', "%$note%");
             })
             // content
-            ->when($content, function ($q) use ($content) {
+            ->when(strlen($content), function ($q) use ($content) {
                 return $q->where('content', 'like', "%$content%");
             })
             // phone
-            ->when($phone, function ($q) use ($phone) {
+            ->when(strlen($phone), function ($q) use ($phone) {
                 return $q->whereHas('getUid', function ($q) use ($phone) {
                     $q->where('phone', 'like', "%$phone%");
                 });
                 // return $q->where('phone', 'like', "%$phone%");
             })
             // uid
-            ->when($uid, function ($q) use ($uid) {
+            ->when(strlen($uid), function ($q) use ($uid) {
                 return $q->where('uid', 'like', "%$uid%");
             })
             // ids

@@ -199,8 +199,7 @@
                         <div class="col-lg-12 col-sm-12">
                             <div class="form-group">
                                 <label for="menu">Số lượng</label>
-                                <input type="number" class="form-control" id="number" placeholder="Số lượng"
-                                    value="100" />
+                                <input type="number" class="form-control" id="number" placeholder="Số lượng" value="100" />
                             </div>
                         </div>
                     </div>

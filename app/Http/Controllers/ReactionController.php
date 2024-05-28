@@ -168,22 +168,22 @@ class ReactionController extends Controller
         $limit = $request->limit;
         $ids = $request->ids ?? [];
 
-        // $links = Link::with(['userLinks', 'parentLink'])
-        //     ->when($user_id, function ($q) use ($user_id) {
-        //         return $q->where('user_id', $user_id);
-        //     })
-        //     ->when($user, function ($q) use ($user) {
-        //         return $q->where('user_id', $user);
-        //     })
-        //     ->get();
+        $links = Link::with(['userLinks', 'parentLink'])
+            ->when($user_id, function ($q) use ($user_id) {
+                return $q->where('user_id', $user_id);
+            })
+            ->when($user, function ($q) use ($user) {
+                return $q->where('user_id', $user);
+            })
+            ->get();
 
-        // $list_link_of_user = [];
-        // foreach ($links as $key => $link) {
-        //     $tmp_link_or_post_id = $link?->parentLink ? $link->parentLink->link_or_post_id : $link->link_or_post_id;
-        //     if (!in_array($tmp_link_or_post_id, $list_link_of_user)) {
-        //         $list_link_of_user[] = $tmp_link_or_post_id;
-        //     }
-        // }
+        $list_link_of_user = [];
+        foreach ($links as $key => $link) {
+            $tmp_link_or_post_id = $link?->parentLink ? $link->parentLink->link_or_post_id : $link->link_or_post_id;
+            if (!in_array($tmp_link_or_post_id, $list_link_of_user)) {
+                $list_link_of_user[] = $tmp_link_or_post_id;
+            }
+        }
 
         $reactions = Reaction::with([
             'getUid',
@@ -197,9 +197,9 @@ class ReactionController extends Controller
             'link.parentLink.childLinks.user'
         ])
             // default
-            // ->whereHas('link', function ($q) use ($list_link_of_user) {
-            //     $q->whereIn('link_or_post_id', $list_link_of_user);
-            // })
+            ->whereHas('link', function ($q) use ($list_link_of_user) {
+                $q->whereIn('link_or_post_id', $list_link_of_user);
+            })
             // to
             ->when($to, function ($q) use ($to) {
                 return $q->where('created_at', '<=', $to . ' 23:59:59');
@@ -221,33 +221,35 @@ class ReactionController extends Controller
                 return $q->where('created_at', 'like', "%$today%");
             })
             // title
-            ->when($title, function ($q) use ($title) {
+            ->when(strlen($title), function ($q) use ($title) {
                 return $q->where('title', 'like', "%$title%");
             })
             // link_or_post_id
-            ->when($link_or_post_id, function ($q) use ($link_or_post_id) {
+            ->when(strlen($link_or_post_id), function ($q) use ($link_or_post_id) {
                 return $q->whereHas('link', function ($q) use ($link_or_post_id) {
                     $q->where('link_or_post_id', 'like', "%$link_or_post_id%");
                 });
             })
             // name_facebook
-            ->when($name_facebook, function ($q) use ($name_facebook) {
+            ->when(strlen($name_facebook), function ($q) use ($name_facebook) {
                 return $q->where('name_facebook', 'like', "%$name_facebook%");
             })
             // note
-            ->when($note, function ($q) use ($note) {
+            ->when(strlen($note), function ($q) use ($note) {
                 return $q->where('note', 'like', "%$note%");
             })
             // reaction
-            ->when($reaction, function ($q) use ($reaction) {
+            ->when(strlen($reaction), function ($q) use ($reaction) {
                 return $q->where('reaction', 'like', "%$reaction%");
             })
             // phone
-            ->when($phone, function ($q) use ($phone) {
-                return $q->where('phone', 'like', "%$phone%");
+            ->when(strlen($phone), function ($q) use ($phone) {
+                return $q->whereHas('getUid', function ($q) use ($phone) {
+                    $q->where('phone', 'like', "%$phone%");
+                });
             })
             // uid
-            ->when($uid, function ($q) use ($uid) {
+            ->when(strlen($uid), function ($q) use ($uid) {
                 return $q->where('uid', 'like', "%$uid%");
             })
             // ids

@@ -54,6 +54,12 @@ class Link extends Model
         );
     }
 
+    public function sameLinks()
+    {
+        return $this->hasMany(Link::class, 'link_or_post_id', 'link_or_post_id')
+            ->orderBy('is_on_at');
+    }
+
     public function userLinks()
     {
         return $this->hasMany(Link::class, 'parent_link_or_post_id', 'link_or_post_id')->orderBy('is_on_at');
