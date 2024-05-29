@@ -250,6 +250,16 @@ class LinkController extends Controller
         ]);
     }
 
+    public function getAllNew(Request $request)
+    {
+        return response()->json([
+            'status' => 0,
+            'links' => "Hello",
+            'user' => "",
+        ]);
+    }
+
+
     // public function getAllUsersByLinkOrPostId(string $link_or_post_id)
     // {
     //     $links = Link::with(['user', 'childLinks.user', 'isOnUserLinks.user'])
