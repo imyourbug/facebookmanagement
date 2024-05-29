@@ -36,15 +36,15 @@ class LinkScanController extends Controller
             $user = Auth::user();
 
             $userLinks = Link::with(['user'])
-                ->where('user_id', Auth::id())
+                ->where('user_id', $user->id)
                 ->where('type', GlobalConstant::TYPE_SCAN)
                 ->get();
-            if ($userLinks->count() >= Auth::user()->limit) {
+            if ($userLinks->count() >= $user->limit) {
                 throw new Exception('Đã quá giới hạn link được thêm');
             }
 
             $userLink = Link::with(['user'])
-                ->where('user_id', Auth::id())
+                ->where('user_id', $user->id)
                 ->where('link_or_post_id', $data['link_or_post_id'])
                 ->first();
 
@@ -58,7 +58,7 @@ class LinkScanController extends Controller
             $data['is_scan'] = GlobalConstant::IS_ON;
             $data['status'] = GlobalConstant::STATUS_RUNNING;
             $data['type'] = GlobalConstant::TYPE_SCAN;
-            $data['delay'] = Auth::user()->delay;
+            $data['delay'] = $user->delay;
 
             // check link_or_post_id
             if (!is_numeric($data['link_or_post_id'])) {
@@ -71,10 +71,10 @@ class LinkScanController extends Controller
 
             DB::beginTransaction();
 
-            $data['user_id'] = Auth::id();
+            $data['user_id'] = $user->id;
             $userLink =  Link::withTrashed()
                 ->where('link_or_post_id', $data['link_or_post_id'])
-                ->where('user_id', Auth::id())
+                ->where('user_id', $user->id)
                 ->first();
 
             if ($userLink) {
@@ -97,20 +97,42 @@ class LinkScanController extends Controller
                     'delay' => $user->delay ?? 0,
                 ]);
             } else {
-                Link::create(
-                    [
-                        'user_id' => Auth::id(),
-                        'link_or_post_id' => $data['link_or_post_id'],
-                        'is_scan' => $data['is_scan'],
+                $newLink =  Link::where('link_or_post_id', $data['link_or_post_id'])
+                    ->whereNull('user_id')
+                    ->first();
+                if ($newLink) {
+                    $newLink->update([
                         'title' => $data['title'] ?? '',
-                        'note' => $data['note'] ?? '',
-                        'type' => $data['type'],
+                        'type' => $data['type'] ?? '',
+                        'is_scan' => $data['is_scan'] ?? '',
                         'is_on_at' => now(),
                         'created_at' => now(),
-                        'updated_at' => now(),
+                        'comment' => 0,
+                        'diff_comment' => 0,
+                        'data' => 0,
+                        'diff_data' => 0,
+                        'reaction' => 0,
+                        'diff_reaction' => 0,
+                        'note' => '',
                         'delay' => $user->delay ?? 0,
-                    ]
-                );
+                        'user_id' => $user->id,
+                    ]);
+                } else {
+                    Link::create(
+                        [
+                            'user_id' => $user->id,
+                            'link_or_post_id' => $data['link_or_post_id'],
+                            'is_scan' => $data['is_scan'],
+                            'title' => $data['title'] ?? '',
+                            'note' => $data['note'] ?? '',
+                            'type' => $data['type'],
+                            'is_on_at' => now(),
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                            'delay' => $user->delay ?? 0,
+                        ]
+                    );
+                }
             }
             Toastr::success('Tạo link quét thành công', __('title.toastr.success'));
             DB::commit();
