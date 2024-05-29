@@ -252,9 +252,12 @@ class LinkController extends Controller
 
     public function getAllNew(Request $request)
     {
+        $links = Link::with([
+            'user',
+        ]);
         return response()->json([
             'status' => 0,
-            'links' => "Hello",
+            'links' => $links,
             'user' => "",
         ]);
     }
