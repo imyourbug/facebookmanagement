@@ -51,7 +51,6 @@ class LinkController extends Controller
 
         $links = Link::with([
             'user',
-            'comments',
             'sameLinks.user',
             'parentLink.sameLinks.user',
             'userLinks.user',

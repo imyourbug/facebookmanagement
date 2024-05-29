@@ -94,20 +94,42 @@ class LinkFollowController extends Controller
                     'delay' => $user->delay ?? 0,
                 ]);
             } else {
-                Link::create(
-                    [
-                        'user_id' => $user->id,
-                        'link_or_post_id' => $data['link_or_post_id'],
-                        'is_scan' => $data['is_scan'],
-                        'title' => $data['title'],
-                        'type' => $data['type'],
-                        'note' => $data['note'] ?? '',
+                $newLink =  Link::where('link_or_post_id', $data['link_or_post_id'])
+                    ->whereNull('user_id')
+                    ->first();
+                if ($newLink) {
+                    $newLink->update([
+                        'title' => $data['title'] ?? '',
+                        'type' => $data['type'] ?? '',
+                        'is_scan' => $data['is_scan'] ?? '',
                         'is_on_at' => now(),
                         'created_at' => now(),
-                        'updated_at' => now(),
+                        'comment' => 0,
+                        'diff_comment' => 0,
+                        'data' => 0,
+                        'diff_data' => 0,
+                        'reaction' => 0,
+                        'diff_reaction' => 0,
+                        'note' => '',
                         'delay' => $user->delay ?? 0,
-                    ]
-                );
+                        'user_id' => $data['user_id'],
+                    ]);
+                } else {
+                    Link::create(
+                        [
+                            'user_id' => $user->id,
+                            'link_or_post_id' => $data['link_or_post_id'],
+                            'is_scan' => $data['is_scan'],
+                            'title' => $data['title'],
+                            'type' => $data['type'],
+                            'note' => $data['note'] ?? '',
+                            'is_on_at' => now(),
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                            'delay' => $user->delay ?? 0,
+                        ]
+                    );
+                }
             }
 
             Toastr::success('Thêm thành công', 'Thông báo');
