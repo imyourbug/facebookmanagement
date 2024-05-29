@@ -255,9 +255,53 @@ class LinkController extends Controller
         $links = Link::with([
             'user',
         ])->get()?->toArray() ?? [];
+
+        foreach ($links as $item) {
+            $id = $item['link_or_post_id'];
+            $user = $item['user_id'];
+            
+            // Kiểm tra xem id đã tồn tại trong mảng tạm thời chưa
+            if (!isset($temp[$id])) {
+                $temp[$id] = [];
+            }
+            
+            // Thêm user vào mảng của id tương ứng
+            if (!in_array($user, $temp[$id])) {
+                $temp[$id][] = $user;
+            }
+        }
+        // Gộp các user của các id có parentid vào id tương ứng
+        foreach ($links as $item) {
+            $parentid = $item['parent_link_or_post_id'];
+            $user = $item['user_id'];
+            
+            if ($parentid != '' && isset($temp[$parentid])) {
+                // Gộp user vào parentid
+                if (!in_array($user, $temp[$parentid])) {
+                    $temp[$parentid][] = $user;
+                }
+                
+                // Gộp luôn các user của id hiện tại vào parentid
+                $currentId = $item['link_or_post_id'];
+                if (isset($temp[$currentId])) {
+                    foreach ($temp[$currentId] as $u) {
+                        if (!in_array($u, $temp[$parentid])) {
+                            $temp[$parentid][] = $u;
+                        }
+                    }
+                    unset($temp[$currentId]);
+                }
+            }
+        }
+        // Tạo danh sách kết quả với cấu trúc mong muốn
+        $result = [];
+        foreach ($temp as $id => $users) {
+            $result[] = ['id' => $id, 'user' => implode(',', $users)];
+        }
+
         return response()->json([
             'status' => 0,
-            'links' => $links,
+            'links' => $result,
             'user' => "",
         ]);
     }
