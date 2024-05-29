@@ -30,13 +30,13 @@ class CommentController extends Controller
         $title = $request->title;
         $name_facebook = $request->name_facebook;
         $today = $request->today;
-        $limit = $request->limit;
+        $limit = $request->limit ?? GlobalConstant::LIMIT_COMMENT;
         $ids = $request->ids ?? [];
         $link_or_post_id = is_numeric($request->link_or_post_id) ? $request->link_or_post_id : $this->getLinkOrPostIdFromUrl($request->link_or_post_id ?? '');
 
         $links = Link::with(['userLinks', 'parentLink'])
             ->when($user_id, function ($q) use ($user_id) {
-                return $q->where('user_id', $user_id);
+                return $q->withTrashed()->where('user_id', $user_id);
             })
             ->when($user, function ($q) use ($user) {
                 return $q->where('user_id', $user);
