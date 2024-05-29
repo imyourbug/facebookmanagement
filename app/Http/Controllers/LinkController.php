@@ -254,7 +254,7 @@ class LinkController extends Controller
     {
         $links = Link::with([
             'user',
-        ]);
+        ])->get()?->toArray() ?? [];
         return response()->json([
             'status' => 0,
             'links' => $links,
