@@ -256,7 +256,7 @@ class LinkController extends Controller
         // Chuyển danh sách user thành một mảng liên kết để tra cứu nhanh
         $user_lookup = [];
         foreach ($users as $user) {
-            $user_lookup[$user['user_id']] = $user['name'];
+            $user_lookup[$user['id']] = $user['name'];
         }
         
         // Mảng để lưu kết quả gộp tạm thời và theo dõi trạng thái
