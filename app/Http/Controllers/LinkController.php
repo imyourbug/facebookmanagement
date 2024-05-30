@@ -255,52 +255,77 @@ class LinkController extends Controller
             'user',
         ])->get()?->toArray() ?? [];
 
-        foreach ($links as $item) {
-            $id = $item['link_or_post_id'];
-            $user = $item['user_id'];
-            
-            // Kiểm tra xem id đã tồn tại trong mảng tạm thời chưa
-            if (!isset($temp[$id])) {
-                $temp[$id] = [];
-            }
-            
-            // Thêm user vào mảng của id tương ứng
-            if (!in_array($user, $temp[$id])) {
-                $temp[$id][] = $user;
-            }
-        }
-        // Gộp các user của các id có parentid vào id tương ứng
-        foreach ($links as $item) {
-            $parentid = $item['parent_link_or_post_id'];
-            $user = $item['user_id'];
-            
-            if ($parentid != '' && isset($temp[$parentid])) {
-                // Gộp user vào parentid
-                if (!in_array($user, $temp[$parentid])) {
-                    $temp[$parentid][] = $user;
-                }
-                
-                // Gộp luôn các user của id hiện tại vào parentid
-                $currentId = $item['link_or_post_id'];
-                if (isset($temp[$currentId])) {
-                    foreach ($temp[$currentId] as $u) {
-                        if (!in_array($u, $temp[$parentid])) {
-                            $temp[$parentid][] = $u;
-                        }
-                    }
-                    unset($temp[$currentId]);
-                }
-            }
-        }
-        // Tạo danh sách kết quả với cấu trúc mong muốn
-        $result = [];
-        foreach ($temp as $id => $users) {
-            $result[] = ['id' => $id, 'user' => implode(',', $users)];
-        }
+        // Chuyển danh sách user thành một mảng liên kết để tra cứu nhanh
+        // $user_lookup = [];
+        // foreach ($users as $user) {
+        //     $user_lookup[$user['user_id']] = $user['name'];
+        // }
+        
+        // // Mảng để lưu kết quả gộp tạm thời và theo dõi trạng thái
+        // $temp_result = [];
+        // $status_tracker = [];
+        // $issan_tracker = [];
+        
+        // // Duyệt qua từng phần tử trong dữ liệu đầu vào
+        // foreach ($links as $entry) {
+        //     $uid_post = $entry['link_or_post_id'];
+        //     $parentid = $entry['parent_link_or_post_id'];
+        //     $user_id = $entry['user_id'];
+        //     $status = $entry['status'];
+        //     $issan = $entry['is_scan'];
+        
+        //     // Xác định uid_post mục tiêu để gộp
+        //     $target_uid_post = $parentid === "" ? $uid_post : $parentid;
+        
+        //     // Nếu uid_post mục tiêu chưa có trong mảng kết quả tạm thời, khởi tạo phần tử mới
+        //     if (!isset($temp_result[$target_uid_post])) {
+        //         $temp_result[$target_uid_post] = [
+        //             'link_or_post_id' => $target_uid_post,
+        //             'parent_link_or_post_id' => [],
+        //             'is_scan' => 0,  // Mặc định là 0 và sẽ cập nhật sau
+        //             'status' => 0  // Mặc định là 0 và sẽ cập nhật sau
+        //         ];
+        //         $status_tracker[$target_uid_post] = [];
+        //         $issan_tracker[$target_uid_post] = [];
+        //     }
+        
+        //     // Thêm user_id vào mảng user_id của phần tử tương ứng
+        //     if (!in_array($user_id, $temp_result[$target_uid_post]['user_id'])) {
+        //         $temp_result[$target_uid_post]['user_id'][] = $user_id;
+        //     }
+        
+        //     // Cập nhật trạng thái và theo dõi
+        //     if ($status == 1) {
+        //         $temp_result[$target_uid_post]['status'] = 1;
+        //     }
+        //     if ($issan == 1) {
+        //         $temp_result[$target_uid_post]['is_scan'] = 1;
+        //     }
+        //     $status_tracker[$target_uid_post][] = $status;
+        //     $issan_tracker[$target_uid_post][] = $issan;
+        // }
+        
+        // // Mảng để lưu kết quả cuối cùng
+        // $result = [];
+        
+        // // Duyệt qua mảng tạm thời và loại bỏ các mục có tất cả các trạng thái là 0
+        // foreach ($temp_result as $uid_post => $entry) {
+        //     if (in_array(1, $status_tracker[$uid_post])) {
+        //         // Ghép tên user lại
+        //         $user_names = [];
+        //         foreach ($entry['user_id'] as $id) {
+        //             if (isset($user_lookup[$id])) {
+        //                 $user_names[] = $user_lookup[$id];
+        //             }
+        //         }
+        //         $entry['user_id'] = implode('|', $user_names);
+        //         $result[] = $entry;
+        //     }
+        // }
 
         return response()->json([
             'status' => 0,
-            'links' => $result,
+            'links' => $links,
             'user' => "",
         ]);
     }
