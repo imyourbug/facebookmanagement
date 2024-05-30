@@ -28,7 +28,7 @@
                     <div class="form-group">
                         <label for="menu">ID bài viết <span class="required">(*)</span></label>
                         <input type="text" class="form-control" name="link_or_post_id"
-                            value="{{ old('link_or_post_id') ?? $link->link_or_post_id }}"
+                            value="{{ old('parent_link_or_post_id') ?? $link->parent_link_or_post_id ?? $link->link_or_post_id}}"
                             placeholder="Nhập ID bài viết">
                     </div>
                 </div>
