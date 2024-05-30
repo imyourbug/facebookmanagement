@@ -269,7 +269,7 @@ class LinkController extends Controller
             foreach ($links as $entry) {
                 $uid_post = $entry['link_or_post_id'];
                 $parentid = $entry['parent_link_or_post_id'];
-                $user_id = $entry['user_id'] ?? '';
+                $user_id = $entry['user_id'];
                 $status = $entry['status'];
                 $issan = $entry['is_scan'];
             
@@ -309,7 +309,7 @@ class LinkController extends Controller
             
             // Duyệt qua mảng tạm thời và loại bỏ các mục có tất cả các trạng thái là 0
             foreach ($temp_result as $uid_post => $entry) {
-                if (in_array(1, $status_tracker[$uid_post])) {
+                if (in_array(1, $issan_tracker[$uid_post])) {
                     // Ghép tên user lại
                     $user_names = [];
                     foreach ($entry['user_id'] as $id) {
