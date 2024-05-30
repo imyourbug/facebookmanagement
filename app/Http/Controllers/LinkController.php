@@ -358,20 +358,20 @@ class LinkController extends Controller
     }
     public function updateParentID(Request $request){
         try{
-            $link_or_post_id = $request->link_or_post_id;
-            $parent_link_or_post_id = $request->parent_link_or_post_id;
+            $link_or_post_id = $request->input('links.*.link_or_post_id');
+            $parent_link_or_post_id = $request->input('links.*.parent_link_or_post_id');
     
             Link::where('link_or_post_id', $link_or_post_id)
                 ->update(['parent_link_or_post_id' => $parent_link_or_post_id]);
 
             return response()->json([
                 'status' => 0,
-                'data' => $request['link_or_post_id'] . "|" .$request['parent_link_or_post_id']
+                'data' => $link_or_post_id . "|" .$parent_link_or_post_id
             ]);
         }catch(Exception $ex){
             return response()->json([
                 'status' => -1,
-                'data' => $request['link_or_post_id'] . "|" .$request['parent_link_or_post_id']
+                'data' => $link_or_post_id . "|" .$parent_link_or_post_id
             ]);
         }
     }
