@@ -331,7 +331,7 @@ class LinkController extends Controller
         }catch(Exception $ex){
             return response()->json([
                 'status' => 0,
-                'links' => $ex->getMessage(),
+                'links' => var_dump($ex),
                 'user' => "Error",
             ]);
         }
