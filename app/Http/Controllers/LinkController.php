@@ -272,6 +272,7 @@ class LinkController extends Controller
                 $user_id = $entry['user_id'];
                 $status = $entry['status'];
                 $issan = $entry['is_scan'];
+                $delay = $entry['delay'];
             
                 // Xác định uid_post mục tiêu để gộp
                 $target_uid_post = $parentid === "" ? $uid_post : $parentid;
@@ -283,7 +284,8 @@ class LinkController extends Controller
                         'user_id' => [],
                         'parent_link_or_post_id' => [],
                         'is_scan' => 0,  // Mặc định là 0 và sẽ cập nhật sau
-                        'status' => 0  // Mặc định là 0 và sẽ cập nhật sau
+                        'status' => 0,  // Mặc định là 0 và sẽ cập nhật sau
+                        'delay' => 0
                     ];
                     $status_tracker[$target_uid_post] = [];
                     $issan_tracker[$target_uid_post] = [];
@@ -300,6 +302,8 @@ class LinkController extends Controller
                 if ($issan == 1) {
                     $temp_result[$target_uid_post]['is_scan'] = 1;
                 }
+                $temp_result[$target_uid_post]['delay'] = $delay;
+                
                 $status_tracker[$target_uid_post][] = $status;
                 $issan_tracker[$target_uid_post][] = $issan;
             }
