@@ -280,6 +280,7 @@ class LinkController extends Controller
                 if (!isset($temp_result[$target_uid_post])) {
                     $temp_result[$target_uid_post] = [
                         'link_or_post_id' => $target_uid_post,
+                        'user_id' => [],
                         'parent_link_or_post_id' => [],
                         'is_scan' => 0,  // Mặc định là 0 và sẽ cập nhật sau
                         'status' => 0  // Mặc định là 0 và sẽ cập nhật sau
@@ -289,11 +290,9 @@ class LinkController extends Controller
                 }
             
                 // Thêm user_id vào mảng user_id của phần tử tương ứng
-                if($user_id != ''){
-                    if (!in_array($user_id, $temp_result[$target_uid_post]['user_id'])) {
-                        $temp_result[$target_uid_post]['user_id'][] = $user_id;
-                    }
-                } 
+                if (!in_array($user_id, $temp_result[$target_uid_post]['user_id'])) {
+                    $temp_result[$target_uid_post]['user_id'][] = $user_id;
+                }
                 // Cập nhật trạng thái và theo dõi
                 if ($status == 1) {
                     $temp_result[$target_uid_post]['status'] = 1;
