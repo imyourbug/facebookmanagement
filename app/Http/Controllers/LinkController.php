@@ -249,7 +249,7 @@ class LinkController extends Controller
         ]);
     }
 
-    public function getAllNew(Request $request)
+    public function getAllNewForUI(Request $request)
     {
         try{
             $links = Link::get()->toArray();
@@ -325,6 +325,26 @@ class LinkController extends Controller
             return response()->json([
                 'status' => 1,
                 'links' => $result,
+                'user' => "Oke",
+            ]);
+
+        }catch(Exception $ex){
+            return response()->json([
+                'status' => 0,
+                'links' => var_dump($ex),
+                'user' => "Error",
+            ]);
+        }
+    }
+    public function getAllNewAPI(Request $request)
+    {
+        try{
+            $links = Link::where('is_scan', '0')
+            ->where('is_scan', '1')->get()?->toArray();
+
+            return response()->json([
+                'status' => 1,
+                'links' => $links,
                 'user' => "Oke",
             ]);
 
