@@ -14,7 +14,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 @endpush
 @section('content')
-    <form action="{{ route('admin.linkrunnings.update', ['id' => $link->id]) }}" method="POST">
+    <form action="{{ route('admin.linkrunnings.update_delay', ['id' => $link->parent_link_or_post_id ?? $link->link_or_post_id]) }}" method="POST">
         <div class="card-body">
             <div class="row">
                 <div class="col-lg-6 col-sm-12">

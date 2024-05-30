@@ -125,6 +125,7 @@ Route::group([
         Route::post('/create', 'LinkRunningController@store')->name('store');
         Route::get('/update/{id}', 'LinkRunningController@show')->name('show');
         Route::post('/update', 'LinkRunningController@update')->name('update');
+        Route::post('/update_delay', 'LinkRunningController@update_delay')->name('update_delay');
     });
 
     #linkfollows

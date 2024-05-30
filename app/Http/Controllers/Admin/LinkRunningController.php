@@ -61,6 +61,23 @@ class LinkRunningController extends Controller
         return redirect()->back();
     }
 
+    public function update_delay(Request $request)
+    {
+        try {
+            //unset($data['id']);
+            DB::beginTransaction();
+            Link::where('parent_link_or_post_id', $request['id'] )-> orwhere('link_or_post_id', $request['id'])
+            ->update(['delay' => $request['delay']]);
+            DB::commit();
+            Toastr::success(__('message.success.update'), __('title.toastr.success'));
+        } catch (Throwable $e) {
+            DB::rollBack();
+            Toastr::error($e->getMessage(), __('title.toastr.fail'));
+        }
+
+        return redirect()->back();
+    }
+
     public function index(Request $request)
     {
         if ($request->ajax()) {
