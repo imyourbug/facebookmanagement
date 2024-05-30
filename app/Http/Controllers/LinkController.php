@@ -269,7 +269,7 @@ class LinkController extends Controller
             foreach ($links as $entry) {
                 $uid_post = $entry['link_or_post_id'];
                 $parentid = $entry['parent_link_or_post_id'];
-                $user_id = $entry['user_id'] ;
+                $user_id = $entry['user_id'] ?? '';
                 $status = $entry['status'];
                 $issan = $entry['is_scan'];
             
@@ -308,24 +308,24 @@ class LinkController extends Controller
             $result = [];
             
             // Duyệt qua mảng tạm thời và loại bỏ các mục có tất cả các trạng thái là 0
-            // foreach ($temp_result as $uid_post => $entry) {
-            //     if (in_array(1, $status_tracker[$uid_post])) {
-            //         // Ghép tên user lại
-            //         $user_names = [];
-            //         foreach ($entry['user_id'] as $id) {
-            //             if (isset($user_lookup[$id])) {
-            //                 $user_names[] = $user_lookup[$id];
-            //             }
-            //         }
-            //         $entry['user_id'] = implode('|', $user_names);
-            //         $result[] = $entry;
-            //     }
-            // }
+            foreach ($temp_result as $uid_post => $entry) {
+                if (in_array(1, $status_tracker[$uid_post])) {
+                    // Ghép tên user lại
+                    $user_names = [];
+                    foreach ($entry['user_id'] as $id) {
+                        if (isset($user_lookup[$id])) {
+                            $user_names[] = $user_lookup[$id];
+                        }
+                    }
+                    $entry['user_id'] = implode('|', $user_names);
+                    $result[] = $entry;
+                }
+            }
     
             return response()->json([
                 'status' => 1,
-                'links' => $links,
-                'user' => $users,
+                'links' => $result,
+                'user' => "Oke",
             ]);
 
         }catch(Exception $ex){
