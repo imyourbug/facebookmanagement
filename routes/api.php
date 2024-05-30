@@ -109,6 +109,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::get('/getAllNewAPI', 'LinkController@getAllNewAPI')->name('getAllNewAPI');
         Route::post('/updateParentID', 'LinkController@updateParentID')->name('updateParentID');
         Route::post('/updateLinkDie', 'LinkController@updateLinkDie')->name('updateLinkDie');
+        Route::post('/updateStatusByParentID', 'LinkController@updateStatusByParentID')->name('updateStatusByParentID');
     });
 
     #userlinks
