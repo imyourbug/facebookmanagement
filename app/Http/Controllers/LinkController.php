@@ -308,24 +308,24 @@ class LinkController extends Controller
             $result = [];
             
             // Duyệt qua mảng tạm thời và loại bỏ các mục có tất cả các trạng thái là 0
-            foreach ($temp_result as $uid_post => $entry) {
-                if (in_array(1, $status_tracker[$uid_post])) {
-                    // Ghép tên user lại
-                    $user_names = [];
-                    foreach ($entry['user_id'] as $id) {
-                        if (isset($user_lookup[$id])) {
-                            $user_names[] = $user_lookup[$id];
-                        }
-                    }
-                    $entry['user_id'] = implode('|', $user_names);
-                    $result[] = $entry;
-                }
-            }
+            // foreach ($temp_result as $uid_post => $entry) {
+            //     if (in_array(1, $status_tracker[$uid_post])) {
+            //         // Ghép tên user lại
+            //         $user_names = [];
+            //         foreach ($entry['user_id'] as $id) {
+            //             if (isset($user_lookup[$id])) {
+            //                 $user_names[] = $user_lookup[$id];
+            //             }
+            //         }
+            //         $entry['user_id'] = implode('|', $user_names);
+            //         $result[] = $entry;
+            //     }
+            // }
     
             return response()->json([
                 'status' => 1,
                 'links' => $links,
-                'user' => "",
+                'user' => $users,
             ]);
 
         }catch(Exception $ex){
