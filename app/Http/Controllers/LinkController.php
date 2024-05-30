@@ -251,10 +251,8 @@ class LinkController extends Controller
 
     public function getAllNew(Request $request)
     {
-        $links = Link::with([
-            'user',
-        ])->get()?->toArray() ?? [];
-
+        $links = Link::get()->toArray();
+        $user = User::get()->toArray();
         // Chuyển danh sách user thành một mảng liên kết để tra cứu nhanh
         // $user_lookup = [];
         // foreach ($users as $user) {
@@ -326,7 +324,7 @@ class LinkController extends Controller
         return response()->json([
             'status' => 0,
             'links' => $links,
-            'user' => "",
+            'user' => $user,
         ]);
     }
 
