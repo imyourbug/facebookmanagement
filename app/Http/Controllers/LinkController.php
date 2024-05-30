@@ -375,6 +375,36 @@ class LinkController extends Controller
             ]);
         }
     }
+    public function updateLinkDie(Request $request){
+        $result = "Update all";
+        try{
+            $parent_link_or_post_id = $request->input('links.0.parent_link_or_post_id');
+            $user_id = $request->input('links.0.user_id');
+            $is_scan = $request->input('links.0.is_scan');
+            
+            //= null sẽ update tất cả
+            if(is_null($user_id) || $user_id == ''){
+                Link::where('parent_link_or_post_id', $parent_link_or_post_id )
+                ->update(['is_scan' => $is_scan]);
+            }else{
+            // != null sẽ update theo user => Dùng cho trường hợp add 2 link trùng nhau
+            Link::where('link_or_post_id', $parent_link_or_post_id )->where('user_id', $user_id)
+                ->update(['is_scan' => $is_scan]);
+                $result = "Update follow user";
+            }
+            
+
+            return response()->json([
+                'status' => 0,
+                'data' => $parent_link_or_post_id  . "|" .$user_id. "|". $result
+            ]);
+        }catch(Exception $ex){
+            return response()->json([
+                'status' => -1,
+                'data' => $parent_link_or_post_id  . "|" .$user_id. "|". $result
+            ]);
+        }
+    }
 
     // public function getAllUsersByLinkOrPostId(string $link_or_post_id)
     // {

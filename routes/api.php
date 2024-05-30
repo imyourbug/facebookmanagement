@@ -108,6 +108,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::get('/getAllNewForUI', 'LinkController@getAllNewForUI')->name('getAllNewForUI');
         Route::get('/getAllNewAPI', 'LinkController@getAllNewAPI')->name('getAllNewAPI');
         Route::post('/updateParentID', 'LinkController@updateParentID')->name('updateParentID');
+        Route::post('/updateLinkDie', 'LinkController@updateLinkDie')->name('updateLinkDie');
     });
 
     #userlinks
