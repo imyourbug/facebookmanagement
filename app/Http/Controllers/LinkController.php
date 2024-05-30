@@ -303,7 +303,7 @@ class LinkController extends Controller
                     $temp_result[$target_uid_post]['is_scan'] = 1;
                 }
                 $temp_result[$target_uid_post]['delay'] = $delay;
-                
+
                 $status_tracker[$target_uid_post][] = $status;
                 $issan_tracker[$target_uid_post][] = $issan;
             }
@@ -956,6 +956,30 @@ class LinkController extends Controller
         return response()->json([
             'status' => 0,
         ]);
+    }
+
+    //Quang
+    public function updateStatusByParentID(Request $request)
+    {
+        $result = "Update all";
+        try{
+            $parent_link_or_post_id = $request['ids'];
+            $status = $request['status'];
+            
+            Link::where('parent_link_or_post_id', $parent_link_or_post_id )-> orwhere('link_or_post_id', $parent_link_or_post_id)
+            ->update(['status' => $status]);
+            
+            return response()->json([
+                'status' => 1,
+                //'data' => $parent_link_or_post_id  . "|" .$user_id. "|". $result
+            ]);
+
+        }catch(Exception $ex){
+            return response()->json([
+                'status' => -1,
+                //'data' => $parent_link_or_post_id  . "|" .$user_id. "|". $result
+            ]);
+        }
     }
 
     public function destroy($id)
