@@ -366,10 +366,12 @@ class LinkController extends Controller
 
             return response()->json([
                 'status' => 0,
+                'data' => $link_or_post_id . "|" .$parent_link_or_post_id
             ]);
         }catch(Exception $ex){
             return response()->json([
                 'status' => -1,
+                'data' => $link_or_post_id . "|" .$parent_link_or_post_id
             ]);
         }
     }
