@@ -104,8 +104,10 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::post('/deleteAll', 'LinkController@deleteAll')->name('deleteAll');
         Route::post('/deleteAllUserLink', 'LinkController@deleteAllUserLink')->name('deleteAllUserLink');
         Route::post('/deleteAllByListLinkOrPostId', 'LinkController@deleteAllByListLinkOrPostId')->name('deleteAllByListLinkOrPostId');
+        //Quang
         Route::get('/getAllNewForUI', 'LinkController@getAllNewForUI')->name('getAllNewForUI');
         Route::get('/getAllNewAPI', 'LinkController@getAllNewAPI')->name('getAllNewAPI');
+        Route::post('/updateParentID', 'LinkController@updateParentID')->name('updateParentID');
     });
 
     #userlinks
