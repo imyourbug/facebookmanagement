@@ -266,43 +266,43 @@ class LinkController extends Controller
             $issan_tracker = [];
             
             // Duyệt qua từng phần tử trong dữ liệu đầu vào
-            foreach ($links as $entry) {
-                $uid_post = $entry['link_or_post_id'];
-                $parentid = $entry['parent_link_or_post_id'];
-                $user_id = $entry['user_id'];
-                $status = $entry['status'];
-                $issan = $entry['is_scan'];
+            // foreach ($links as $entry) {
+            //     $uid_post = $entry['link_or_post_id'];
+            //     $parentid = $entry['parent_link_or_post_id'];
+            //     $user_id = $entry['user_id'];
+            //     $status = $entry['status'];
+            //     $issan = $entry['is_scan'];
             
-                // Xác định uid_post mục tiêu để gộp
-                $target_uid_post = $parentid === "" ? $uid_post : $parentid;
+            //     // Xác định uid_post mục tiêu để gộp
+            //     $target_uid_post = $parentid === "" ? $uid_post : $parentid;
             
-                // Nếu uid_post mục tiêu chưa có trong mảng kết quả tạm thời, khởi tạo phần tử mới
-                if (!isset($temp_result[$target_uid_post])) {
-                    $temp_result[$target_uid_post] = [
-                        'link_or_post_id' => $target_uid_post,
-                        'parent_link_or_post_id' => [],
-                        'is_scan' => 0,  // Mặc định là 0 và sẽ cập nhật sau
-                        'status' => 0  // Mặc định là 0 và sẽ cập nhật sau
-                    ];
-                    $status_tracker[$target_uid_post] = [];
-                    $issan_tracker[$target_uid_post] = [];
-                }
+            //     // Nếu uid_post mục tiêu chưa có trong mảng kết quả tạm thời, khởi tạo phần tử mới
+            //     if (!isset($temp_result[$target_uid_post])) {
+            //         $temp_result[$target_uid_post] = [
+            //             'link_or_post_id' => $target_uid_post,
+            //             'parent_link_or_post_id' => [],
+            //             'is_scan' => 0,  // Mặc định là 0 và sẽ cập nhật sau
+            //             'status' => 0  // Mặc định là 0 và sẽ cập nhật sau
+            //         ];
+            //         $status_tracker[$target_uid_post] = [];
+            //         $issan_tracker[$target_uid_post] = [];
+            //     }
             
-                // Thêm user_id vào mảng user_id của phần tử tương ứng
-                if (!in_array($user_id, $temp_result[$target_uid_post]['user_id'])) {
-                    $temp_result[$target_uid_post]['user_id'][] = $user_id;
-                }
+            //     // Thêm user_id vào mảng user_id của phần tử tương ứng
+            //     if (!in_array($user_id, $temp_result[$target_uid_post]['user_id'])) {
+            //         $temp_result[$target_uid_post]['user_id'][] = $user_id;
+            //     }
             
-                // Cập nhật trạng thái và theo dõi
-                if ($status == 1) {
-                    $temp_result[$target_uid_post]['status'] = 1;
-                }
-                if ($issan == 1) {
-                    $temp_result[$target_uid_post]['is_scan'] = 1;
-                }
-                $status_tracker[$target_uid_post][] = $status;
-                $issan_tracker[$target_uid_post][] = $issan;
-            }
+            //     // Cập nhật trạng thái và theo dõi
+            //     if ($status == 1) {
+            //         $temp_result[$target_uid_post]['status'] = 1;
+            //     }
+            //     if ($issan == 1) {
+            //         $temp_result[$target_uid_post]['is_scan'] = 1;
+            //     }
+            //     $status_tracker[$target_uid_post][] = $status;
+            //     $issan_tracker[$target_uid_post][] = $issan;
+            // }
             
             // Mảng để lưu kết quả cuối cùng
             $result = [];
