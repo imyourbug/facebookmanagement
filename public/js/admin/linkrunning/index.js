@@ -66,16 +66,16 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    // return `<p class="show-title tool-tip" data-id="${d.id}" data-link_or_post_id="${d.link_or_post_id}">${getListTitleByUserLink(d.title, d.titles)}
-                    // <div style="display:none;width: max-content;
-                    //             background-color: black;
-                    //             color: #fff;
-                    //             border-radius: 6px;
-                    //             padding: 5px 10px;
-                    //             position: absolute;
-                    //             z-index: 1;" class="tooltip-title tooltip-title-${d.id}">
-                    // </div></p>`;
-                    return "Trống";
+                    return `<p class="show-title tool-tip" data-id="${d.link_or_post_id}" data-link_or_post_id="${d.link_or_post_id}">${d.link_or_post_id}
+                    <div style="display:none;width: max-content;
+                                background-color: black;
+                                color: #fff;
+                                border-radius: 6px;
+                                padding: 5px 10px;
+                                position: absolute;
+                                z-index: 1;" class="tooltip-title tooltip-title-${d.link_or_post_id}">
+                    </div></p>`;
+                    //return "Trống";
                 },
             },
             {
