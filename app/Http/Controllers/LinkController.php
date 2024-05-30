@@ -340,7 +340,7 @@ class LinkController extends Controller
     {
         try{
             $links = Link::where('is_scan', 0)
-            ->where('is_scan', 1)->get()?->toArray();
+            ->orWhere('is_scan', 1)->get()?->toArray();
 
             return response()->json([
                 'status' => 1,
