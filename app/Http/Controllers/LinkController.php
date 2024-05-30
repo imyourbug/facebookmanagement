@@ -968,16 +968,14 @@ class LinkController extends Controller
             
             Link::where('parent_link_or_post_id', $parent_link_or_post_id )-> orwhere('link_or_post_id', $parent_link_or_post_id)
             ->update(['status' => $status]);
-            
+
             return response()->json([
-                'status' => 1,
-                //'data' => $parent_link_or_post_id  . "|" .$user_id. "|". $result
+            'status' => 0,
             ]);
 
         }catch(Exception $ex){
             return response()->json([
                 'status' => -1,
-                //'data' => $parent_link_or_post_id  . "|" .$user_id. "|". $result
             ]);
         }
     }
