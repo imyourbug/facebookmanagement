@@ -80,7 +80,7 @@ class LinkRunningController extends Controller
     {
         return view('admin.linkrunning.edit', [
             'title' => 'Chi tiết link đang chạy',
-            'link' => Link::firstWhere('link_or_post_id', $id)->orwhere('parent_link_or_post_id', $id)
+            'link' => Link::where('link_or_post_id', $id)->orwhere('parent_link_or_post_id', $id)->first()
         ]);
     }
 
