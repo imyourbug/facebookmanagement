@@ -289,10 +289,11 @@ class LinkController extends Controller
                 }
             
                 // Thêm user_id vào mảng user_id của phần tử tương ứng
-                // if (!in_array($user_id, $temp_result[$target_uid_post]['user_id'])) {
-                //     $temp_result[$target_uid_post]['user_id'][] = $user_id;
-                // }
-            
+                if($user_id != ''){
+                    if (!in_array($user_id, $temp_result[$target_uid_post]['user_id'])) {
+                        $temp_result[$target_uid_post]['user_id'][] = $user_id;
+                    }
+                } 
                 // Cập nhật trạng thái và theo dõi
                 if ($status == 1) {
                     $temp_result[$target_uid_post]['status'] = 1;
