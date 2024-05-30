@@ -323,7 +323,7 @@ class LinkController extends Controller
             }
     
             return response()->json([
-                'status' => 0,
+                'status' => 1,
                 'links' => $links,
                 'user' => "",
             ]);
@@ -331,7 +331,7 @@ class LinkController extends Controller
             return response()->json([
                 'status' => 0,
                 'links' => $ex,
-                'user' => "",
+                'user' => "Error",
             ]);
         }
     }
