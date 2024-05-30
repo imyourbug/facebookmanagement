@@ -269,7 +269,7 @@ class LinkController extends Controller
             foreach ($links as $entry) {
                 $uid_post = $entry['link_or_post_id'];
                 $parentid = $entry['parent_link_or_post_id'];
-                $user_id = $entry['user_id'] ?? '';
+                $user_id = $entry['user_id'] ;
                 $status = $entry['status'];
                 $issan = $entry['is_scan'];
             
