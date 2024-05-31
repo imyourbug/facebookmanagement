@@ -198,6 +198,68 @@ class UserLinkController extends Controller
         ]);
     }
 
+    public function getAllLinkScan(Request $request)
+    {
+        // $comment_from = $request->comment_from;
+        // $comment_to = $request->comment_to;
+        // $delay_from = $request->delay_from;
+        // $delay_to = $request->delay_to;
+        // $data_from = $request->data_from;
+        // $data_to = $request->data_to;
+        // $reaction_from = $request->reaction_from;
+        // $reaction_to = $request->reaction_to;
+        // $time_from = $request->time_from;
+        // $time_to = $request->time_to;
+        // $last_data_from = $request->last_data_from;
+        // $last_data_to = $request->last_data_to;
+        // $from = $request->from;
+        // $to = $request->to;
+           $user_id = $request->user_id;
+        // $user = $request->user;
+        // $note = $request->note;
+        // $link_id = $request->link_id;
+        // $is_scan = $request->is_scan;
+           $type = (string)$request->type;
+        // $title = $request->title;
+        // $content = $request->content;
+        // $status = $request->status;
+        // $link_or_post_id = is_numeric($request->link_or_post_id) ? $request->link_or_post_id : $this->getLinkOrPostIdFromUrl($request->link_or_post_id ?? '');
+
+        // $query = '(HOUR(CURRENT_TIMESTAMP()) * 60 + MINUTE(CURRENT_TIMESTAMP()) - HOUR(updated_at) * 60 - MINUTE(updated_at))/60 + DATEDIFF(CURRENT_TIMESTAMP(), updated_at) * 24';
+        // $queryLastData = '(HOUR(CURRENT_TIMESTAMP()) * 60 + MINUTE(CURRENT_TIMESTAMP()) - HOUR(created_at) * 60 - MINUTE(created_at))/60 + DATEDIFF(CURRENT_TIMESTAMP(), created_at) * 24';
+
+        // DB::enableQueryLog();
+        $users = User::get()->toArray();
+        // Tạo một mảng tương ứng với user_id và tên của user
+        $userMap = [];
+        foreach ($users as $u) {
+            $userMap[$u['user_id']] = $u['name'];
+        }
+        $userLinks = [];
+        if($user_id != null)
+        {
+            $userLinks = Link::where('user_id', $user_id)->where('type', $type)-> get()?->toArray() ?? [];
+        }
+        else
+        {
+            $userLinks = Link::where('type', $type)->get()?->toArray() ?? [];
+        }
+        
+
+        foreach ($userLinks as &$post) {
+            if (isset($userMap[$post['user_id']])) {
+                $post['name'] = $userMap[$post['user_id']];
+            } else {
+                $post['name'] = '';
+            }
+        }
+        return response()->json([
+            'status' => 0,
+            'links' => $userLinks,
+            'user' => User::firstWhere('id', $user_id),
+        ]);
+    }
+
     public function updateLinkByLinkOrPostId(Request $request)
     {
         try {

@@ -248,7 +248,7 @@ class LinkController extends Controller
             'user' => User::firstWhere('id', $user_id),
         ]);
     }
-
+    //Quang
     public function getAllNewForUI(Request $request)
     {
         try{
@@ -344,6 +344,26 @@ class LinkController extends Controller
             ]);
         }
     }
+    //Quang
+    public function getAllLinkScanNewForUI(Request $request)
+    {
+        try{
+            $links = Link::where('type', GlobalConstant::TYPE_SCAN)->get()->toArray();
+            return response()->json([
+                'status' => 1,
+                'links' => $links,
+                'user' => "Oke",
+            ]);
+
+        }catch(Exception $ex){
+            return response()->json([
+                'status' => 0,
+                'links' => var_dump($ex),
+                'user' => "Error",
+            ]);
+        }
+    }
+    //Quang
     public function getAllNewAPI(Request $request)
     {
         try{

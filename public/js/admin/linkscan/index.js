@@ -29,7 +29,7 @@ $(document).ready(function () {
             top2Start: 'pageLength',
         },
         ajax: {
-            url: `/api/userlinks/getAll?type=0`,
+            url: `/api/userlinks/getAllLinkScan?type=0`,
             dataSrc: "links",
         },
         columns: [
@@ -52,13 +52,13 @@ $(document).ready(function () {
             {
                 data: function (d) {
                     return d.created_at;
-                    return d.updated_at;
+                    //return d.updated_at;
                 },
             },
             {
                 data: function (d) {
-                    return d.user.name;
-                    return getListAccountNameByUserLink(d.accounts);
+                    return d.name;
+                    //return getListAccountNameByUserLink(d.accounts);
                 },
             },
             {

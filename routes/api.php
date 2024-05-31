@@ -119,6 +119,9 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::post('/update', 'UserLinkController@update')->name('update');
         Route::post('/updateLinkByLinkOrPostId', 'UserLinkController@updateLinkByLinkOrPostId')->name('updateLinkByLinkOrPostId');
         Route::post('/updateLinkByListLinkId', 'UserLinkController@updateLinkByListLinkId')->name('updateLinkByListLinkId');
+
+        //Quang
+        Route::get('/getAllLinkScan', 'UserLinkController@getAllLinkScan')->name('getAllLinkScan');
     });
 
     #settings
