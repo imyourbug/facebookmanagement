@@ -110,6 +110,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::post('/updateParentID', 'LinkController@updateParentID')->name('updateParentID');
         Route::post('/updateLinkDie', 'LinkController@updateLinkDie')->name('updateLinkDie');
         Route::post('/updateStatusByParentID', 'LinkController@updateStatusByParentID')->name('updateStatusByParentID');
+        Route::post('/updateStatusLink', 'LinkController@updateStatusLink')->name('updateStatusLink');
     });
 
     #userlinks

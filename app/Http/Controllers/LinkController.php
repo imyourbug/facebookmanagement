@@ -433,7 +433,17 @@ class LinkController extends Controller
             ]);
         }
     }
-
+    //Quang
+    public function updateStatusLink(Request $request){
+        $data = array_chunk($request['ids'], 200);
+        $typeStatus = $request['status'];
+        
+        foreach ($data as $links) {
+            Link::whereIn('link_or_post_id', $links)
+                ->orWhereIn('parent_link_or_post_id', $links)
+                ->update(['status' => $typeStatus]);
+        }
+    }
     // public function getAllUsersByLinkOrPostId(string $link_or_post_id)
     // {
     //     $links = Link::with(['user', 'childLinks.user', 'isOnUserLinks.user'])
