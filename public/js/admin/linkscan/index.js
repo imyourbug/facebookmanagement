@@ -57,7 +57,7 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return 'QQQQQ';
+                    return d.name;
                     //return getListAccountNameByUserLink(d.accounts);
                 },
             },
