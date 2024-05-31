@@ -412,12 +412,17 @@ class LinkController extends Controller
             
             //= null sẽ update tất cả
             if(is_null($user_id) || $user_id == ''){
-                Link::where('parent_link_or_post_id', $parent_link_or_post_id )
+                Link::where('parent_link_or_post_id', $parent_link_or_post_id )->orwhere('link_or_post_id', $parent_link_or_post_id)
                 ->update(['is_scan' => $is_scan]);
             }else{
             // != null sẽ update theo user => Dùng cho trường hợp add 2 link trùng nhau
-            Link::where('link_or_post_id', $parent_link_or_post_id )->where('user_id', $user_id)
-                ->update(['is_scan' => $is_scan]);
+            Link::where(function($query) use ($parent_link_or_post_id) {
+                $query->where('parent_link_or_post_id', $parent_link_or_post_id)
+                      ->orWhere('link_or_post_id', $parent_link_or_post_id);
+            })
+            ->where('user_id', $user_id)
+            ->update(['is_scan' => $is_scan]);
+            
                 $result = "Update follow user";
             }
             
