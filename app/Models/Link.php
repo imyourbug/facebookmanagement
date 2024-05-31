@@ -37,8 +37,7 @@ class Link extends Model
         'diff_reaction',
         'user_id',
         'active',
-        'is_on_at',
-        'name'
+        'is_on_at'
     ];
 
     public function user()

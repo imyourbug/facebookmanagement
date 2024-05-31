@@ -255,7 +255,7 @@ class UserLinkController extends Controller
         }
         return response()->json([
             'status' => 0,
-            'links' => $userLinks,
+            'links' => $post,
             'user' => User::firstWhere('id', $user_id),
         ]);
     }
