@@ -38,6 +38,7 @@ class Link extends Model
         'user_id',
         'active',
         'is_on_at',
+        'name'
     ];
 
     public function user()
