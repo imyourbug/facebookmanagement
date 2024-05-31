@@ -61,6 +61,7 @@ class LinkScanController extends Controller
             $data['type'] = GlobalConstant::TYPE_SCAN;
             $data['status'] = GlobalConstant::STATUS_RUNNING;
             $data['delay'] = $user->delay;
+            $data['parent_link_or_post_id'] = '';
 
             // check link_or_post_id
             if (!is_numeric($data['link_or_post_id'])) {
@@ -70,7 +71,13 @@ class LinkScanController extends Controller
                 $link_or_post_id = explode('/', $data['link_or_post_id']);
                 $data['link_or_post_id'] = $link_or_post_id[count($link_or_post_id) - 1];
             }
+            // Kiểm tra xem đã tồn tại ở parent id nòa chưa
+            $countLink = Link::where('parent_link_or_post_id', $data['link_or_post_id'])->count();
+            if($countLink > 0){
 
+                $data['parent_link_or_post_id'] = $data['link_or_post_id'];
+            }
+                
             DB::beginTransaction();
             $userLink =  Link::withTrashed()
                 ->where('link_or_post_id', $data['link_or_post_id'])
@@ -95,7 +102,8 @@ class LinkScanController extends Controller
                     'reaction' => 0,
                     'diff_reaction' => 0,
                     'note' => '',
-                    'delay' => $user->delay ?? 0,
+                    'delay' => $user->delay ?? 1000,
+                    'parent_link_or_post_id' => $data['parent_link_or_post_id']
                 ]);
             } else {
                 $newLink =  Link::where('link_or_post_id', $data['link_or_post_id'])
@@ -115,8 +123,9 @@ class LinkScanController extends Controller
                         'reaction' => 0,
                         'diff_reaction' => 0,
                         'note' => '',
-                        'delay' => $user->delay ?? 0,
+                        'delay' => $user->delay ?? 1000,
                         'user_id' => $data['user_id'],
+                        'parent_link_or_post_id' => $data['parent_link_or_post_id']
                     ]);
                 } else {
                     Link::create(
@@ -131,6 +140,7 @@ class LinkScanController extends Controller
                             'created_at' => now(),
                             'updated_at' => now(),
                             'delay' => $user->delay ?? 0,
+                            'parent_link_or_post_id' => $data['parent_link_or_post_id']
                         ]
                     );
                 }
