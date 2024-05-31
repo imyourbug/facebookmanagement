@@ -252,7 +252,7 @@ class LinkController extends Controller
     public function getAllNewForUI(Request $request)
     {
         try{
-            $links = Link::get()->toArray();
+            $links = Link::where('type', GlobalConstant::TYPE_SCAN)->get()->toArray();
             $users = User::get()->toArray();
             // Chuyển danh sách user thành một mảng liên kết để tra cứu nhanh
             $user_lookup = [];
@@ -273,6 +273,7 @@ class LinkController extends Controller
                 $status = $entry['status'];
                 $issan = $entry['is_scan'];
                 $delay = $entry['delay'];
+                $type = $entry['type'];
             
                 // Xác định uid_post mục tiêu để gộp
                 $target_uid_post = ($parentid === "" || $parentid === null) ? $uid_post : $parentid;
@@ -285,7 +286,8 @@ class LinkController extends Controller
                         'parent_link_or_post_id' => [],
                         'is_scan' => 0,  // Mặc định là 0 và sẽ cập nhật sau
                         'status' => 0,  // Mặc định là 0 và sẽ cập nhật sau
-                        'delay' => 0
+                        'delay' => 0,
+                        'type' => 0,
                     ];
                     $status_tracker[$target_uid_post] = [];
                     $issan_tracker[$target_uid_post] = [];
@@ -301,6 +303,9 @@ class LinkController extends Controller
                 }
                 if ($issan == 1) {
                     $temp_result[$target_uid_post]['is_scan'] = 1;
+                }
+                if ($type == 0) {
+                    $temp_result[$target_uid_post]['type'] = 1;
                 }
                 $temp_result[$target_uid_post]['delay'] = $delay;
 
@@ -325,7 +330,6 @@ class LinkController extends Controller
                     $result[] = $entry;
                 }
             }
-    
             return response()->json([
                 'status' => 1,
                 'links' => $result,
