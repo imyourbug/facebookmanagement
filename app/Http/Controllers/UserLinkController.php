@@ -238,11 +238,11 @@ class UserLinkController extends Controller
         $userLinks = [];
         if($user_id != null)
         {
-            $userLinks = Link::where('user_id', $user_id)->where('type', $type)-> get()?->toArray() ?? [];
+            $userLinks = Link::where('user_id', $user_id)->where('type', $type)->orderByDesc('created_at')-> get()?->toArray() ?? [];
         }
         else
         {
-            $userLinks = Link::where('type', $type)->get()?->toArray() ?? [];
+            $userLinks = Link::where('type', $type)->orderByDesc('created_at')->get()?->toArray() ?? [];
         }
         
 
