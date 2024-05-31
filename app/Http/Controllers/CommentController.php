@@ -183,7 +183,7 @@ class CommentController extends Controller
         // $ids = $request->ids ?? [];
         // $link_or_post_id = is_numeric($request->link_or_post_id) ? $request->link_or_post_id : $this->getLinkOrPostIdFromUrl($request->link_or_post_id ?? '');
 
-        $links = Link::where('user_id', $user_id)->get()->toArray() ?? [];
+        $links = Link::where('user_id', $user_id)->pluck('parent_link_or_post_id')->toArray() ?? [];
 
         // $list_link_of_user = [];
         // foreach ($links as $key => $link) {
