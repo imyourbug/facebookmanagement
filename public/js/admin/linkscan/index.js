@@ -295,21 +295,21 @@ function displayFiltering() {
 async function reload() {
     let count = 0;
 
-    await $.ajax({
-        type: "GET",
-        url: `/api/userlinks/getAll`,
-        success: function (response) {
-            if (response.status == 0) {
-                allRecord = response.links;
-                response.links.forEach((e) => {
-                    if (e.type == 0) {
-                        count++;
-                    }
-                });
-                $('.count-link').text(`Số link: ${count}`);
-            }
-        }
-    });
+    // await $.ajax({
+    //     type: "GET",
+    //     url: `/api/userlinks/getAll`,
+    //     success: function (response) {
+    //         if (response.status == 0) {
+    //             allRecord = response.links;
+    //             response.links.forEach((e) => {
+    //                 if (e.type == 0) {
+    //                     count++;
+    //                 }
+    //             });
+    //             $('.count-link').text(`Số link: ${count}`);
+    //         }
+    //     }
+    // });
     //
     tempAllRecord = [];
     reloadAll();
