@@ -114,7 +114,7 @@
             </div>
         </div>
     </div>
-    <input type="hidden" value="{{ Auth::id() }}" name="" id="user_id" />
+    <!-- <input type="hidden" value="{{ Auth::id() }}" name="" id="user_id" /> -->
     <div class="modal fade" id="modalFilter" style="display: none;" aria-modal="true" role="dialog">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
