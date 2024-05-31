@@ -443,6 +443,9 @@ class LinkController extends Controller
                 ->orWhereIn('parent_link_or_post_id', $links)
                 ->update(['status' => $typeStatus]);
         }
+        return response()->json([
+            'status' => 0,
+        ]);
     }
     // public function getAllUsersByLinkOrPostId(string $link_or_post_id)
     // {

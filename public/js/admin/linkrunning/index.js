@@ -400,7 +400,7 @@ $(document).on("click", ".btn-stop-multiple", function () {
         if (tempAllRecord.length) {
             $.ajax({
                 type: "POST",
-                url: `/api/links/updateLinkByListLinkId`,
+                url: `/api/links/updateStatusLink`,
                 data: {
                     ids: tempAllRecord,
                     status: 0,
