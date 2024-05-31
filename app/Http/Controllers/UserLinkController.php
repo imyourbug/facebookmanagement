@@ -246,13 +246,13 @@ class UserLinkController extends Controller
         }
         
 
-        foreach ($userLinks as $post) {
-            if (isset($userMap[$post['user_id']])) {
-                $post['name'] = $userMap[$post['user_id']];
-            } else {
-                $post['name'] = '';
-            }
-        }
+        // foreach ($userLinks as $post) {
+        //     if (isset($userMap[$post['user_id']])) {
+        //         $post['name'] = $userMap[$post['user_id']];
+        //     } else {
+        //         $post['name'] = '';
+        //     }
+        // }
         return response()->json([
             'status' => 0,
             'links' => $userLinks,
