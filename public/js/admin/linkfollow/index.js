@@ -30,7 +30,7 @@ $(document).ready(function () {
             top2Start: 'pageLength',
         },
         ajax: {
-            url: `/api/userlinks/getAll?type=1`,
+            url: `/api/userlinks/getAllLinkScan?type=1`,
             dataSrc: "links",
         },
         columns: [
