@@ -57,7 +57,6 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    console.log(d)
                     return d.name;
                     //return getListAccountNameByUserLink(d.accounts);
                 },
