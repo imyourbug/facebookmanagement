@@ -971,6 +971,7 @@ class LinkController extends Controller
 
             return response()->json([
             'status' => 0,
+            'change stt' => $status
             ]);
 
         }catch(Exception $ex){
