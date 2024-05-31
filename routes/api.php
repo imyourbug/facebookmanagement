@@ -87,7 +87,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::get('/getAll', 'CommentController@getAll')->name('getAll');
         Route::post('/deleteAll', 'CommentController@deleteAll')->name('deleteAll');
         Route::post('/updateById', 'CommentController@updateById')->name('updateById');
-        Route::post('/getAllByUser', 'CommentController@getAllByUser')->name('getAllByUser');
+        Route::get('/getAllByUser', 'CommentController@getAllByUser')->name('getAllByUser');
     });
 
     #links
