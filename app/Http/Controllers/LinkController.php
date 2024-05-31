@@ -275,7 +275,7 @@ class LinkController extends Controller
                 $delay = $entry['delay'];
             
                 // Xác định uid_post mục tiêu để gộp
-                $target_uid_post = $parentid === "" ? $uid_post : $parentid;
+                $target_uid_post = ($parentid === "" || $parentid === null) ? $uid_post : $parentid;
             
                 // Nếu uid_post mục tiêu chưa có trong mảng kết quả tạm thời, khởi tạo phần tử mới
                 if (!isset($temp_result[$target_uid_post])) {
