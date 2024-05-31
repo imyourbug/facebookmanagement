@@ -233,7 +233,7 @@ class UserLinkController extends Controller
         // Tạo một mảng tương ứng với user_id và tên của user
         $userMap = [];
         foreach ($users as $u) {
-            $userMap[$u['user_id']] = $u['name'];
+            $userMap[$u['id']] = $u['name'];
         }
         $userLinks = [];
         if($user_id != null)
@@ -246,7 +246,7 @@ class UserLinkController extends Controller
         }
         
 
-        foreach ($userLinks as &$post) {
+        foreach ($userLinks as $post) {
             if (isset($userMap[$post['user_id']])) {
                 $post['name'] = $userMap[$post['user_id']];
             } else {
