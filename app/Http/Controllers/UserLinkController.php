@@ -246,7 +246,7 @@ class UserLinkController extends Controller
         }
         
 
-        foreach ($userLinks as $post) {
+        foreach ($userLinks as &$post) {
             if (isset($userMap[$post['user_id']])) {
                 $post['name'] = $userMap[$post['user_id']];
             } else {
@@ -255,7 +255,7 @@ class UserLinkController extends Controller
         }
         return response()->json([
             'status' => 0,
-            'links' => $post,
+            'links' => $userLinks,
             'user' => User::firstWhere('id', $user_id),
         ]);
     }
