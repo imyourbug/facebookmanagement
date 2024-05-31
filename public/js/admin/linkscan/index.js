@@ -57,8 +57,8 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return 'QQ';
                     console.log(d)
+                    return 'QQ';
                     //return getListAccountNameByUserLink(d.accounts);
                 },
             },
