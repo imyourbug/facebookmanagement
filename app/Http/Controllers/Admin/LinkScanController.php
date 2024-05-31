@@ -110,6 +110,7 @@ class LinkScanController extends Controller
             } else {
                 // Tạo mới link
                 Link::create([
+                    'link_or_post_id' => $data['link_or_post_id'],
                     'title' => $data['title'] ?? '',
                     'type' => $data['type'] ?? '',
                     'is_scan' => $data['is_scan'] ?? '',
