@@ -35,7 +35,7 @@ $(document).ready(function () {
         columns: [
             {
                 data: function (d) {
-                    return `<input class="btn-select" type="checkbox" data-link_or_post_id="${d.link_or_post_id} data-id="${d.link_or_post_id}" />`;
+                    return `<input class="btn-select" type="checkbox" data-link_or_post_id="${d.link_or_post_id}" data-id="${d.link_or_post_id}" />`;
                 }
             },
             {
