@@ -290,23 +290,23 @@ async function reload() {
     let count = 0;
     let user_id = $('#user_id').val();
 
-    await $.ajax({
-        type: "GET",
-        url: `/api/userlinks/getAll`,
-        success: function (response) {
-            console.log(response.links);
-            all = response.links.length;
-            if (response.status == 0) {
-                allRecord = response.links;
-                response.links.forEach((e) => {
-                    if (e.type == 1) {
-                        count++;
-                    }
-                });
-                $('.count-link').text(`Số link: ${count}`);
-            }
-        }
-    });
+    // await $.ajax({
+    //     type: "GET",
+    //     url: `/api/userlinks/getAll`,
+    //     success: function (response) {
+    //         console.log(response.links);
+    //         all = response.links.length;
+    //         if (response.status == 0) {
+    //             allRecord = response.links;
+    //             response.links.forEach((e) => {
+    //                 if (e.type == 1) {
+    //                     count++;
+    //                 }
+    //             });
+    //             $('.count-link').text(`Số link: ${count}`);
+    //         }
+    //     }
+    // });
     //
     tempAllRecord = [];
     reloadAll();
