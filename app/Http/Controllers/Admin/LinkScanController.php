@@ -104,7 +104,8 @@ class LinkScanController extends Controller
                     'diff_reaction' => 0,
                     'note' => '',
                     'delay' => $user->delay ?? 1000,
-                    'parent_link_or_post_id' => $data['parent_link_or_post_id']
+                    'parent_link_or_post_id' => $data['parent_link_or_post_id'],
+                    'user_id' => $data['user_id'],
                 ]);
                 $status = 'Link có sắn';
             } else {
