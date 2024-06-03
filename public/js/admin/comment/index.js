@@ -66,7 +66,7 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return '';
+                    return d.title;
                     // return `<p class="show-title tool-tip" data-type='content' data-content="${d.link ? d.link.content : ''}" data-link_or_post_id="${d.link ? d.link.link_or_post_id : ''}" data-id="${d.id}">${d.link ? d.link.title : ''}
                     // <div style="display:none;width: max-content;
                     //             background-color: black;
