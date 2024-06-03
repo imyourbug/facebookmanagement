@@ -64,9 +64,9 @@ class CommentController extends Controller
             'link.parentLink.childLinks.user'
         ])
             // default
-            ->whereHas('link', function ($q) use ($list_link_of_user) {
-                $q->whereIn('link_or_post_id', $list_link_of_user);
-            })
+            // ->whereHas('link', function ($q) use ($list_link_of_user) {
+            //     $q->whereIn('link_or_post_id', $list_link_of_user);
+            // })
             // to
             ->when($to, function ($q) use ($to) {
                 return $q->where('created_at', '<=', $to . ' 23:59:59');
