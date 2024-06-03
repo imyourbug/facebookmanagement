@@ -29,7 +29,7 @@ $(document).ready(function () {
             top2Start: 'pageLength',
         },
         ajax: {
-            url: `/api/comments/getAll?today=${new Date().toJSON().slice(0, 10)}`,
+            url: `/api/comments/getAllCommentNew?today=${new Date().toJSON().slice(0, 10)}`,
             dataSrc: "comments",
         },
         columns: [
@@ -45,7 +45,8 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return d.link ? d.link.content : '';
+                    return '';
+                    //return d.link ? d.link.content : '';
                 },
             },
             {
@@ -60,20 +61,21 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return getListAccountNameByUserLink(d.accounts);
+                    return d.accounts;
                 },
             },
             {
                 data: function (d) {
-                    return `<p class="show-title tool-tip" data-type='content' data-content="${d.link ? d.link.content : ''}" data-link_or_post_id="${d.link ? d.link.link_or_post_id : ''}" data-id="${d.id}">${d.link ? d.link.title : ''}
-                    <div style="display:none;width: max-content;
-                                background-color: black;
-                                color: #fff;
-                                border-radius: 6px;
-                                padding: 5px 10px;
-                                position: absolute;
-                                z-index: 1;" class="tooltip-title tooltip-title-${d.id}">
-                    </div></p>`;
+                    return '';
+                    // return `<p class="show-title tool-tip" data-type='content' data-content="${d.link ? d.link.content : ''}" data-link_or_post_id="${d.link ? d.link.link_or_post_id : ''}" data-id="${d.id}">${d.link ? d.link.title : ''}
+                    // <div style="display:none;width: max-content;
+                    //             background-color: black;
+                    //             color: #fff;
+                    //             border-radius: 6px;
+                    //             padding: 5px 10px;
+                    //             position: absolute;
+                    //             z-index: 1;" class="tooltip-title tooltip-title-${d.id}">
+                    // </div></p>`;
                 },
             },
             {
@@ -91,7 +93,8 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return displayPhoneByRole(d.get_uid ? d.get_uid.phone : '');
+                    return '';
+                    //return displayPhoneByRole(d.get_uid ? d.get_uid.phone : '');
                 },
             },
             {
