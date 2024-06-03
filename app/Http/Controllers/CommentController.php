@@ -92,11 +92,11 @@ class CommentController extends Controller
                 return $q->where('title', 'like', "%$title%");
             })
             // link_or_post_id
-            ->when(strlen($link_or_post_id), function ($q) use ($link_or_post_id) {
-                return $q->whereHas('link', function ($q) use ($link_or_post_id) {
-                    $q->where('link_or_post_id', 'like', "%$link_or_post_id%");
-                });
-            })
+            // ->when(strlen($link_or_post_id), function ($q) use ($link_or_post_id) {
+            //     return $q->whereHas('link', function ($q) use ($link_or_post_id) {
+            //         $q->where('link_or_post_id', 'like', "%$link_or_post_id%");
+            //     });
+            // })
             // name_facebook
             ->when(strlen($name_facebook), function ($q) use ($name_facebook) {
                 return $q->where('name_facebook', 'like', "%$name_facebook%");
