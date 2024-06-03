@@ -321,16 +321,16 @@ async function reload() {
     let all = 0;
     let user_id = $('#user_id').val();
 
-    await $.ajax({
-        type: "GET",
-        url: "/api/links/getAll",
-        success: function (response) {
-            if (response.status == 0) {
-                all = response.links.length;
-                $('.count-link').text(`Số luồng: ${count}/${all}`);
-            }
-        }
-    });
+    // await $.ajax({
+    //     type: "GET",
+    //     url: "/api/links/getAll",
+    //     success: function (response) {
+    //         if (response.status == 0) {
+    //             all = response.links.length;
+    //             $('.count-link').text(`Số luồng: ${count}/${all}`);
+    //         }
+    //     }
+    // });
 
     //
     tempAllRecord = [];
