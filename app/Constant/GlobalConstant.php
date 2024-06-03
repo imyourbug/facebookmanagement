@@ -53,5 +53,5 @@ class GlobalConstant
 
     public const LIMIT_LINK_HISTORY = 5;
 
-    public const LIMIT_COMMENT = 5000;
+    public const LIMIT_COMMENT = 1000;
 }
