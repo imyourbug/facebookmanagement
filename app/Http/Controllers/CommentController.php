@@ -205,17 +205,7 @@ class CommentController extends Controller
         }
 
         DB::enableQueryLog();
-        $comments = Comment::with([
-            'getUid',
-            'link.user',
-            'link.userLinks.user',
-            'link.userLinks.user',
-            'link.childLinks.user',
-            'link.parentLink.user',
-            'link.childLinks.userLinks.user',
-            'link.parentLink.userLinks.user',
-            'link.parentLink.childLinks.user'
-        ])->when(strlen($today), function ($q) use ($today) {
+        $comments = Comment::when(strlen($today), function ($q) use ($today) {
             return $q->where('created_at', 'like', "%$today%");
         })->orderByDesc('created_at');
 
