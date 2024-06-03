@@ -269,14 +269,14 @@ class CommentController extends Controller
                 'link_or_post_id' => [],
             ];
             foreach ($data['comments'] as $key => $value) {
-                $link = Link::firstWhere('link_or_post_id', $value['link_or_post_id']);
-                if (!$link) {
-                    if (!in_array($value['link_or_post_id'], $error['link_or_post_id'])) {
-                        $error['link_or_post_id'][] = $value['link_or_post_id'];
-                    }
-                    // throw new Exception('Không tồn tại link_or_post_id');
-                    continue;
-                }
+                // $link = Link::firstWhere('link_or_post_id', $value['link_or_post_id']);
+                // if (!$link) {
+                //     if (!in_array($value['link_or_post_id'], $error['link_or_post_id'])) {
+                //         $error['link_or_post_id'][] = $value['link_or_post_id'];
+                //     }
+                //     // throw new Exception('Không tồn tại link_or_post_id');
+                //     continue;
+                // }
                 $comment = Comment::firstWhere('comment_id', $value['comment_id']);
                 if ($comment) {
                     if (!in_array($value['comment_id'], $error['comment_id'])) {
@@ -284,7 +284,7 @@ class CommentController extends Controller
                     }
                     continue;
                 }
-                $unique_link_ids[$link->id] = $link;
+                //$unique_link_ids[$link->id] = $link;
                 $comment = Comment::create($value);
                 //
                 // get data phone
