@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Constant\GlobalConstant;
 use App\Http\Controllers\Controller;
 use App\Models\Comment;
+use App\Models\User;
 use App\Models\Link;
 use App\Models\LinkHistory;
 use App\Models\Uid;
