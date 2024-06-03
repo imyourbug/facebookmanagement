@@ -188,7 +188,7 @@ class CommentController extends Controller
         $users = User::get()->toArray();
 
         $userMap = [];
-        foreach ($user as $u) {
+        foreach ($users as $u) {
             $userMap[$u['id']] = $u['name'];
         }
 
