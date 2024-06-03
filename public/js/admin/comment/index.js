@@ -66,16 +66,15 @@ $(document).ready(function () {
             },
             {
                 data: function (d) {
-                    return d.title;
-                    // return `<p class="show-title tool-tip" data-type='content' data-content="${d.link ? d.link.content : ''}" data-link_or_post_id="${d.link ? d.link.link_or_post_id : ''}" data-id="${d.id}">${d.link ? d.link.title : ''}
-                    // <div style="display:none;width: max-content;
-                    //             background-color: black;
-                    //             color: #fff;
-                    //             border-radius: 6px;
-                    //             padding: 5px 10px;
-                    //             position: absolute;
-                    //             z-index: 1;" class="tooltip-title tooltip-title-${d.id}">
-                    // </div></p>`;
+                    return `<p class="show-title tool-tip" data-type='content' data-content="${d.link_or_post_id}" data-link_or_post_id="${d.link_or_post_id}" data-id="${d.id}">${d.title}
+                    <div style="display:none;width: max-content;
+                                background-color: black;
+                                color: #fff;
+                                border-radius: 6px;
+                                padding: 5px 10px;
+                                position: absolute;
+                                z-index: 1;" class="tooltip-title tooltip-title-${d.id}">
+                    </div></p>`;
                 },
             },
             {
