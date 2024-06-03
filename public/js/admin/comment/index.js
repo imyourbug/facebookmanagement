@@ -319,18 +319,18 @@ $(document).on("click", ".btn-delete", function () {
 });
 
 function reload() {
-    $.ajax({
-        type: "GET",
-        // url: `/api/comments/getAll`,
-        url: dataTable.ajax.url(),
-        success: function (response) {
-            if (response.status == 0) {
-                $('.count-comment').text(`Bình luận: ${response.comments.length}`);
-            } else {
-                toastr.error(response.message);
-            }
-        },
-    });
+    // $.ajax({
+    //     type: "GET",
+    //     // url: `/api/comments/getAll`,
+    //     url: dataTable.ajax.url(),
+    //     success: function (response) {
+    //         if (response.status == 0) {
+    //             $('.count-comment').text(`Bình luận: ${response.comments.length}`);
+    //         } else {
+    //             toastr.error(response.message);
+    //         }
+    //     },
+    // });
 
     tempAllRecord = [];
     reloadAll();
