@@ -20,7 +20,7 @@ services:
         # restart: unless-stopped
         tty: true
         ports:
-            - '${DB_PORT:-3306}:3306'
+            - '${DB_PORT:-3307}:3306'
         environment:
             MYSQL_DATABASE: facebook
             MYSQL_USER: sail
