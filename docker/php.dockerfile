@@ -3,7 +3,7 @@ FROM php:8.1-fpm-alpine
 WORKDIR /var/www/html
 
 COPY . .
-
+ADD ./docker/php.ini /usr/local/etc/php/php.ini
 # RUN chmod -R 777 .
 RUN chown -R www-data:www-data /var/www
 RUN curl -sS https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions -o /usr/local/bin/install-php-extensions && chmod +x /usr/local/bin/install-php-extensions
