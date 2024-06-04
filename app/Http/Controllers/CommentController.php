@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\Link;
 use App\Models\LinkHistory;
 use App\Models\Uid;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Throwable;
@@ -185,61 +186,68 @@ class CommentController extends Controller
         $ids = $request->ids ?? [];
         //$link_or_post_id = is_numeric($request->link_or_post_id) ? $request->link_or_post_id : $this->getLinkOrPostIdFromUrl($request->link_or_post_id ?? '');
 
-        $links = Link::get()->toArray();
-        $users = User::get()->toArray();
-
-        $userMap = [];
-        foreach ($users as $u) {
-            $userMap[$u['id']] = $u['name'];
+        try{
+            $links = Link::get()->toArray();
+            $users = User::get()->toArray();
+    
+            $userMap = [];
+            foreach ($users as $u) {
+                $userMap[$u['id']] = $u['name'];
+            }
+    
+            $linkMap = [];
+            foreach ($links as $link) {
+                $linkMap[$link['parent_link_or_post_id']]['titles'][] = $link['title'];
+                $linkMap[$link['parent_link_or_post_id']]['users'][] = $userMap[$link['user_id']];
+            }
+    
+            // Combine titles and users into a single string
+            foreach ($linkMap as $id => $data) {
+                $linkMap[$id]['titles'] = implode('|', $data['titles']);
+                $linkMap[$id]['users'] = implode('|', $data['users']);
+            }
+    
+            DB::enableQueryLog();
+            $comments = Comment::when(strlen($today), function ($q) use ($today) {
+                return $q->where('created_at', 'like', "%$today%");
+            })->orderByDesc('created_at');
+    
+            // limit
+            if ($limit) {
+                $comments = $comments->limit($limit);
+            }
+    
+            $comments = $comments->get()?->toArray() ?? [];;
+            // dd(DB::getRawQueryLog());
+    
+            $result = [];
+            foreach ($comments as $comment) {
+                $parentId = $comment['link_or_post_id'];
+                $uid = $comment['uid'];
+                $result[] = [
+                    'comment_id' => $comment['comment_id'],
+                    'title' => $linkMap[$parentId]['titles'],
+                    'content' => $comment['content'],
+                    'accounts' => $linkMap[$parentId]['users'],
+                    'link_or_post_id' => $parentId,
+                    'uid' => $uid,
+                    'name_facebook' => $comment['name_facebook'],
+                    'created_at' => $comment['created_at'],
+                    'id' => $comment['id'],
+                    'note' => $comment['note']
+                ];
+            }
+    
+            return response()->json([
+                'status' => 0,
+                'comments' => $result
+            ]);
+        }catch(Exception $ex){
+            return response()->json([
+                'status' => -1,
+                'comments' => var_dump($ex)
+            ]);
         }
-
-        $linkMap = [];
-        foreach ($links as $link) {
-            $linkMap[$link['parent_link_or_post_id']]['titles'][] = $link['title'];
-            $linkMap[$link['parent_link_or_post_id']]['users'][] = $userMap[$link['user_id']];
-        }
-
-        // Combine titles and users into a single string
-        foreach ($linkMap as $id => $data) {
-            $linkMap[$id]['titles'] = implode('|', $data['titles']);
-            $linkMap[$id]['users'] = implode('|', $data['users']);
-        }
-
-        DB::enableQueryLog();
-        $comments = Comment::when(strlen($today), function ($q) use ($today) {
-            return $q->where('created_at', 'like', "%$today%");
-        })->orderByDesc('created_at');
-
-        // limit
-        if ($limit) {
-            $comments = $comments->limit($limit);
-        }
-
-        $comments = $comments->get()?->toArray() ?? [];;
-        // dd(DB::getRawQueryLog());
-
-        $result = [];
-        foreach ($comments as $comment) {
-            $parentId = $comment['link_or_post_id'];
-            $uid = $comment['uid'];
-            $result[] = [
-                'comment_id' => $comment['comment_id'],
-                'title' => $linkMap[$parentId]['titles'],
-                'content' => $comment['content'],
-                'accounts' => $linkMap[$parentId]['users'],
-                'link_or_post_id' => $parentId,
-                'uid' => $uid,
-                'name_facebook' => $comment['name_facebook'],
-                'created_at' => $comment['created_at'],
-                'id' => $comment['id'],
-                'note' => $comment['note']
-            ];
-        }
-
-        return response()->json([
-            'status' => 0,
-            'comments' => $result
-        ]);
     }
 
     public function getAllByUser(Request $request)
