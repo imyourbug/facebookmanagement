@@ -226,9 +226,9 @@ class CommentController extends Controller
                 $uid = $comment['uid'];
                 $result[] = [
                     'comment_id' => $comment['comment_id'],
-                    'title' => $linkMap[$parentId]['titles'],
+                    'title' => $linkMap[$parentId]['titles'] ?? '',
                     'content' => $comment['content'],
-                    'accounts' => $linkMap[$parentId]['users'],
+                    'accounts' => $linkMap[$parentId]['users'] ?? '',
                     'link_or_post_id' => $parentId,
                     'uid' => $uid,
                     'name_facebook' => $comment['name_facebook'],
